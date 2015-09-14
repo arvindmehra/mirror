@@ -1,0 +1,10 @@
+.realifex
+  = image_tag("realifex-icon-lock.gif", alt: "Lock Icon", class: "page-icon")
+  %h1 Reset Password
+  %p.page-message Please enter your new Realifex Password in the fields below.
+
+  = form_for @user, :url => password_reset_path(params[:id]) do |f|
+    = f.password_field :password, placeholder: "Enter your new password", class: "realifex-field"
+    = f.password_field :password_confirmation, placeholder: "Confirm your new password", class: "realifex-field"
+    .realifex-button-wrapper
+      = submit_tag "Continue", class: "realifex-button"

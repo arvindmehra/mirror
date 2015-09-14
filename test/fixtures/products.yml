@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  bundle_name_ios: MyString
+  bundle_name_android: MyString
+  name: MyString
+  description: MyString
+
+two:
+  bundle_name_ios: MyString
+  bundle_name_android: MyString
+  name: MyString
+  description: MyString

@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 1
+  start_date: 2015-01-14 09:12:31
+  end_date: 2015-01-14 09:12:31
+  tier_id: 1
+  is_active: false
+
+two:
+  user_id: 1
+  start_date: 2015-01-14 09:12:31
+  end_date: 2015-01-14 09:12:31
+  tier_id: 1
+  is_active: false
