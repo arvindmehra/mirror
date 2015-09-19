@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150319205421) do
+ActiveRecord::Schema.define(version: 20150916041021) do
 
   create_table "devices", force: true do |t|
     t.integer  "user_id"
@@ -40,9 +40,11 @@ ActiveRecord::Schema.define(version: 20150319205421) do
     t.string   "city"
     t.string   "suburb"
     t.string   "country"
-    t.float    "latitude",      limit: 24
-    t.float    "longitude",     limit: 24
+    t.float    "latitude",       limit: 24
+    t.float    "longitude",      limit: 24
     t.datetime "recorded_at"
+    t.string   "original_image_path", limit: 500
+    t.string   "thumb_image_path",    limit: 500
   end
 
   add_index "notes", ["user_id"], name: "index_notes_on_user_id", using: :btree

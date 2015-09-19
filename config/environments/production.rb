@@ -101,4 +101,12 @@ Rails.application.configure do
   config.action_mailer.default_url_options = {:host => 'realifex-production.elasticbeanstalk.com'}
 
   config.apple_receipt_validation_url  = ENV["APPLE_RECEIPT_VALIDATION_URL"]
+
+  # AWS_ACCESS_KEY_ID = 'AKIAI6TDMWU43NZ6Q3FA'
+  # AWS_SECRET_ACCESS_KEY = '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'
+  # AWS_BUCKET_NAME = 'dev-images-realifex'
+
+  AWS_ACCESS_KEY_ID = ENV["AWS_ACCESS_KEY_ID"]
+  AWS_SECRET_ACCESS_KEY = ENV["AWS_SECRET_KEY"]
+  AWS_BUCKET_NAME = ENV["AWS_BUCKET_NAME"]
 end

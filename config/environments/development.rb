@@ -49,4 +49,11 @@ Rails.application.configure do
   config.apple_receipt_validation_url  = "https://sandbox.itunes.apple.com"
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+
+
+  AWS_ACCESS_KEY_ID = 'AKIAI6TDMWU43NZ6Q3FA'
+  AWS_SECRET_ACCESS_KEY = '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'
+  AWS_BUCKET_NAME = 'dev-images-realifex'
+
+
 end

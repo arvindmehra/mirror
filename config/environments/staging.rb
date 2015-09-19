@@ -61,4 +61,9 @@ Rails.application.configure do
   config.apple_receipt_validation_url = "https://sandbox.itunes.apple.com"
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+
+  AWS_ACCESS_KEY_ID = ENV["AWS_ACCESS_KEY_ID"]
+  AWS_SECRET_ACCESS_KEY = ENV["AWS_SECRET_KEY"]
+  AWS_BUCKET_NAME = ENV["AWS_BUCKET_NAME"]
+
 end

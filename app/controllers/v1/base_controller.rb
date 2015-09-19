@@ -10,6 +10,7 @@ class V1::BaseController < ApplicationController
   private
 
   def set_device
+    # p "VIKASH - 001"
     unless request.headers['device-vendor-id'] && request.headers['device-platform'] && request.headers['location-enabled']
       render json: {errors: ["Device vendor ID,Platform and location setting required!"]}, status: 400
     end
