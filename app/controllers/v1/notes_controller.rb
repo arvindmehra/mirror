@@ -25,7 +25,7 @@ class V1::NotesController < V1::BaseController
       # Lets save images also
       @base_path="note_images/"+(@note.id/1000).to_s+"/"+@note.id.to_s
       if params[:original_image] then
-        @file_name_with_path=@base_path+"/original_"+params[:thumb_image].original_filename
+        @file_name_with_path=@base_path+"/original_"+params[:original_image].original_filename
         p @file_name_with_path
         save_screenshot_to_s3(params[:original_image].path,@file_name_with_path)
         @note.original_image_path= @file_name_with_path
@@ -60,18 +60,24 @@ class V1::NotesController < V1::BaseController
       # Lets save images also
       @base_path="note_images/"+(@note.id/1000).to_s+"/"+@note.id.to_s
 
-      if params[:original_image] or params[:delete_original_image]
-        delete_from_s3(@note.original_image_path)
-        @note.original_image_path= ''
+      if (params[:original_image] or params[:delete_original_image])
+        begin
+          delete_from_s3(@note.original_image_path)
+          @note.original_image_path= ''
+        rescue Exception => e
+        end
       end
 
       if params[:thumb_image] or params[:delete_thumb_image]
-        delete_from_s3(@note.thumb_image_path)
-        @note.thumb_image_path= ''
+        begin
+          delete_from_s3(@note.thumb_image_path)
+          @note.thumb_image_path= ''
+        rescue Exception => e
+        end
       end
 
       if params[:original_image] then
-        @file_name_with_path=@base_path+"/original_"+params[:thumb_image].original_filename
+        @file_name_with_path=@base_path+"/original_"+params[:original_image].original_filename
         save_screenshot_to_s3(params[:original_image].path,@file_name_with_path)
         @note.original_image_path= @file_name_with_path
       end
