@@ -7,7 +7,7 @@ class Note < ActiveRecord::Base
 
   def calculate_tags
     tags.destroy_all
-    body.scan(/(?:\s|^)#(.+?)(?=[\s,]|$)/) do |match|
+    body.scan(/(?:\s|^)#(.+?)(?=[\s,.]|$)/) do |match|
       name = match.first.to_s
       index = Regexp.last_match.offset(0).first
       index = index + 1 if body[index] != "#"
