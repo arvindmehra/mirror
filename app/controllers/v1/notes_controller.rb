@@ -77,13 +77,13 @@ class V1::NotesController < V1::BaseController
       end
 
       if params[:original_image] then
-        @file_name_with_path=@base_path+"/original_"+params[:original_image].original_filename
+        @file_name_with_path=@base_path+"/original_"+Time.now.to_i.to_s+"_"+params[:original_image].original_filename
         save_screenshot_to_s3(params[:original_image].path,@file_name_with_path)
         @note.original_image_path= @file_name_with_path
       end
 
       if params[:thumb_image] then
-        @file_name_with_path=@base_path+"/thumb_"+params[:thumb_image].original_filename
+        @file_name_with_path=@base_path+"/thumb_"+Time.now.to_i.to_s+"_"+params[:thumb_image].original_filename
         save_screenshot_to_s3(params[:thumb_image].path,@file_name_with_path)
         @note.thumb_image_path= @file_name_with_path
       end
