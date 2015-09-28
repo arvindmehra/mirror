@@ -40,8 +40,8 @@ ActiveRecord::Schema.define(version: 20150916041021) do
     t.string   "city"
     t.string   "suburb"
     t.string   "country"
-    t.float    "latitude",       limit: 24
-    t.float    "longitude",      limit: 24
+    t.float    "latitude",            limit: 24
+    t.float    "longitude",           limit: 24
     t.datetime "recorded_at"
     t.string   "original_image_path", limit: 500
     t.string   "thumb_image_path",    limit: 500
