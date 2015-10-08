@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150916041021) do
+ActiveRecord::Schema.define(version: 20151008064427) do
 
   create_table "devices", force: true do |t|
     t.integer  "user_id"
@@ -45,6 +45,12 @@ ActiveRecord::Schema.define(version: 20150916041021) do
     t.datetime "recorded_at"
     t.string   "original_image_path", limit: 500
     t.string   "thumb_image_path",    limit: 500
+    t.float    "heart_rate",          limit: 24
+    t.float    "sleep_time",          limit: 24
+    t.float    "temperature",         limit: 24
+    t.string   "whether_type",        limit: 20
+    t.float    "steps_walked",        limit: 24
+    t.float    "calories_burnt",      limit: 24
   end
 
   add_index "notes", ["user_id"], name: "index_notes_on_user_id", using: :btree
