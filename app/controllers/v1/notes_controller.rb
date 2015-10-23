@@ -49,6 +49,20 @@ class V1::NotesController < V1::BaseController
   end
 
   def destroy
+    if (@note.original_image_path)
+      begin
+        delete_from_s3(@note.original_image_path)
+      rescue Exception => e
+      end
+    end
+
+    if (@note.thumb_image_path)
+      begin
+        delete_from_s3(@note.thumb_image_path)
+      rescue Exception => e
+      end
+    end
+
     @note.destroy
     head :no_content
   end
