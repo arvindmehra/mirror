@@ -34,7 +34,7 @@ RailsAdmin.config do |config|
 
   config.authorize_with do
     authenticate_or_request_with_http_basic('Please enter your username and password') do |username, password|
-      (username == (ENV['ADMIN_USERNAME'])) && (password == (ENV['ADMIN_PASSWORD']))
+      (username == ADMIN_USERNAME && password == ADMIN_PASSWORD)
     end
   end
 
