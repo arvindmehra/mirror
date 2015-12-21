@@ -11,7 +11,64 @@ class V1::NotesController < V1::BaseController
     #@notes = Rails.cache.fetch("notes/index/#{@current_user.id}") { @current_user.notes.includes(:tags).reverse_order }
     @notes = @current_user.notes.includes(:tags).reverse_order
   end
-  
+
+  # GET /notes/getPS
+  def perceptionScore
+    @all_notes_score=get_notes_conditional(params,true)
+    @my_notes_score=get_notes_conditional(params,false)
+    render json: { all_notes_score: @all_notes_score, my_notes_score: @my_notes_score }
+  end
+
+  def get_notes_conditional(params,is_global)
+    if (is_global)
+      @notes = Note
+    else
+      @notes = @current_user.notes.includes(:tags)
+    end
+
+    if params
+      if(params[:begin_date] && params[:end_date])
+        @notes = @notes.where(created_at: params[:begin_date]+" 00:00:00" .. params[:end_date]+" 23:59:59")
+      end
+
+      if(params[:tags] && !is_global)
+        @notes = @notes.where(tags: {name:params[:tags]})
+      end
+
+      if(params[:min_heart_rate] && params[:max_heart_rate])
+        @notes = @notes.where(heart_rate: params[:max_heart_rate] .. params[:min_heart_rate])
+      end
+
+      if(params[:whether_type])
+        @notes = @notes.where(:whether_type => params[:whether_type].split(","))
+      end
+
+      if(params[:min_sleep_time] && params[:max_sleep_time])
+        @notes = @notes.where(sleep_time: params[:max_sleep_time] .. params[:min_sleep_time])
+      end
+
+      if(params[:min_temperature] && params[:max_temperature])
+        @notes = @notes.where(temperature: params[:max_temperature] .. params[:min_temperature])
+      end
+
+      if(params[:min_steps_walked] && params[:max_steps_walked])
+        @notes = @notes.where(steps_walked: params[:max_steps_walked] .. params[:min_steps_walked])
+      end
+
+      if(params[:min_calories_burnt] && params[:max_calories_burnt])
+        @notes = @notes.where(calories_burnt: params[:max_calories_burnt] .. params[:min_calories_burnt])
+      end
+
+      if(params[:score_data])
+        @notes = @notes.where(:perception_score => params[:score_data].split(",").map { |s| calculate_perception_score(s.split("-")[0].to_i,s.split("-")[1].to_i) })
+      end
+
+    end
+
+    return @notes.average(:perception_score)
+  end
+
+
   # GET /notes/:id
   def show
   end
@@ -38,14 +95,26 @@ class V1::NotesController < V1::BaseController
         @note.thumb_image_path= @file_name_with_path
       end
 
-      if params[:original_image] or params[:thumb_image]
-        @note.save
-      end
+
+      # Calculate the perception score
+      @note.perception_score=calculate_perception_score(@note.impact_score,@note.feeling_score)
+      @note.save
+
       #expire_user_caches()
       render :show
     else
       render json: { errors: @note.errors.full_messages }
     end
+  end
+
+  def calculate_perception_score(impact_score,feeling_score)
+    @feeling_score_value=0
+    if(feeling_score>=5)
+      @feeling_score_value=feeling_score-4
+    else
+      @feeling_score_value=feeling_score-5
+    end
+    return impact_score*@feeling_score_value
   end
 
   def destroy
@@ -101,6 +170,9 @@ class V1::NotesController < V1::BaseController
         save_screenshot_to_s3(params[:thumb_image].path,@file_name_with_path)
         @note.thumb_image_path= @file_name_with_path
       end
+
+      # Calculate the perception score
+      @note.perception_score=calculate_perception_score(@note.impact_score,@note.feeling_score)
 
       @note.save
 

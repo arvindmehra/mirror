@@ -15,6 +15,7 @@ Rails.application.routes.draw do
       end
     end
 
+
     get 'tags/search' => "tags#search"
     get 'tags' => "tags#index", :defaults => {:format => 'json'} 
 
@@ -23,7 +24,10 @@ Rails.application.routes.draw do
 
     get 'users/subscriptions/status' => 'subscriptions#status'
     post 'users/subscriptions/expire_all' => 'subscriptions#expire_all'
-    
+
+    get 'notes/getPS' => "notes#perceptionScore"
+
+
     resources :notes
     resources :transactions, only: [:index, :create]
   end
