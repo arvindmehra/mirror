@@ -35,28 +35,74 @@ class V1::NotesController < V1::BaseController
         @notes = @notes.where(tags: {name:params[:tags]})
       end
 
-      if(params[:min_heart_rate] && params[:max_heart_rate])
-        @notes = @notes.where(heart_rate: params[:max_heart_rate] .. params[:min_heart_rate])
-      end
-
       if(params[:whether_type])
         @notes = @notes.where(:whether_type => params[:whether_type].split(","))
       end
 
-      if(params[:min_sleep_time] && params[:max_sleep_time])
-        @notes = @notes.where(sleep_time: params[:max_sleep_time] .. params[:min_sleep_time])
+      if(params[:heart_rate_range] && params[:heart_rate_range]) then
+        conditions = String.new
+        wheres = Array.new
+        params[:heart_rate_range].split(",").each_with_index{ |element, index|
+          conditions << " OR " unless conditions.length == 0
+          conditions << " heart_rate BETWEEN  ? AND ?"
+          wheres << element.split("-")[0]
+          wheres << element.split("-")[1]
+        }
+        wheres.insert(0, conditions)
+        @notes = @notes.where(wheres)
       end
 
-      if(params[:min_temperature] && params[:max_temperature])
-        @notes = @notes.where(temperature: params[:max_temperature] .. params[:min_temperature])
+      if(params[:sleep_time_range] && params[:sleep_time_range]) then
+        conditions = String.new
+        wheres = Array.new
+        params[:sleep_time_range].split(",").each_with_index{ |element, index|
+          conditions << " OR " unless conditions.length == 0
+          conditions << " sleep_time BETWEEN  ? AND ?"
+          wheres << element.split("-")[0]
+          wheres << element.split("-")[1]
+        }
+        wheres.insert(0, conditions)
+        @notes = @notes.where(wheres)
       end
 
-      if(params[:min_steps_walked] && params[:max_steps_walked])
-        @notes = @notes.where(steps_walked: params[:max_steps_walked] .. params[:min_steps_walked])
+
+      if(params[:temperature_range] && params[:temperature_range]) then
+          conditions = String.new
+          wheres = Array.new
+          params[:temperature_range].split(",").each_with_index{ |element, index|
+            conditions << " OR " unless conditions.length == 0
+            conditions << " temperature BETWEEN  ? AND ?"
+            wheres << element.split("-")[0]
+            wheres << element.split("-")[1]
+          }
+          wheres.insert(0, conditions)
+          @notes = @notes.where(wheres)
       end
 
-      if(params[:min_calories_burnt] && params[:max_calories_burnt])
-        @notes = @notes.where(calories_burnt: params[:max_calories_burnt] .. params[:min_calories_burnt])
+      if(params[:steps_walked_range] && params[:steps_walked_range]) then
+        conditions = String.new
+        wheres = Array.new
+        params[:steps_walked_range].split(",").each_with_index{ |element, index|
+          conditions << " OR " unless conditions.length == 0
+          conditions << " steps_walked BETWEEN  ? AND ?"
+          wheres << element.split("-")[0]
+          wheres << element.split("-")[1]
+        }
+        wheres.insert(0, conditions)
+        @notes = @notes.where(wheres)
+      end
+
+      if(params[:calories_burnt_range] && params[:calories_burnt_range]) then
+        conditions = String.new
+        wheres = Array.new
+        params[:calories_burnt_range].split(",").each_with_index{ |element, index|
+          conditions << " OR " unless conditions.length == 0
+          conditions << " calories_burnt BETWEEN  ? AND ?"
+          wheres << element.split("-")[0]
+          wheres << element.split("-")[1]
+        }
+        wheres.insert(0, conditions)
+        @notes = @notes.where(wheres)
       end
 
       if(params[:score_data])
