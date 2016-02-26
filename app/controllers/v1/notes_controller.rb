@@ -39,6 +39,10 @@ class V1::NotesController < V1::BaseController
         @notes = @notes.where(:whether_type => params[:whether_type].split(","))
       end
 
+      if(params[:category])
+        @notes = @notes.where(:category => params[:category].split(","))
+      end
+
       if(params[:heart_rate_range] && params[:heart_rate_range]) then
         conditions = String.new
         wheres = Array.new
@@ -247,7 +251,7 @@ class V1::NotesController < V1::BaseController
     Rails.cache.delete("tags/index/#{@current_user.id}")
     Rails.cache.delete("notes/index/#{@current_user.id}")
   end
-  
+
   def set_note
     @note = Note.find(params[:id])
     if @note.user != @current_user
