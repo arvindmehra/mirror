@@ -15,109 +15,14 @@ class V1::NotesController < V1::BaseController
   # GET /notes/getPS
   def perceptionScore
     @all_notes_score=get_notes_conditional(params,true)
-    @my_notes_score=get_notes_conditional(params,false)
-    render json: { all_notes_score: @all_notes_score, my_notes_score: @my_notes_score }
+    render json: { all_notes_score: @all_notes_score }
   end
 
   def get_notes_conditional(params,is_global)
-    if (is_global)
-      @notes = Note
-    else
-      @notes = @current_user.notes.includes(:tags)
-    end
-
-    if params
-      if(params[:begin_date] && params[:end_date])
-        @notes = @notes.where(created_at: params[:begin_date]+" 00:00:00" .. params[:end_date]+" 23:59:59")
-      end
-
-      if(params[:tags] && !is_global)
-        @notes = @notes.where(tags: {name:params[:tags]})
-      end
-
-      if(params[:whether_type])
-        @notes = @notes.where(:whether_type => params[:whether_type].split(","))
-      end
-
-      if(params[:category])
-        @notes = @notes.where(:category => params[:category].split(","))
-      end
-
-      if(params[:heart_rate_range] && params[:heart_rate_range]) then
-        conditions = String.new
-        wheres = Array.new
-        params[:heart_rate_range].split(",").each_with_index{ |element, index|
-          conditions << " OR " unless conditions.length == 0
-          conditions << " heart_rate BETWEEN  ? AND ?"
-          wheres << element.split("-")[0]
-          wheres << element.split("-")[1]
-        }
-        wheres.insert(0, conditions)
-        @notes = @notes.where(wheres)
-      end
-
-      if(params[:sleep_time_range] && params[:sleep_time_range]) then
-        conditions = String.new
-        wheres = Array.new
-        params[:sleep_time_range].split(",").each_with_index{ |element, index|
-          conditions << " OR " unless conditions.length == 0
-          conditions << " sleep_time BETWEEN  ? AND ?"
-          wheres << element.split("-")[0]
-          wheres << element.split("-")[1]
-        }
-        wheres.insert(0, conditions)
-        @notes = @notes.where(wheres)
-      end
-
-
-      if(params[:temperature_range] && params[:temperature_range]) then
-          conditions = String.new
-          wheres = Array.new
-          params[:temperature_range].split(",").each_with_index{ |element, index|
-            conditions << " OR " unless conditions.length == 0
-            conditions << " temperature BETWEEN  ? AND ?"
-            wheres << element.split("-")[0]
-            wheres << element.split("-")[1]
-          }
-          wheres.insert(0, conditions)
-          @notes = @notes.where(wheres)
-      end
-
-      if(params[:steps_walked_range] && params[:steps_walked_range]) then
-        conditions = String.new
-        wheres = Array.new
-        params[:steps_walked_range].split(",").each_with_index{ |element, index|
-          conditions << " OR " unless conditions.length == 0
-          conditions << " steps_walked BETWEEN  ? AND ?"
-          wheres << element.split("-")[0]
-          wheres << element.split("-")[1]
-        }
-        wheres.insert(0, conditions)
-        @notes = @notes.where(wheres)
-      end
-
-      if(params[:calories_burnt_range] && params[:calories_burnt_range]) then
-        conditions = String.new
-        wheres = Array.new
-        params[:calories_burnt_range].split(",").each_with_index{ |element, index|
-          conditions << " OR " unless conditions.length == 0
-          conditions << " calories_burnt BETWEEN  ? AND ?"
-          wheres << element.split("-")[0]
-          wheres << element.split("-")[1]
-        }
-        wheres.insert(0, conditions)
-        @notes = @notes.where(wheres)
-      end
-
-      if(params[:score_data])
-        @notes = @notes.where(:perception_score => params[:score_data].split(",").map { |s| calculate_perception_score(s.split("-")[0].to_i,s.split("-")[1].to_i) })
-      end
-
-    end
-
-    return @notes.average(:perception_score)
+    filtered_params = filtering_params(params)
+    notes = Note.filter(filtered_params)
+    return notes.average(:perception_score)
   end
-
 
   # GET /notes/:id
   def show
@@ -147,7 +52,7 @@ class V1::NotesController < V1::BaseController
 
 
       # Calculate the perception score
-      @note.perception_score=calculate_perception_score(@note.impact_score,@note.feeling_score)
+      @note.perception_score=Note.calculate_perception_score(@note.impact_score,@note.feeling_score)
       @note.save
 
       #expire_user_caches()
@@ -155,16 +60,6 @@ class V1::NotesController < V1::BaseController
     else
       render json: { errors: @note.errors.full_messages }
     end
-  end
-
-  def calculate_perception_score(impact_score,feeling_score)
-    @feeling_score_value=0
-    if(feeling_score>=5)
-      @feeling_score_value=feeling_score-4
-    else
-      @feeling_score_value=feeling_score-5
-    end
-    return impact_score*@feeling_score_value
   end
 
   def destroy
@@ -222,7 +117,7 @@ class V1::NotesController < V1::BaseController
       end
 
       # Calculate the perception score
-      @note.perception_score=calculate_perception_score(@note.impact_score,@note.feeling_score)
+      @note.perception_score=Note.calculate_perception_score(@note.impact_score,@note.feeling_score)
 
       @note.save
 
@@ -257,6 +152,10 @@ class V1::NotesController < V1::BaseController
     if @note.user != @current_user
       head :unauthorized
     end
+  end
+
+  def filtering_params(params)
+    params.slice(:heart_rate_range, :category, :sleep_time_range, :temperature_range, :steps_walked_range, :calories_burnt_range, :whether_type, :score_data, :begin_date, :end_date)
   end
 
   def note_params
