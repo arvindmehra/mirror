@@ -30,7 +30,7 @@ class V1::NotesController < V1::BaseController
 
   # POST /notes
   def create
-    @note = Note.new(note_params)
+    @note = Note.new(sanitized_params)
     @note.user = @current_user
 
     if @note.save
@@ -129,6 +129,15 @@ class V1::NotesController < V1::BaseController
   end
 
   private
+
+  def sanitized_params
+    sanitize_params = note_params
+    health_kit_params =  sanitize_params.slice(:heart_rate, :sleep_time, :steps_walked, :calories_burnt)
+    health_kit_params = health_kit_params.select{|key, value| value == "0" }
+    health_kit_params.map{|key,value| health_kit_params[key] = nil}
+    sanitize_params.merge!(health_kit_params)
+    sanitize_params
+  end
 
   def save_screenshot_to_s3(image_location, file_name_with_path)
     service = AWS::S3.new(:access_key_id => AWS_ACCESS_KEY_ID, :secret_access_key => AWS_SECRET_ACCESS_KEY)
