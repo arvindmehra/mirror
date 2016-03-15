@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151217063254) do
+ActiveRecord::Schema.define(version: 20160315034007) do
 
   create_table "devices", force: true do |t|
     t.integer  "user_id"
@@ -111,6 +111,16 @@ ActiveRecord::Schema.define(version: 20151217063254) do
 
   add_index "transactions", ["bundle_name"], name: "index_transactions_on_bundle_name", using: :btree
   add_index "transactions", ["user_id"], name: "index_transactions_on_user_id", using: :btree
+
+  create_table "user_activities", force: true do |t|
+    t.integer  "user_id"
+    t.string   "activity_date"
+    t.integer  "time_spent"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "user_activities", ["user_id"], name: "index_user_activities_on_user_id", using: :btree
 
   create_table "users", force: true do |t|
     t.string   "encrypted_email"

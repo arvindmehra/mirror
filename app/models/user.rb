@@ -8,6 +8,7 @@ class User < ActiveRecord::Base
   has_many :subscriptions
   has_many :transactions
   has_many :receipts
+  has_many :user_activities
 
   after_create :create_trial_subscription
 
@@ -31,7 +32,7 @@ class User < ActiveRecord::Base
   def subscription_not_purchased?
     return self.transactions.empty?
   end
-  
+
   def subscription_info
     subscription_info = SubscriptionInfo.new
     if self.has_active_subscription?
