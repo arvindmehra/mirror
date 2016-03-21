@@ -13,8 +13,19 @@ module Filterable
     end
 
     def get_date_range(filtered_params)
-      date_range_start = filtered_params.delete(:begin_date) + " 00:00:00"
-      date_range_end = filtered_params.delete(:end_date) + " 23:59:59"
+      # Below condition is a quick fix to solve the timezone issue
+      # TODO remove this once the issue is solved.
+      if filtered_params[:begin_date] == filtered_params[:end_date]
+        date_range_start = (DateTime.parse(filtered_params.delete(:begin_date))-1).strftime("%Y-%m-%d")
+        date_range_end = (DateTime.parse(filtered_params.delete(:end_date))+1).strftime("%Y-%m-%d")
+      else
+        date_range_start = filtered_params.delete(:begin_date)
+        date_range_end = filtered_params.delete(:end_date)
+      end
+
+      date_range_start=date_range_start+ " 00:00:00"
+      date_range_end=date_range_end+ " 23:59:59"
+
       date_range = date_range_start .. date_range_end
       filtered_params[:date_range] = date_range
       filtered_params
