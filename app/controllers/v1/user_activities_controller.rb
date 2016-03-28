@@ -26,13 +26,19 @@ class V1::UserActivitiesController < V1::BaseController
       user_activity = @current_user.user_activities.where(activity_date: params[:activity_date])
       active_time = user_activity.present? ? user_activity.pluck(:time_spent).sum : nil
     end
-    render json: {active_time: active_time}
+    render json: {active_time: active_time, activity_goal: @current_user.activity_goal}
   end
 
   def keyboard
     render json: { exluded: [{text: "this",language: "french"},{text: "is", language: "eng-us"},{text: "a", language: "french"}],
                   suggested: [{text: "red",language: "french"},{text: "green", language: "eng-us"},{text: "cyan", language: "french"}]
                   }
+  end
+
+  def set_activity_goal
+    if params[:activity_goal] && @current_user.update(activity_goal: params[:activity_goal])
+      head :ok
+    end
   end
 
 end

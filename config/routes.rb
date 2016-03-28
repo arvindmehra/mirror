@@ -28,8 +28,9 @@ Rails.application.routes.draw do
     get 'notes/getPS' => "notes#perceptionScore"
 
     post 'user_activities/record_activity' => "user_activities#record_activity"
-    get 'user_activities/active_period' => "user_activities#active_period"
+    post 'user_activities/set_activity_goal' => "user_activities#set_activity_goal"
 
+    get 'user_activities/active_period' => "user_activities#active_period"
     get "user_activities/keyboard" => "user_activities#keyboard"
 
 

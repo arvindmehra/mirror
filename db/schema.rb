@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160315034007) do
+ActiveRecord::Schema.define(version: 20160328051914) do
 
   create_table "devices", force: true do |t|
     t.integer  "user_id"
@@ -134,6 +134,7 @@ ActiveRecord::Schema.define(version: 20160315034007) do
     t.integer  "login_count"
     t.integer  "app_opens_count"
     t.datetime "auth_token_created_at"
+    t.integer  "activity_goal"
   end
 
   add_index "users", ["auth_token"], name: "index_users_on_auth_token", using: :btree
