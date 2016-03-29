@@ -11,7 +11,7 @@ class V1::UserActivitiesController < V1::BaseController
       user_activity.save
     end
     if record.present?
-      render :json => {status: 200}
+      render :json => {activity_time: @current_user.lifetime_acitivity_time, first_activity_date:  @current_user.first_activity_date }
     else
       render :json => {errors: "no record created"}
     end

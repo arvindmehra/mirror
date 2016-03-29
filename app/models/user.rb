@@ -48,4 +48,12 @@ class User < ActiveRecord::Base
     return subscription_info
   end
 
+  def lifetime_acitivity_time
+    user_activities.pluck(:time_spent).sum
+  end
+
+  def first_activity_date
+    user_activities.present? ? user_activities.first.activity_date.to_date : nil
+  end
+
 end
