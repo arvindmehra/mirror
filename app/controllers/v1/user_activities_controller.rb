@@ -11,7 +11,7 @@ class V1::UserActivitiesController < V1::BaseController
       user_activity.save
     end
     if record.present?
-      render :json => {activity_time: @current_user.lifetime_acitivity_time, first_activity_date:  @current_user.first_activity_date }
+      render :json => {activity_time: @current_user.lifetime_acitivity_time, first_activity_date:  @current_user.first_activity_date, activity_goal: @current_user.activity_goal_time }
     else
       render :json => {errors: "no record created"}
     end
@@ -37,7 +37,7 @@ class V1::UserActivitiesController < V1::BaseController
 
   def set_activity_goal
     if params[:activity_goal] && @current_user.update(activity_goal: params[:activity_goal])
-      head :ok
+      render :json => { activity_goal: @current_user.activity_goal_time }
     end
   end
 
