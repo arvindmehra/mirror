@@ -56,4 +56,8 @@ class User < ActiveRecord::Base
     user_activities.present? ? user_activities.first.activity_date.to_date : nil
   end
 
+  def activity_goal_time
+    activity_goal.present? ? activity_goal : 3   #send 3 minutes if goal is not set
+  end
+
 end
