@@ -1,0 +1,18 @@
+<%= form_for(@filter) do |f| %>
+  <%= f.label :name %>:
+  <%= f.text_field :name %><br />
+  <%= f.label :family %>:
+  <%= f.text_field :family %><br />
+  <%= f.label :filter_type %>:
+  <%= f.text_field :filter_type %><br />
+  <%= f.label :list_type %>:
+  <%= f.select :list_type, options_for_select(Filter::LIST_KEYS.invert.to_a) %><br />  
+  <%= f.label :operator %>
+  <%= f.select :operator,options_for_select(Filter::RELATION_OPERATOR), :include_blank => false, class: "hidden", name: "numeric_operator" %><br />
+    <%= f.label "non-op" %>
+   <%= f.select :operator,options_for_select(Filter::NON_RELATION_OPERATOR), :include_blank => false, class: "hidden", name: "non-numeric_operator" %><br />
+   <%= f.label :condition %>
+  <%= f.text_field :condition %><br />
+  <%= f.submit %>
+<% end %>
+

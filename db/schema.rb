@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160408033215) do
+ActiveRecord::Schema.define(version: 20160404062906) do
 
   create_table "devices", force: true do |t|
     t.integer  "user_id"
@@ -29,6 +29,18 @@ ActiveRecord::Schema.define(version: 20160408033215) do
   create_table "drop_down_lists", force: true do |t|
     t.string   "name"
     t.string   "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "filters", force: true do |t|
+    t.string   "name"
+    t.string   "family"
+    t.string   "filter_type"
+    t.string   "segment"
+    t.string   "list_type"
+    t.string   "operator"
+    t.string   "condition"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

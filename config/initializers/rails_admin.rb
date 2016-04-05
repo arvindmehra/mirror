@@ -37,5 +37,9 @@ RailsAdmin.config do |config|
       (username == ADMIN_USERNAME && password == ADMIN_PASSWORD)
     end
   end
+  config.navigation_static_label = ""
+  config.navigation_static_links = {
+  'Filters' => "/filters"
+}
 
 end

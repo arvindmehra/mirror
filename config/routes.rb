@@ -37,10 +37,12 @@ Rails.application.routes.draw do
 
     resources :user_notifications, :only => [:update]
 
+
     resources :notes
     resources :transactions, only: [:index, :create]
   end
 
+  resources :filters
   resources :password_resets, only: [:edit, :update, :create]
 
 end
