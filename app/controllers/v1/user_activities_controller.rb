@@ -30,9 +30,7 @@ class V1::UserActivitiesController < V1::BaseController
   end
 
   def keyboard
-    render json: { exluded: [{text: "this",language: "french"},{text: "is", language: "eng-us"},{text: "a", language: "french"}],
-                  suggested: [{text: "red",language: "french"},{text: "green", language: "eng-us"},{text: "cyan", language: "french"}]
-                  }
+    render json: SuggestedHashtag.keyboard_suggestions
   end
 
   def set_activity_goal
