@@ -23,7 +23,7 @@ class SuggestedHashtag < ActiveRecord::Base
   def language_enum
     keyboard_shortcodes = {
       "en-US" => "English-US",
-      "en-UK" => "English-UK" ,
+      "en-GB" => "English-UK" ,
       "en-AU" => "English-AUS"  ,
       "fr-FR" => "French-France"  ,
       "es-ES" => "Spanish-Spain"
