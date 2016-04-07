@@ -56,21 +56,7 @@
 </li>
 </ul>
 <div id="list">
-<script>
-jQuery(function($) {
-$.filters.options.regional = {
-datePicker: {
-dateFormat: "mm/dd/yy",
-dayNames: ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
-dayNamesShort: ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
-dayNamesMin: ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
-firstDay: "1",
-monthNames: ["January","February","March","April","May","June","July","August","September","October","November","December"],
-monthNamesShort: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
-}
-}
 
-});
 </script>
 <style>
 </style>
@@ -96,30 +82,35 @@ Refresh
 <table class="table table-condensed table-striped">
 <thead>
 <tr>
-<th class="shrink">
-<input class="toggle" type="checkbox">
-</th>
-<th class="header pjax  id_field integer_type" data-href="/admin/device?sort=id" rel="tooltip" title="">Id</th>
 <th class="header pjax  user_field belongs_to_association_type" data-href="/admin/device?sort=user" rel="tooltip" title="" data-original-title="">Name</th>
 <th class="header pjax  vendor_id_field string_type" data-href="/admin/device?sort=vendor_id" rel="tooltip" title="" data-original-title="">Family</th>
 <th class="header pjax  platform_field string_type" data-href="/admin/device?sort=platform" rel="tooltip" title="" data-original-title="">Type</th>
 <th class="header pjax  created_at_field datetime_type" data-href="/admin/device?sort=created_at" rel="tooltip" title="">Segment</th>
-<th class="header pjax headerSortDown updated_at_field datetime_type" data-href="/admin/device?sort=updated_at&amp;sort_reverse=true" rel="tooltip" title="">Total Users</th>
+<th class="header pjax  vendor_id_field string_type" data-href="/admin/device?sort=vendor_id" rel="tooltip" title="" data-original-title="">List Type</th>
+<th class="header pjax  vendor_id_field string_type" data-href="/admin/device?sort=vendor_id" rel="tooltip" title="" data-original-title="">Operator</th>
+<th class="header pjax  vendor_id_field string_type" data-href="/admin/device?sort=vendor_id" rel="tooltip" title="" data-original-title="">Condition</th>
+<th class="header pjax  vendor_id_field string_type" data-href="/admin/device?sort=vendor_id" rel="tooltip" title="" data-original-title="">Start Date</th>
+<th class="header pjax  vendor_id_field string_type" data-href="/admin/device?sort=vendor_id" rel="tooltip" title="" data-original-title="">End Date</th>
+</tr>
+</tr>
+</tr>
 </tr>
 </thead>
 <tbody>
 <% if @filters.present? %>
   <% @filters.each do |filter| %>
     <tr class="device_row">
-      <td><input id="bulk_ids_" name="bulk_ids[]" type="checkbox" value="8"></td>
-      <td class="id_field integer_type" title="8"><%=filter.id %></td>
       <td class="vendor_id_field string_type" title="iosSimulator"><%= link_to filter.name, filter_path(filter) %></td>
       <td class="platform_field string_type" title="ios"><%=filter.family %></td>
       <td class="created_at_field datetime_type" title="February 26, 2016 11:41"><%=filter.filter_type %></td>
       <td class="updated_at_field datetime_type" title="March 30, 2016 06:59"><%=filter.segment %></td>
+      <td class="updated_at_field datetime_type" title="March 30, 2016 06:59"><%=filter.list_type %></td>
+      <td class="updated_at_field datetime_type" title="March 30, 2016 06:59"><%=filter.operator %></td>
+      <td class="updated_at_field datetime_type" title="March 30, 2016 06:59"><%=filter.condition %></td>
+      <td class="updated_at_field datetime_type" title="March 30, 2016 06:59"><%=filter.start_date.try(:to_date) %></td>
+      <td class="updated_at_field datetime_type" title="March 30, 2016 06:59"><%=filter.end_date.try(:to_date) %></td>
       <td class="last links">
       <ul class="inline">
-        <li title="Show" rel="tooltip" class="icon show_member_link "><%= link_to ("<i class='icon-info-sign'></i>").html_safe, filter_path(filter) %></li>
 
         <!-- <li title="Edit" rel="tooltip" class="icon edit_member_link ">
           <a class="pjax" href="/admin/device/8/edit">

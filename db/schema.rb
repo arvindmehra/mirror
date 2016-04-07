@@ -41,6 +41,8 @@ ActiveRecord::Schema.define(version: 20160404062906) do
     t.string   "list_type"
     t.string   "operator"
     t.string   "condition"
+    t.datetime "start_date"
+    t.datetime "end_date"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

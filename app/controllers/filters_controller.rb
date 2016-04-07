@@ -13,8 +13,8 @@ class FiltersController < ApplicationController
   end
 
   def show
-    filter = Filter.find(params[:id])
-    @users = filter.get_scope_users if filter.present?
+    @filter = Filter.find(params[:id])
+    @users = @filter.get_scope_users if @filter.present?
   end
 
   def new
@@ -28,10 +28,17 @@ class FiltersController < ApplicationController
     end
   end
 
+  def get_list
+    @filter_list = Filter.drop_down_list(params[:list_type])
+    respond_to do |format|
+      format.js
+    end
+  end
+
   private
 
   def filter_params
-    params.require(:filter).permit(:name, :family, :filter_type, :segment, :operator, :condition,:list_type)
+    params.require(:filter).permit(:name, :family, :filter_type, :segment, :operator, :condition,:list_type, :start_date, :end_date)
   end
 
 end

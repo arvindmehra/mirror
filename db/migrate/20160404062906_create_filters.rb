@@ -8,6 +8,8 @@ class CreateFilters < ActiveRecord::Migration
       t.string :list_type
       t.string :operator
       t.string :condition
+      t.datetime :start_date
+      t.datetime :end_date
 
       t.timestamps
     end

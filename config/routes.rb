@@ -38,10 +38,12 @@ Rails.application.routes.draw do
     resources :user_notifications, :only => [:update]
 
 
+
+
     resources :notes
     resources :transactions, only: [:index, :create]
   end
-
+  get 'get_list' => "filters#get_list"
   resources :filters
   resources :password_resets, only: [:edit, :update, :create]
 

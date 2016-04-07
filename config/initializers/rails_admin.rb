@@ -32,6 +32,9 @@ RailsAdmin.config do |config|
     # history_show
   end
 
+  config.excluded_models << "Filter"
+  config.excluded_models << "DropDownList"
+
   config.authorize_with do
     authenticate_or_request_with_http_basic('Please enter your username and password') do |username, password|
       (username == ADMIN_USERNAME && password == ADMIN_PASSWORD)
