@@ -9,6 +9,7 @@ class User < ActiveRecord::Base
   has_many :transactions
   has_many :receipts
   has_many :user_activities
+  has_many :user_notifications
 
   after_create :create_trial_subscription
 

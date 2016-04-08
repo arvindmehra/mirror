@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160330084545) do
+ActiveRecord::Schema.define(version: 20160408033215) do
 
   create_table "devices", force: true do |t|
     t.integer  "user_id"
@@ -137,6 +137,23 @@ ActiveRecord::Schema.define(version: 20160330084545) do
   end
 
   add_index "user_activities", ["user_id"], name: "index_user_activities_on_user_id", using: :btree
+
+  create_table "user_notifications", force: true do |t|
+    t.string   "title"
+    t.string   "subtitle"
+    t.string   "description"
+    t.string   "merge_field"
+    t.integer  "user_id"
+    t.integer  "admin_notification_id"
+    t.string   "cta"
+    t.string   "category"
+    t.boolean  "read_status"
+    t.boolean  "useful"
+    t.boolean  "mark_deleted"
+    t.datetime "sent_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "users", force: true do |t|
     t.string   "encrypted_email"
