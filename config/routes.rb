@@ -33,6 +33,9 @@ Rails.application.routes.draw do
     get 'user_activities/active_period' => "user_activities#active_period"
     get "user_activities/keyboard" => "user_activities#keyboard"
 
+    get "user_notifications/get_all" => "user_notifications#get_all"
+
+    resources :user_notifications, :only => [:update]
 
     resources :notes
     resources :transactions, only: [:index, :create]
