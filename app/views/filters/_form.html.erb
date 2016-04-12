@@ -55,7 +55,7 @@
   $(function() {
   return $(document).on('change', '#filter_list_type', function(evt) {
     return $.ajax({
-      url: '/get_list',
+      url: '/filters/get_list',
       type: 'GET',
       dataType: 'script',
       data: {

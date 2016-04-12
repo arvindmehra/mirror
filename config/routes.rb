@@ -15,7 +15,6 @@ Rails.application.routes.draw do
       end
     end
 
-
     get 'tags/search' => "tags#search"
     get 'tags' => "tags#index", :defaults => {:format => 'json'}
 
@@ -36,15 +35,15 @@ Rails.application.routes.draw do
     get "user_notifications/get_all" => "user_notifications#get_all"
 
     resources :user_notifications, :only => [:update]
-
-
-
-
     resources :notes
     resources :transactions, only: [:index, :create]
   end
-  get 'get_list' => "filters#get_list"
-  resources :filters
+  
+  resources :filters do 
+    collection do 
+      get :get_list
+    end
+  end
   resources :password_resets, only: [:edit, :update, :create]
 
 end
