@@ -164,7 +164,7 @@ class V1::NotesController < V1::BaseController
   end
 
   def filtering_params(params)
-    params.slice(:heart_rate_range, :category, :sleep_time_range, :temperature_range, :steps_walked_range, :calories_burnt_range, :whether_type, :score_data, :begin_date, :end_date)
+    params.slice(:heart_rate_range, :category, :sleep_time_range, :temperature_range, :steps_walked_range, :calories_burnt_range, :whether_type, :score_data, :begin_date, :end_date, :today)
   end
 
   def note_params
