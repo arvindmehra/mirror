@@ -1,0 +1,137 @@
+<h1>List of Filters</h1>
+</div>
+  <ol class="breadcrumb"><li class="false"><a class="pjax" href="/admin/">Dashboard</a></li>
+    <li class="active">Filters</li>
+  </ol>
+  <ul class="nav nav-tabs">
+    <li title="" rel="" class="icon index_collection_link active">
+      <a class="pjax" href="/admin/device">
+        <i class="icon-th-list"></i>
+        <span>List</span>
+      </a>
+    </li>
+
+    <li title="" rel="" class="icon new_collection_link ">
+      <%= link_to ("<i class='icon-plus'></i> Add New").html_safe, new_filter_path %>
+    </li>
+
+    <li title="" rel="" class="icon export_collection_link ">
+      <a class="pjax" href="/admin/device/export">
+        <i class="icon-share"></i>
+        <span>Export</span>
+      </a>
+    </li>
+<li class="dropdown" style="float:right"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Selected items<b class="caret"></b></a><ul class="dropdown-menu" style="left:auto; right:0;"><li><a href="#" onclick="jQuery('#bulk_action').val('export'); jQuery('#bulk_form').submit(); return false;">Export selected Devices</a></li><li><a href="#" onclick="jQuery('#bulk_action').val('bulk_delete'); jQuery('#bulk_form').submit(); return false;">Delete selected Devices</a></li></ul></li>
+<li class="dropdown" style="float:right">
+  <a class="dropdown-toggle" data-toggle="dropdown" href="#">Add filter<b class="caret"></b></a>
+  <ul class="dropdown-menu" id="filters" style="left:auto; right:0;">
+    <li>
+      <a data-field-label="Id" data-field-name="id" data-field-options="" data-field-type="integer" data-field-value="" href="#">Name</a>
+    </li>
+    <li>
+      <a data-field-label="User" data-field-name="user" data-field-options="" data-field-type="belongs_to_association" data-field-value="" href="#">Family</a>
+    </li>
+    <li>
+      <a data-field-label="Vendor" data-field-name="vendor_id" data-field-options="" data-field-type="string" data-field-value="" href="#">Vendor</a>
+    </li>
+    <li>
+      <a data-field-label="Platform" data-field-name="platform" data-field-options="" data-field-type="string" data-field-value="" href="#">Platform</a>
+    </li>
+    <li>
+      <a data-field-label="Created at" data-field-name="created_at" data-field-options="" data-field-type="datetime" data-field-value="" href="#">Created at</a>
+    </li>
+    <li>
+      <a data-field-label="Updated at" data-field-name="updated_at" data-field-options="" data-field-type="datetime" data-field-value="" href="#">Updated at</a>
+    </li>
+    <li>
+      <a data-field-label="Locale" data-field-name="locale" data-field-options="" data-field-type="string" data-field-value="" href="#">Locale</a>
+    </li>
+    <li>
+      <a data-field-label="Location enabled" data-field-name="location_enabled" data-field-options="" data-field-type="boolean" data-field-value="" href="#">Location enabled</a>
+    </li>
+    <li>
+      <a data-field-label="Notification token" data-field-name="notification_token" data-field-options="" data-field-type="string" data-field-value="" href="#">Notification token</a>
+    </li>
+  </ul>
+</li>
+</ul>
+<div id="list">
+
+</script>
+<style>
+</style>
+<form accept-charset="UTF-8" action="/admin/device?sort=updated_at" class="pjax-form form-inline" method="get"><div style="display:none"><input name="utf8" type="hidden" value="✓"></div>
+<div class="well">
+<span id="filters_box"></span>
+<hr class="filters_box" style="display:none">
+<div class="input-group">
+<input class="form-control input-small" name="query" placeholder="Filter" type="search">
+<span class="input-group-btn">
+<button class="btn btn-primary" data-disable-with="<i class='icon-white icon-refresh'></i> Refresh" type="submit">
+<i class="icon-white icon-refresh"></i>
+Refresh
+</button>
+</span>
+</div>
+<span style="float:right"><a class="btn btn-info" href="/admin/device/export?sort=updated_at">Export found Devices</a></span>
+</div>
+</form>
+
+<form accept-charset="UTF-8" action="/admin/device/bulk_action" class="form" id="bulk_form" method="post"><div style="display:none"><input name="utf8" type="hidden" value="✓"><input name="authenticity_token" type="hidden" value="ozaU2R4O/5rZF+nN2ve7kRhlqTwvtAimQck9RPJE7U4="></div>
+<input id="bulk_action" name="bulk_action" type="hidden">
+<table class="table table-condensed table-striped">
+<thead>
+<tr>
+<th class="header pjax  user_field belongs_to_association_type" data-href="/admin/device?sort=user" rel="tooltip" title="" data-original-title="">Name</th>
+<th class="header pjax  vendor_id_field string_type" data-href="/admin/device?sort=vendor_id" rel="tooltip" title="" data-original-title="">Family</th>
+<th class="header pjax  platform_field string_type" data-href="/admin/device?sort=platform" rel="tooltip" title="" data-original-title="">Type</th>
+<th class="header pjax  created_at_field datetime_type" data-href="/admin/device?sort=created_at" rel="tooltip" title="">Segment</th>
+<th class="header pjax  vendor_id_field string_type" data-href="/admin/device?sort=vendor_id" rel="tooltip" title="" data-original-title="">List Type</th>
+<th class="header pjax  vendor_id_field string_type" data-href="/admin/device?sort=vendor_id" rel="tooltip" title="" data-original-title="">Operator</th>
+<th class="header pjax  vendor_id_field string_type" data-href="/admin/device?sort=vendor_id" rel="tooltip" title="" data-original-title="">Condition</th>
+<th class="header pjax  vendor_id_field string_type" data-href="/admin/device?sort=vendor_id" rel="tooltip" title="" data-original-title="">Start Date</th>
+<th class="header pjax  vendor_id_field string_type" data-href="/admin/device?sort=vendor_id" rel="tooltip" title="" data-original-title="">End Date</th>
+</tr>
+</tr>
+</tr>
+</tr>
+</thead>
+<tbody>
+<% if @filters.present? %>
+  <% @filters.each do |filter| %>
+    <tr class="device_row">
+      <td class="vendor_id_field string_type" title="iosSimulator"><%= link_to filter.name, filter_path(filter) %></td>
+      <td class="platform_field string_type" title="ios"><%=filter.family %></td>
+      <td class="created_at_field datetime_type" title="February 26, 2016 11:41"><%=filter.filter_type %></td>
+      <td class="updated_at_field datetime_type" title="March 30, 2016 06:59"><%=filter.segment %></td>
+      <td class="updated_at_field datetime_type" title="March 30, 2016 06:59"><%=filter.list_type %></td>
+      <td class="updated_at_field datetime_type" title="March 30, 2016 06:59"><%=filter.operator %></td>
+      <td class="updated_at_field datetime_type" title="March 30, 2016 06:59"><%=filter.condition %></td>
+      <td class="updated_at_field datetime_type" title="March 30, 2016 06:59"><%=filter.start_date.try(:to_date) %></td>
+      <td class="updated_at_field datetime_type" title="March 30, 2016 06:59"><%=filter.end_date.try(:to_date) %></td>
+      <td class="last links">
+      <ul class="inline">
+
+        <!-- <li title="Edit" rel="tooltip" class="icon edit_member_link ">
+          <a class="pjax" href="/admin/device/8/edit">
+            <i class="icon-pencil"></i>
+            <span style="display:none">Edit</span>
+          </a>
+        </li> -->
+
+        <!-- <li title="Delete" rel="tooltip" class="icon delete_member_link ">
+          <a class="pjax" href="/admin/device/8/delete">
+            <i class="icon-remove"></i>
+            <span style="display:none">Delete</span>
+          </a>
+        </li> -->
+      </ul>
+      </td>
+    </tr>
+  <% end %>
+<% end %>
+</tbody>
+</table>
+</div>
+</div>
+</div>

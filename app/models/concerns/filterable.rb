@@ -13,19 +13,28 @@ module Filterable
     end
 
     def get_date_range(filtered_params)
-      # Below condition is a quick fix to solve the timezone issue
-      # TODO remove this once the issue is solved.
-      if filtered_params[:begin_date] == filtered_params[:end_date]
-        date_range_start = (DateTime.parse(filtered_params.delete(:begin_date))-1).strftime("%Y-%m-%d")
-        date_range_end = (DateTime.parse(filtered_params.delete(:end_date))+1).strftime("%Y-%m-%d")
+      if filtered_params[:today].present?
+        date_range_start = filtered_params.delete(:begin_date).in_time_zone - 24.hour
+        date_range_end = filtered_params.delete(:end_date).in_time_zone
+        filtered_params.delete(:today)
+        puts "in today"
+      elsif filtered_params[:begin_date] == filtered_params[:end_date]
+        if filtered_params[:begin_date].split(" ").count == 1
+          puts "in with same date no timezone"
+          date_range_start = (DateTime.parse(filtered_params.delete(:begin_date))-1).strftime("%Y-%m-%d")
+          date_range_end = (DateTime.parse(filtered_params.delete(:end_date))+1).strftime("%Y-%m-%d")
+          date_range_start = date_range_start+ " 00:00:00"
+          date_range_end = date_range_end+ " 23:59:59"
+        elsif filtered_params[:begin_date].split(" ").count == 3
+          puts "in with same date with timezone"
+          date_range_start = filtered_params.delete(:begin_date).in_time_zone
+          date_range_end = filtered_params.delete(:end_date).in_time_zone
+        end
       else
-        date_range_start = filtered_params.delete(:begin_date)
-        date_range_end = filtered_params.delete(:end_date)
+        puts "in custom filter"
+        date_range_start = filtered_params.delete(:begin_date).in_time_zone
+        date_range_end = filtered_params.delete(:end_date).in_time_zone
       end
-
-      date_range_start=date_range_start+ " 00:00:00"
-      date_range_end=date_range_end+ " 23:59:59"
-
       date_range = date_range_start .. date_range_end
       filtered_params[:date_range] = date_range
       filtered_params

@@ -20,7 +20,7 @@ class V1::UserActivitiesController < V1::BaseController
   def active_period
     if params[:begin_date] && params[:end_date]
       user_activities = @current_user.user_activities.active_time(params[:begin_date]..params[:end_date])
-      active_time = user_activities.present? ? (user_activities.pluck(:time_spent).sum / user_activities.count) : nil
+      active_time = user_activities.present? ? user_activities.pluck(:time_spent).sum : nil
     end
     if params[:activity_date]
       user_activity = @current_user.user_activities.where(activity_date: params[:activity_date])
