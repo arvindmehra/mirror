@@ -48,6 +48,9 @@ Rails.application.routes.draw do
       get :get_list
     end
   end
+
+  resources :filter_groups do
+  end
   resources :password_resets, only: [:edit, :update, :create]
 
 end

@@ -1,0 +1,41 @@
+<h1>Groups</h1>
+  <ol class="breadcrumb"><li class="false"><a class="pjax" href="/admin/">Dashboard</a></li>
+    <li class="active">Filters</li>
+  </ol>
+  <ul class="nav nav-tabs">
+    <li title="" rel="" class="icon index_collection_link active">
+      <a class="pjax" href="/admin/device">
+        <i class="icon-th-list"></i>
+        <span>List</span>
+      </a>
+    </li>
+
+    <li title="" rel="" class="icon new_collection_link ">
+      <%= link_to ("<i class='icon-plus'></i> Add New").html_safe, new_filter_group_path %>
+    </li>
+	</ul>
+
+<form accept-charset="UTF-8" action="/admin/device/bulk_action" class="form" id="bulk_form" method="post"><div style="display:none"><input name="utf8" type="hidden" value="✓"><input name="authenticity_token" type="hidden" value="ozaU2R4O/5rZF+nN2ve7kRhlqTwvtAimQck9RPJE7U4="></div>
+<input id="bulk_action" name="bulk_action" type="hidden">
+<table class="table table-condensed table-striped">
+<thead>
+	<tr>
+		<th class="header pjax  user_field belongs_to_association_type" data-href="/admin/device?sort=user" rel="tooltip" title="" data-original-title="">Name</th>
+
+	</tr>
+</tr>
+</thead>
+<tbody>
+<% if @filter_groups.present? %>
+  <% @filter_groups.each do |group| %>
+    <tr class="device_row">
+      <td class="vendor_id_field string_type" title="iosSimulator"><%= link_to group.name, filter_group_path(group) %></td>
+      
+    </tr>
+  <% end %>
+<% end %>
+</tbody>
+</table>
+</div>
+</div>
+</div>
