@@ -28,6 +28,7 @@ gem 'rails-web-console'
 
 group :development do
   gem 'byebug'
+  gem 'quiet_assets'
 end
 
 # Use jquery as the JavaScript library
