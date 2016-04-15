@@ -46,7 +46,11 @@ Rails.application.routes.draw do
   resources :filters do 
     collection do
       get :get_list
+      get :get_collective_list
     end
+  end
+
+  resources :filter_groups do
   end
   resources :password_resets, only: [:edit, :update, :create]
 

@@ -42,7 +42,8 @@ RailsAdmin.config do |config|
   end
   config.navigation_static_label = ""
   config.navigation_static_links = {
-  'Filters' => "/filters"
+  'Filters' => "/filters",
+  "Groups" => "/filter_groups"
 }
 
 end

@@ -1,0 +1,1 @@
+$("#filter_list_type").empty().append("<%= escape_javascript(render :partial => 'collective_list') %>")
