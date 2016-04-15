@@ -13,11 +13,16 @@ class Filter < ActiveRecord::Base
     end
     # begin
       users = send("process_#{@segment}")
-      users.count
+      users
     # rescue
     #   message = "Filter not Aplicable"
     # end
 
+  end
+
+  def process_weather_condition
+    s = User.joins(:notes).where(notes: {whether_type: "#{@condition}"})
+    s
   end
 
   def process_downloaded_the_app
@@ -25,7 +30,7 @@ class Filter < ActiveRecord::Base
     if @condition == "today"
       s = User.where("Date(#{segment_definition}) #{@operator}  DATE(NOW())")
     else
-      s = User.where("#{segment_definition} #{@operator} DATE_SUB(NOW(), condition #{@digit} #{@hour_day_week})")
+      s = User.where("#{segment_definition} #{@operator} DATE_SUB(NOW(), INTERVAL #{@digit} #{@hour_day_week})")
     end
     s
   end
@@ -89,9 +94,6 @@ class Filter < ActiveRecord::Base
 
   def process_average_well_being_score
   end
-
-
-
   
   LIST_KEYS = {
     "numeric_operator_list" => "Numeric Operator List",
@@ -108,9 +110,9 @@ class Filter < ActiveRecord::Base
     "category_list" => "Category List",
     "feeling_score_list" => "Feeling score List",
     "impact_score_list" => "Impact score List",
-    "well_being_score_list" => "Well-being score List",
+    "well_being_score_list" => "Well being score List",
     "occurrences_for_each_topic_list" =>  "Occurrences for each topic list",
-    "condition_list" => "Condition list",
+    "weather_condition_list" => "Weather Condition list",
     "label_list" => "Label List",
     "future_date_list" => "Future date list",
     "distance_list" => "Distance list",
@@ -205,7 +207,7 @@ class Filter < ActiveRecord::Base
     "impact_score_list" => [1,2,3,4,5,6],
     "well_being_score_list" => [-24, -23, -22, -21, -20, -19, -18, -17, -16, -15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0,
                                  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
-    "condition_list" => ["clear",
+    "weather_condition_list" => ["clear",
                           "overcast",
                           "wind",
                           "cloudy",
@@ -227,14 +229,19 @@ SEGMENT= [["Downloaded the app", "downloaded_the_app"],
           ["Feeling score","feeling_score"],
           ["Impact score","impact_score"],
           ["Average Feeling score","average_feeling_score"],
-          ["Average Impact score","average_impac_score"],
-          ["Well-being score","well_being_score"],
-          ["Average Well-being score","average_well_being_score"]
+          ["Average Impact score","average_impact_score"],
+          ["Well being score","well_being_score"],
+          ["Average Well-being score","average_well_being_score"],
+          ["Weather Condition", "weather_condition"]
 
         ]
 
   def self.drop_down_list(key)
     KEY_OPERATORS[key]
+  end
+
+  def self.collective_list(key)
+    LIST_KEYS[key]
   end
 
 end

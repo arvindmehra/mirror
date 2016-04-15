@@ -54,8 +54,8 @@ Rails.application.configure do
   AWS_ACCESS_KEY_ID = 'AKIAI6TDMWU43NZ6Q3FA'
   AWS_SECRET_ACCESS_KEY = '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'
   AWS_BUCKET_NAME = 'dev-images-realifex'
-  ADMIN_USERNAME= 'vikash'
-  ADMIN_PASSWORD= 'vikash'
+  ADMIN_USERNAME= 'username'
+  ADMIN_PASSWORD= 'password'
 
 
 end

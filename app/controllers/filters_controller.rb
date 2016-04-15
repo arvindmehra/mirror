@@ -4,7 +4,7 @@ class FiltersController < ApplicationController
 
   def authenticate
     authenticate_or_request_with_http_basic('Administration') do |username, password|
-      username == 'vikash' && password == 'vikash'
+      username == 'username' && password == 'password'
     end
   end
 
@@ -30,6 +30,13 @@ class FiltersController < ApplicationController
 
   def get_list
     @filter_list = Filter.drop_down_list(params[:list_type])
+    respond_to do |format|
+      format.js
+    end
+  end
+
+  def get_collective_list
+    @collective_list = params[:list_type]
     respond_to do |format|
       format.js
     end
