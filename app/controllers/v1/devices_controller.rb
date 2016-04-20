@@ -13,6 +13,14 @@ class V1::DevicesController < V1::BaseController
     @device = @current_device
   end
 
+  def set_notification_token
+    if @current_device.update(notification_token: params[:notification_token])
+      render :show
+    else
+      render json: {errors: @current_device.errors.full_messages}, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def device_params

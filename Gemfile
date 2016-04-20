@@ -25,6 +25,7 @@ gem 'kaminari'
 gem 'rails_admin'
 gem 'grocer'
 gem 'rails-web-console'
+gem 'houston'
 
 group :development do
   gem 'byebug'
