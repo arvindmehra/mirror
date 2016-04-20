@@ -64,6 +64,9 @@ GEM
       railties (>= 4.0.1)
     highline (1.6.21)
     hike (1.2.3)
+    houston (2.2.1)
+      commander (~> 4.1)
+      json
     hpricot (0.8.6)
     html2haml (1.0.1)
       erubis (~> 2.7.0)
@@ -210,6 +213,7 @@ DEPENDENCIES
   coffee-rails (~> 4.0.0)
   grocer
   haml-rails
+  houston
   jbuilder (~> 2.0)
   jquery-rails
   kaminari

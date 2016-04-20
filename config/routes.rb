@@ -20,6 +20,7 @@ Rails.application.routes.draw do
 
     get 'devices/me' => 'devices#show'
     patch 'devices/me' => 'devices#update'
+    patch 'devices/set_notification_token' => 'devices#set_notification_token'
 
     get 'users/subscriptions/status' => 'subscriptions#status'
     post 'users/subscriptions/expire_all' => 'subscriptions#expire_all'
@@ -49,6 +50,7 @@ Rails.application.routes.draw do
       get :get_collective_list
     end
   end
+  get 'temp_push_notifications/get_push' => 'temp_push_notifications#get_push' #temp url
 
   resources :filter_groups do
   end

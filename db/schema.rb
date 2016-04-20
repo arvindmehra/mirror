@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160419044656) do
+ActiveRecord::Schema.define(version: 20160420030627) do
 
   create_table "devices", force: true do |t|
     t.integer  "user_id"
@@ -97,6 +97,13 @@ ActiveRecord::Schema.define(version: 20160419044656) do
 
   add_index "products", ["bundle_name_android"], name: "index_products_on_bundle_name_android", using: :btree
   add_index "products", ["bundle_name_ios"], name: "index_products_on_bundle_name_ios", using: :btree
+
+  create_table "push_notifications", force: true do |t|
+    t.string   "environment"
+    t.text     "ios_certificate"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "receipts", force: true do |t|
     t.text     "receipt",    limit: 2147483647
