@@ -3,15 +3,15 @@ class V1::UserNotificationsController < V1::BaseController
   before_action :set_notification, except: [:get_all, :get_unread_count]
 
   def get_all
-    notifications = UserNotification.non_deleted #temp for demo purpose use below line after demo
+    #notifications = UserNotification.non_deleted #temp for demo purpose use below line after demo
     # notifications = @current_user.user_notifications.unread
-    render json: notifications.to_json(:except => ["user_id","admin_notification_id","updated_at"])
+    render json: UserNotification.notification_response
   end
 
   def get_unread_count
-    unread_notifications = UserNotification.unread.count #temp for demo purpose use below line after demo
+     #temp for demo purpose use below line after demo
     # unread_notifications = @current_user.user_notifications.unread.count
-    render json: {unread_count: unread_notifications}
+    render json: UserNotification.unread_notification_response_count
   end
 
   def update
