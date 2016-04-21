@@ -13,8 +13,9 @@ class PushNotification < ActiveRecord::Base
   end
 
   def self.notify_ios(text,token,data=nil)
-    apn = Rails.env.production? ? Houston::Client.production : Houston::Client.development
-    apn.certificate = PushNotification.where(environment: :development).first.ios_certificate
+    apn = Rails.env.development? ? Houston::Client.development : Houston::Client.production
+    environment = Rails.env.development? ? "development" : "production"
+    apn.certificate = PushNotification.where(environment: environment).first.ios_certificate
     device = Device.find_by(notification_token: token)
     if device.present?
       notification = Houston::Notification.new(device: device.notification_token)
