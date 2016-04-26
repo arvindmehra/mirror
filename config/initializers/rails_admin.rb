@@ -47,6 +47,7 @@ RailsAdmin.config do |config|
   config.navigation_static_links = {
   'Filters' => "/filters",
   "Groups" => "/filter_groups",
+  "Rules" => "/rule_engines",
   "Admin Notifications" => "/notification_templates"
 }
 

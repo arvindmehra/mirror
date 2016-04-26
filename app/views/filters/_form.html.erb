@@ -79,10 +79,19 @@ $(function() {
     case "feeling_score":
         list_type = "feeling_score_list";
         break;
+    case "average_feeling_score":
+        list_type = "feeling_score_list";
+        break;
     case"impact_score":
         list_type = "impact_score_list";
         break;
+    case"average_impact_score":
+        list_type = "impact_score_list";
+        break;
     case "well_being_score":
+        list_type = "well_being_score_list";
+        break;
+    case "average_well_being_score":
         list_type = "well_being_score_list";
         break;
     case "weather_condition":
@@ -131,7 +140,6 @@ $(document).ready(function(){
           this.value == 'impact_score' ||
           this.value == 'average_feeling_score' ||
           this.value == 'average_impact_score' ||
-          this.value == 'about_to_expire' ||
           this.value == 'average_well_being_score' ||
           this.value == 'well_being_score' ||
           this.value == 'expired_subscription')
@@ -156,7 +164,8 @@ $(document).ready(function(){
           $("#filter_list_type_id").hide();
           $("#filter_condition_id").hide();
         }
-      else if ( this.value == 'weather_condition' || this.value == 'categories')
+      else if ( this.value == 'weather_condition' || this.value == 'categories' ||
+          this.value == 'about_to_expire')
       {
         $("#free_text_field").hide();
         $("#filter_operator_id").hide();

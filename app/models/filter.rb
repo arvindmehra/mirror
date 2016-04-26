@@ -93,18 +93,33 @@ class Filter < ActiveRecord::Base
     s
   end
 
-  def process_average_feeling_score
-  end 
-
   def process_average_impact_score
-  end 
+    s = User.find_by_sql("select user_avg_table.* from
+          (select users.*, avg(impact_score) as avg from users
+          inner join notes
+          on notes.user_id  = users.id group by user_id) as user_avg_table where avg #{@operator} #{@condition}")
+    s
+  end
 
-  def process_well_being_score
-    s = User.joins(:notes).where("notes.perception_score #{operator} ?","#{condition}")
+  def process_average_feeling_score
+    s = User.find_by_sql("select user_avg_table.* from
+          (select users.*, avg(feeling_score) as avg from users
+          inner join notes
+          on notes.user_id  = users.id group by user_id) as user_avg_table where avg #{@operator} #{@condition}")
     s
   end
 
   def process_average_well_being_score
+    s = User.find_by_sql("select user_avg_table.* from
+          (select users.*, avg(perception_score) as avg from users
+          inner join notes
+          on notes.user_id  = users.id group by user_id) as user_avg_table where avg #{@operator} #{@condition}")
+    s
+  end
+
+  def process_well_being_score
+    s = User.joins(:notes).where("notes.perception_score #{operator} ?","#{condition}")
+    s
   end
 
   def process_about_to_expire
@@ -120,8 +135,8 @@ class Filter < ActiveRecord::Base
   end
 
   def process_total_notes
-    s = User.find_by_sql("select user_ids, user_notes from
-        (select users.id as user_ids, count(notes.id) as user_notes from users
+    s = User.find_by_sql("select unotes.*, user_notes from
+        (select users.* , count(notes.id) as user_notes from users
         inner join notes
         on users.id = notes.user_id group by users.id) as unotes where user_notes #{@operator} #{@free_text}")
     s
@@ -175,7 +190,7 @@ class Filter < ActiveRecord::Base
   MORE_THAN_OR_EQUAL_TO = ">="
   EQUAL_TO = "="
   BETWEEN_OP = "between"
-  RELATION_OPERATOR = [LESS_THAN,LESS_THAN_OR_EQUAL_TO,MORE_THAN,MORE_THAN_OR_EQUAL_TO,EQUAL_TO,BETWEEN_OP,IN]
+  RELATION_OPERATOR = [LESS_THAN,LESS_THAN_OR_EQUAL_TO,MORE_THAN,MORE_THAN_OR_EQUAL_TO,EQUAL_TO]
   NON_RELATION_OPERATOR = ["yes","no"]
 
   TEXT_OPERATOR_LIST = {
