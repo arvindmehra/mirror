@@ -6,10 +6,6 @@
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
 </head>
-<body>
-
-
-
 
 
 <body class="rails_admin" cz-shortcut-listen="true">
@@ -32,7 +28,7 @@
     <div class="sidebar-nav">
       <ul class="nav nav-pills nav-stacked">
         <li class="dropdown-header">Navigation</li>
-        <li data-model="device" class="active"><a class="pjax" href="/admin/device">Devices</a></li>
+        <li data-model="device" ><a class="pjax" href="/admin/device">Devices</a></li>
         <li data-model="note"><a class="pjax" href="/admin/note">Notes</a></li>
         <li data-model="product"><a class="pjax" href="/admin/product">Products</a></li>
         <li data-model="receipt"><a class="pjax" href="/admin/receipt">Receipts</a></li>
@@ -44,26 +40,22 @@
         <li data-model="user_activity"><a class="pjax" href="/admin/user_activity">User activities</a></li>
       </ul>
       <ul class="nav nav-pills nav-stacked">
-        <li class="nav-header"></li>
-        <li><a href="/filters">Filters</a></li>
+        <li class= "<%= params["controller"]=="filters" ? "active" : ""%>"><a href="/filters">Filters</a></li>
       </ul>
       <ul class="nav nav-pills nav-stacked">
-        <li class="nav-header"></li>
-        <li><a href="/filter_groups">Groups</a></li>
+        <li class= "<%= params["controller"]=="filter_groups" ? "active" : ""%>"><a href="/filter_groups">Groups</a></li>
       </ul>
       <ul class="nav nav-pills nav-stacked">
-        <li class="nav-header"></li>
-        <li><a href="/rule_engines">Rules</a></li>
+        <li class= "<%= params["controller"]=="rule_engines" ? "active" : ""%>"><a href="/rule_engines">Rules</a></li>
+      </ul>
+       <ul class="nav nav-pills nav-stacked">
+        <li class= "<%= params["controller"]=="notification_templates" ? "active" : ""%>"><a href="/notification_templates">Admin Notification</a></li>
       </ul>
     </div>
   </div>
   <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
 <div class="row">
 <div class="content" data-pjax-container="">
-  <script>
-    $('.nav.nav-pills li.active').removeClass('active');
-    $('.nav.nav-pills li[data-model="device"]').addClass('active');
-  </script>
 <!-- <div class="page-header"> -->
 <%= yield %>
 </body>

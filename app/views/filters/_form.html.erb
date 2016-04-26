@@ -14,30 +14,32 @@
   </div>
   <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
     <%= f.label :segment, class: "col-sm-2 control-label" %>
-    <%= f.select :segment,options_for_select(Filter::SEGMENT), class: "form-control"%>
+    <div class="col-sm-8 controls">
+      <%= f.select :segment,options_for_select(Filter::SEGMENT), class: "form-control"%>
+    </div>
   </div>
-  <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-10" id ="filter_operator_id">
     <%= f.label :operator, class: "col-sm-2 control-label" %>
-    <%= f.select :operator,options_for_select(Filter::RELATION_OPERATOR), class: "form-control" %><br />
+    <div class="col-sm-8 controls">
+      <%= f.select :operator,options_for_select(Filter::RELATION_OPERATOR), class: "form-control" %><br />
+    </div>
   </div>
-  <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-10" id ="filter_list_type_id">
     <%= f.label :list_type, class: "col-sm-2 control-label" %>
-    <%= f.select :list_type, options_for_select(Filter::LIST_KEYS.invert.to_a),{ id: 'filter_list_type', class: "form-control" }%>
+    <div class="col-sm-8 controls">
+      <%= f.select :list_type,options_for_select(Filter::LIST_KEYS.invert.to_a),{id: 'filter_list_type', class: "form-control"}%>
+    </div>
   </div>
-  <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-10" id="filter_condition_id" >
     <%= f.label :condition, class: "col-sm-2 control-label" %>
-    <%= f.select :condition, options_for_select(Filter::RELATION_OPERATOR), { id: 'filter_condition', class: "form-control" } %><br />
-  </div>
-  <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
-    <%= f.label :start_date, class: "col-sm-2 control-label" %>
     <div class="col-sm-8 controls">
-      <%= f.text_field :start_date, class: "form-control",:placeholder => "yyyy-mm-dd" %><br />
+      <%= f.select :condition, options_for_select(Filter::RELATION_OPERATOR), { id: 'filter_condition', class: "form-control" } %><br />
+    </div> 
   </div>
-  </div>
-  <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
-    <%= f.label :end_date, class: "col-sm-2 control-label" %>
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-10" id="free_text_field" style="display:none;">
+    <%= f.label :free_text, class: "col-sm-2 control-label" %>
     <div class="col-sm-8 controls">
-      <%= f.text_field :end_date, class: "form-control" ,:placeholder => "yyyy-mm-dd"  %><br />
+      <%= f.text_field :free_text, class: "form-control" %><br />
     </div>
   </div>
   <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
@@ -86,6 +88,18 @@ $(function() {
     case "weather_condition":
         list_type = "weather_condition_list";
         break;
+    case "about_to_expire":
+        list_type = "future_date_list";
+        break;
+    case "subscribed_alteast_once" :
+        list_type = "purchase_list";
+        break;
+    case "active_subscription":
+        list_type = "purchase_list";
+        break;
+    case "havent_subscribed":
+        list_type = "purchase_list";
+        break;
     default: 
         list_type = "recency_list";
         break;
@@ -106,6 +120,50 @@ $(function() {
       }
     });
   });
+});
+
+$(document).ready(function(){
+    $('#filter_segment').on('change', function() {
+      if ( this.value == 'downloaded_the_app' ||
+          this.value == 'upgraded_the_app' ||
+          this.value == 'last_note_created' ||
+          this.value == 'feeling_score' ||
+          this.value == 'impact_score' ||
+          this.value == 'average_feeling_score' ||
+          this.value == 'average_impact_score' ||
+          this.value == 'about_to_expire' ||
+          this.value == 'average_well_being_score' ||
+          this.value == 'well_being_score' ||
+          this.value == 'expired_subscription')
+        {
+          $("#free_text_field").hide();
+          $("#filter_list_type_id").show();
+          $("#filter_condition_id").show();
+          $("#filter_operator_id").show();
+        }
+      else if (this.value == 'subscribed_alteast_once' ||
+              this.value == 'active_subscription' ||
+              this.value == 'havent_subscribed')
+        {
+          $("#free_text_field").hide();
+          $("#filter_list_type_id").show();
+          $("#filter_condition_id").show();
+          $("#filter_operator_id").hide();
+        }
+      else if ( this.value == 'total_notes' || this.value == 'steps')
+        {
+          $("#free_text_field").show();
+          $("#filter_list_type_id").hide();
+          $("#filter_condition_id").hide();
+        }
+      else if ( this.value == 'weather_condition' || this.value == 'categories')
+      {
+        $("#free_text_field").hide();
+        $("#filter_operator_id").hide();
+        $("#filter_list_type_id").show();
+        $("#filter_condition_id").show();
+      }
+    });
 });
 
 </script>

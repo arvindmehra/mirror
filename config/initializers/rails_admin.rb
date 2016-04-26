@@ -34,6 +34,9 @@ RailsAdmin.config do |config|
 
   config.excluded_models << "Filter"
   config.excluded_models << "DropDownList"
+  config.excluded_models << "FilterGroup"
+  config.excluded_models << "NotificationTemplate"
+  config.excluded_models << "RuleEngine"
 
   config.authorize_with do
     authenticate_or_request_with_http_basic('Please enter your username and password') do |username, password|
@@ -43,7 +46,8 @@ RailsAdmin.config do |config|
   config.navigation_static_label = ""
   config.navigation_static_links = {
   'Filters' => "/filters",
-  "Groups" => "/filter_groups"
+  "Groups" => "/filter_groups",
+  "Admin Notifications" => "/notification_templates"
 }
 
 end

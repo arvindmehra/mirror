@@ -1,4 +1,4 @@
-<h1>Rules</h1>
+<h1>Admin Notification</h1>
   <ol class="breadcrumb"><li class="false"><a class="pjax" href="/admin/">Dashboard</a></li>
     <li class="active">Rules</li>
   </ol>
@@ -11,7 +11,7 @@
     </li>
 
     <li title="" rel="" class="icon new_collection_link ">
-      <%= link_to ("<i class='icon-plus'></i> Add New").html_safe, new_rule_engine_path %>
+      <%= link_to ("<i class='icon-plus'></i> Add New").html_safe, new_notification_template_path %>
     </li>
 	</ul>
 
@@ -26,10 +26,10 @@
 </tr>
 </thead>
 <tbody>
-<% if @rules.present? %>
-  <% @rules.each do |rule| %>
+<% if @notifications.present? %>
+  <% @notifications.each do |template| %>
     <tr class="device_row">
-      <td class="vendor_id_field string_type" title="iosSimulator"><%= link_to rule.name, rule_engine_path(rule) %></td>
+      <td class="vendor_id_field string_type" title="iosSimulator"><%= link_to template.title, notification_template_path(template) %></td>
       
     </tr>
   <% end %>

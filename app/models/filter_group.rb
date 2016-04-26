@@ -24,7 +24,7 @@ class FilterGroup < ActiveRecord::Base
     else
       users = (Filter.find(@fid1).get_scope_users) & (Filter.find(@fid2).get_scope_users)
     end
-    users.count
+    users
   end
 
   def readable_expression

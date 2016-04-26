@@ -12,7 +12,7 @@ class RuleEnginesController < ApplicationController
     @rule.expression << " " << rule_params[:conditional_operator]
     @rule.expression << " " <<  rule_params[:filter_two]
     @rule.save
-    redirect_to rules_path
+    redirect_to rule_engines_path
   end
 
   def show
@@ -26,7 +26,7 @@ class RuleEnginesController < ApplicationController
 
   private
 
-  def filter_group_params
+  def rule_params
     params.require(:rule_engine).permit(:name, :filter_one, :filter_two, :conditional_operator)
   end
 
