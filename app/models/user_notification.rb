@@ -8,10 +8,10 @@ class UserNotification < ActiveRecord::Base
   scope :for_suggestion_screen, -> { where(display_screen: :suggestion).order(:created_at => :desc) }
 
 
-  def self.notification_response
+  def self.notification_response(landmark=nil)
     response_hash  = {}
     response_hash[:option_notifications] = option_notifications
-    response_hash[:suggestion_notifications] = suggestion_notifications
+    response_hash[:suggestion_notifications] = suggestion_notifications(landmark)
     response_hash
   end
 
@@ -19,8 +19,8 @@ class UserNotification < ActiveRecord::Base
     UserNotification.for_option_screen.limit(3).non_deleted
   end
 
-  def self.suggestion_notifications
-    UserNotification.for_suggestion_screen.non_deleted
+  def self.suggestion_notifications(landmark=nil)
+    landmark.present? ? UserNotification.for_suggestion_screen.non_deleted.where("id > ?",landmark) : UserNotification.for_suggestion_screen.non_deleted
   end
 
   def self.unread_notification_response_count
