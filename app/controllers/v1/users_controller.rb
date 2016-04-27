@@ -41,7 +41,7 @@ class V1::UsersController < V1::BaseController
   end
 
   def sign_out
-    @current_device.update(user: nil)
+    @current_device.update(user: nil,notification_token: nil)
     head :no_content
   end
 
