@@ -24,7 +24,7 @@ class NotificationTemplatesController < ApplicationController
 private
     
   def notification_params
-    params.require(:notification_template).permit(:title, :subtitle, :description, :merge_field,:cta,:useful, :rule_engine_id, :execution_type, :start_date, :end_date, :active)
+    params.require(:notification_template).permit(:title, :subtitle, :description, :merge_field,:cta,:useful, :rule_engine_id, :execution_type, :start_date, :end_date, :active, :category)
   end
 
 end

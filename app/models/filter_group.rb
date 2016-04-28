@@ -20,29 +20,35 @@ class FilterGroup < ActiveRecord::Base
   end
 
   def unwind_expression
-    if expression.present?
-      exp = expression.gsub('Filter_', '').gsub('AND', '&').gsub('OR', '|').split
-      users = Filter.find(exp.shift).get_scope_users
-      while exp.any?
-        operator = exp.shift
-        next_users = Filter.find(exp.shift).get_scope_users
-        users = users.send(operator, next_users)
+    if self.expression.present?
+      expression = self.expression.split("OR").sort_by(&:length).reverse
+      expression.each do |exp|
+        exp = exp.gsub('Filter_', '').gsub('AND', '&').gsub('OR', '|').split
+        @users = Filter.find(exp.shift).get_scope_users
+        while exp.any?
+          operator = exp.shift
+          next_users = Filter.find(exp.shift).get_scope_users
+          @users = @users.send(operator, next_users)
+        end
+        @users
       end
-      users
+      @users
     end
   end
 
   def self.unwind_query_expression(query_exp=nil)
-    if query_exp.present?
-      exp = query_exp.gsub('Filter_', '').gsub('AND', '&').gsub('OR', '|').split
-      users = Filter.find(exp.shift).get_scope_users
+    query_exp =  query_exp.split("OR").sort_by(&:length).reverse
+    query_exp.each do |exp|
+      exp = exp.gsub('Filter_', '').gsub('AND', '&').gsub('OR', '|').split
+      @users = Filter.find(exp.shift).get_scope_users
       while exp.any?
         operator = exp.shift
         next_users = Filter.find(exp.shift).get_scope_users
-        users = users.send(operator, next_users)
+        @users = @users.send(operator, next_users)
       end
-      users
+      @users
     end
+    @users
   end
 
   def readable_expression
