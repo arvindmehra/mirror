@@ -20,7 +20,9 @@ class V1::DevicesController < V1::BaseController
         device.save!
       end
     end
+    set_device
     if @current_device.update(notification_token: params[:notification_token])
+
       render :show
     else
       render json: {errors: @current_device.errors.full_messages}, status: :unprocessable_entity
