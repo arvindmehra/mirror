@@ -13,24 +13,36 @@ class FilterGroup < ActiveRecord::Base
   
   def get_scope_users
     unwind_expression
-    get_users_from_expression
+  end
+
+  def self.scope_users(query_exp=nil)
+    unwind_query_expression(query_exp)
   end
 
   def unwind_expression
-    exp = self.expression #"Filter_5 OR Filter_7"
-    exp = exp.split(" ") #["Filter_5", "OR", "Filter_7"]
-    @fid1 = exp[0].split("_").last
-    @fid2 = exp[2].split("_").last
-    @operator = exp[1]
+    if expression.present?
+      exp = expression.gsub('Filter_', '').gsub('AND', '&').gsub('OR', '|').split
+      users = Filter.find(exp.shift).get_scope_users
+      while exp.any?
+        operator = exp.shift
+        next_users = Filter.find(exp.shift).get_scope_users
+        users = users.send(operator, next_users)
+      end
+      users
+    end
   end
 
-  def get_users_from_expression
-    if @operator == "OR"
-      users = (Filter.find(@fid1).get_scope_users) | (Filter.find(@fid2).get_scope_users)
-    else
-      users = (Filter.find(@fid1).get_scope_users) & (Filter.find(@fid2).get_scope_users)
+  def self.unwind_query_expression(query_exp=nil)
+    if query_exp.present?
+      exp = query_exp.gsub('Filter_', '').gsub('AND', '&').gsub('OR', '|').split
+      users = Filter.find(exp.shift).get_scope_users
+      while exp.any?
+        operator = exp.shift
+        next_users = Filter.find(exp.shift).get_scope_users
+        users = users.send(operator, next_users)
+      end
+      users
     end
-    users
   end
 
   def readable_expression

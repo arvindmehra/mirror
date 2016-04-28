@@ -151,6 +151,10 @@ class Filter < ActiveRecord::Base
     s = User.joins(:notes).where("notes.recorded_at #{@operator} DATE_SUB(now(), INTERVAL #{@digit} #{@hour_day_week})")
     s
   end
+
+  def process_steps
+    User.joins(:notes).where("steps_walked #{@operator} #{@free_text}")
+  end
   
   LIST_KEYS = {
     "numeric_operator_list" => "Numeric Operator List",
@@ -199,6 +203,16 @@ class Filter < ActiveRecord::Base
     "ends_with" => "Ends With",
     "contains" => "Contains"
   }
+
+  FAMILY = [["Usage","usage"],
+                    ["Life Activity in Realifex","life_activity_in_realifex"],
+                    ["Time","time"],
+                    ["Places","places"],
+                    ["Category,Topics,Score","category_topic_score"],
+                    ["Weather","weather"],
+                    ["Steps","steps"],
+                    ["Inclusion/Exclusion","inclusion_exclusion"]
+                  ]
   
 
   KEY_OPERATORS = {

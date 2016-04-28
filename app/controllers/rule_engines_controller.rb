@@ -8,10 +8,11 @@ class RuleEnginesController < ApplicationController
 
   def create
     @rule = RuleEngine.new(rule_params)
-    @rule.expression = rule_params[:filter_one]
-    @rule.expression << " " << rule_params[:conditional_operator]
-    @rule.expression << " " <<  rule_params[:filter_two]
-    @rule.save
+    if rule_params.present? || !rule_params.nil?
+      rules = rule_params.reject{|k,v| v.blank? || k == "name"}
+      @rule.expression = rules.values.join if rules.present?
+      @rule.save if @rule.expression.present?
+    end
     redirect_to rule_engines_path
   end
 
@@ -27,7 +28,7 @@ class RuleEnginesController < ApplicationController
   private
 
   def rule_params
-    params.require(:rule_engine).permit(:name, :filter_one, :filter_two, :conditional_operator)
+    params.require(:rule_engine).permit(:name, :filter_one, :conditional_operator_one, :group_one,:conditional_operator_two,:group_two)
   end
 
 end
