@@ -1,6 +1,10 @@
 <h1></h1>
+<h2>Name :  <%= @filter_group.name %> </h2> 
+<!-- <h2>Expression : <%#=@filter_group.readable_expression %></h2> -->
+<h3>Total_users : <%= @filter_group.get_scope_users.try(:count) %></h3>
 
-
-<h2>Name :  <%=@filter_group.name %> </h2> 
-<h2>Expression : <%=@filter_group.readable_expression %></h2>
-<h3>Total_users : <%=@filter_group.get_scope_users %></h3>
+<% if @filter_group.get_scope_users.present? %>
+	<%	@filter_group.get_scope_users.each do |user| %>
+		<%= user.id %>
+	<% end %>
+<% end %>

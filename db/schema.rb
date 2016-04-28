@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160420030627) do
+ActiveRecord::Schema.define(version: 20160426044717) do
 
   create_table "devices", force: true do |t|
     t.integer  "user_id"
@@ -48,6 +48,7 @@ ActiveRecord::Schema.define(version: 20160420030627) do
     t.string   "list_type"
     t.string   "operator"
     t.string   "condition"
+    t.text     "free_text"
     t.datetime "start_date"
     t.datetime "end_date"
     t.datetime "created_at"
@@ -84,6 +85,22 @@ ActiveRecord::Schema.define(version: 20160420030627) do
 
   add_index "notes", ["user_id"], name: "index_notes_on_user_id", using: :btree
 
+  create_table "notification_templates", force: true do |t|
+    t.string   "title"
+    t.string   "subtitle"
+    t.text     "description"
+    t.string   "merge_field"
+    t.string   "cta"
+    t.boolean  "useful"
+    t.integer  "rule_engine_id"
+    t.string   "execution_type"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.boolean  "active"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "products", force: true do |t|
     t.string   "bundle_name_ios"
     t.string   "bundle_name_android"
@@ -111,6 +128,13 @@ ActiveRecord::Schema.define(version: 20160420030627) do
     t.datetime "updated_at"
     t.integer  "user_id"
     t.string   "platform"
+  end
+
+  create_table "rule_engines", force: true do |t|
+    t.string   "name"
+    t.string   "expression"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "subscriptions", force: true do |t|

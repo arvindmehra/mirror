@@ -7,9 +7,8 @@ class FilterGroupsController < ApplicationController
 
   def create
     @filter_group = FilterGroup.new(filter_group_params)
-    @filter_group.expression = filter_group_params[:filter_one]
-    @filter_group.expression << " " << filter_group_params[:conditional_operator]
-    @filter_group.expression << " " <<  filter_group_params[:filter_two]
+    expression = filter_group_params.reject{|k,v| v.blank? || k == "name"}
+    @filter_group.expression = expression.values.join
     @filter_group.save
     redirect_to filter_groups_path
   end
@@ -35,7 +34,7 @@ class FilterGroupsController < ApplicationController
   private
 
   def filter_group_params
-    params.require(:filter_group).permit(:name, :filter_one, :filter_two, :conditional_operator)
+    params.require(:filter_group).permit(:name, :filter_one,:conditional_operator_one, :filter_two,:conditional_operator_two,:filter_three,:conditional_operator_three,:filter_four,:conditional_operator_four,:filter_five)
   end
 
 end

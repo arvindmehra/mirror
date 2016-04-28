@@ -8,8 +8,11 @@ class Filter < ActiveRecord::Base
     @operator = @filter.operator # <
     @start_date = @filter.start_date
     @end_date = @filter.end_date
+    @free_text = @filter.free_text
     if @list_type == "recency_list"
       @digit, @hour_day_week = @condition.split("_")
+    elsif @list_type == "future_date_list"
+      @in, @digit, @hour_day_week = @condition.split("_")
     end
     # begin
       users = send("process_#{@segment}")
@@ -35,34 +38,43 @@ class Filter < ActiveRecord::Base
     s
   end
 
-  def process_expired_subscription
-    s = User.joins(:subscriptions).where("Date(subscriptions.end_date) #{@operator} DATE_SUB(NOW(), INTERVAL #{@digit} #{@hour_day_week})")
-    s
-  end
-
   def process_subscribed_alteast_once
-    s = User.joins(:receipts)
+    if @condition == "12"
+      id = 1
+    elsif @condition == "3"
+      id = 2
+    else
+      id = 3
+    end
+    s =  User.joins(:transactions).where(transactions: {product_id: id})
     s
   end
 
   def process_active_subscription
-    s = Subscription.where("DATE(@end_date) >= DATE(NOW())")
+    if @condition == "12"
+      id = 1
+    elsif @condition == "3"
+      id = 2
+    else
+      id = 3
+    end
+    s = User.joins(:transactions).joins(:subscriptions).where(transactions: {product_id: id}).where("DATE(subscriptions.end_date) >= CURDATE()").uniq
     s
   end
 
   def process_expired_subscription
-    s = User.joins(:subscriptions).where("Date(subscriptions.end_date) #{@operator} DATE_SUB(NOW(), INTERVAL #{@digit} #{@hour_day_week})")
+    s = User.joins(:subscriptions)
+    if @condition == "today"
+      s = s.where("end_date between CURDATE() and now()")
+    else
+      s = s.where("subscriptions.end_date between DATE_SUB(NOW(), INTERVAL #{@digit} #{@hour_day_week}) and now()")
+    end
     s
   end
 
   def process_havent_subscribed
     s = users = User.joins(:receipts)
     s = User.where.not(id: users.pluck(:user_id))
-    s
-  end
-
-   def process_about_to_expire
-    s = User.joins(:subscriptions).where("subscriptions.end_date between ? and ?",@start_date ,@end_date)
     s
   end
 
@@ -81,18 +93,67 @@ class Filter < ActiveRecord::Base
     s
   end
 
-  def process_average_feeling_score
-  end 
-
   def process_average_impact_score
-  end 
+    s = User.find_by_sql("select user_avg_table.* from
+          (select users.*, avg(impact_score) as avg from users
+          inner join notes
+          on notes.user_id  = users.id group by user_id) as user_avg_table where avg #{@operator} #{@condition}")
+    s
+  end
+
+  def process_average_feeling_score
+    s = User.find_by_sql("select user_avg_table.* from
+          (select users.*, avg(feeling_score) as avg from users
+          inner join notes
+          on notes.user_id  = users.id group by user_id) as user_avg_table where avg #{@operator} #{@condition}")
+    s
+  end
+
+  def process_average_well_being_score
+    s = User.find_by_sql("select user_avg_table.* from
+          (select users.*, avg(perception_score) as avg from users
+          inner join notes
+          on notes.user_id  = users.id group by user_id) as user_avg_table where avg #{@operator} #{@condition}")
+    s
+  end
 
   def process_well_being_score
     s = User.joins(:notes).where("notes.perception_score #{operator} ?","#{condition}")
     s
   end
 
-  def process_average_well_being_score
+  def process_about_to_expire
+    s = User.joins(:subscriptions)
+    if @condition == "today"
+      s = s.where("Date(end_date) = CURDATE()")
+    elsif @condition == "tomorrow"
+      s = s.where("Date(end_date) = DATE_ADD(CURDATE(), INTERVAL 1 Day)")
+    else
+      s = s.where("subscriptions.end_date between NOW() and DATE_ADD(NOW(), INTERVAL #{@digit} #{@hour_day_week})")
+    end
+    s
+  end
+
+  def process_total_notes
+    s = User.find_by_sql("select unotes.*, user_notes from
+        (select users.* , count(notes.id) as user_notes from users
+        inner join notes
+        on users.id = notes.user_id group by users.id) as unotes where user_notes #{@operator} #{@free_text}")
+    s
+  end
+
+  def process_last_connection
+    s =  User.where("Date(last_activity) #{@operator} DATE_SUB(now(), INTERVAL #{@digit} #{@hour_day_week})")
+    s
+  end
+
+  def process_last_note_created
+    s = User.joins(:notes).where("notes.recorded_at #{@operator} DATE_SUB(now(), INTERVAL #{@digit} #{@hour_day_week})")
+    s
+  end
+
+  def process_steps
+    User.joins(:notes).where("steps_walked #{@operator} #{@free_text}")
   end
   
   LIST_KEYS = {
@@ -133,7 +194,7 @@ class Filter < ActiveRecord::Base
   MORE_THAN_OR_EQUAL_TO = ">="
   EQUAL_TO = "="
   BETWEEN_OP = "between"
-  RELATION_OPERATOR = [LESS_THAN,LESS_THAN_OR_EQUAL_TO,MORE_THAN,MORE_THAN_OR_EQUAL_TO,EQUAL_TO,BETWEEN_OP,IN]
+  RELATION_OPERATOR = [LESS_THAN,LESS_THAN_OR_EQUAL_TO,MORE_THAN,MORE_THAN_OR_EQUAL_TO,EQUAL_TO]
   NON_RELATION_OPERATOR = ["yes","no"]
 
   TEXT_OPERATOR_LIST = {
@@ -142,6 +203,16 @@ class Filter < ActiveRecord::Base
     "ends_with" => "Ends With",
     "contains" => "Contains"
   }
+
+  FAMILY = [["Usage","usage"],
+                    ["Life Activity in Realifex","life_activity_in_realifex"],
+                    ["Time","time"],
+                    ["Places","places"],
+                    ["Category,Topics,Score","category_topic_score"],
+                    ["Weather","weather"],
+                    ["Steps","steps"],
+                    ["Inclusion/Exclusion","inclusion_exclusion"]
+                  ]
   
 
   KEY_OPERATORS = {
@@ -214,14 +285,30 @@ class Filter < ActiveRecord::Base
                           "rain",
                           "thunderstorm",
                           "fog",
-                          "snow"]
+                          "snow"],
+    "future_date_list" => [ "in_1_hour",
+                            "in_2_hour",
+                            "in_4_hour",
+                            "today",
+                            "tomorrow",
+                            "in_1_day",
+                            "in_2_day",
+                            "in_3_day",
+                            "in_4_day",
+                            "in_5_day",
+                            "in_6_day",
+                            "in_7_day",
+                            "in_8_day",
+                            "in_9_day"
+                          ],
+    "purchase_list" => [12,6,3]
   }
 
 SEGMENT= [["Downloaded the app", "downloaded_the_app"],
           ["Upgraded the app","upgraded_the_app"],
           ["Last note created","last_note_created"],
           ["Users subscribed atleast once","subscribed_alteast_once"],
-          ["Users with active subscription","subscription_active?"],
+          ["Users with active subscription","active_subscription"],
           ["Users havent yet subscribed","havent_subscribed"],
           ["User with subscription about to expire","about_to_expire"],
           ["User with expired subscription","expired_subscription"],
@@ -232,7 +319,13 @@ SEGMENT= [["Downloaded the app", "downloaded_the_app"],
           ["Average Impact score","average_impact_score"],
           ["Well being score","well_being_score"],
           ["Average Well-being score","average_well_being_score"],
-          ["Weather Condition", "weather_condition"]
+          ["Weather Condition", "weather_condition"],
+          ["Notes in Realifex", "total_notes"],
+          ["Last Connection", "last_connection"],
+          ["Specific Users", "specific_users"],
+          ["Steps", "steps"],
+          ["Activity of the day", "activity_of_the_day"],
+          ["Average activity", "average_activity"]
 
         ]
 

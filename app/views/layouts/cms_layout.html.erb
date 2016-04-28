@@ -1,66 +1,62 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <title>Realifex</title>
-  <%= stylesheet_link_tag 'cms_layout', media: 'all', 'data-turbolinks-track' => true %>
-  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
-  <%= csrf_meta_tags %>
-</head>
-<body>
-
-
-
-
-
-<body class="rails_admin" cz-shortcut-listen="true">
-<div class="label label-warning" id="loading" style="position: fixed; right: 20px; bottom: 20px; z-index: 100000; display: none;">Loading...</div>
-  <nav class="navbar navbar-default navbar-fixed-top">
+  <head>
+    <title>Realifex</title>
+    <%= stylesheet_link_tag 'cms_layout', media: 'all', 'data-turbolinks-track' => true %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+    <%= csrf_meta_tags %>
+  </head>
+  <body class="rails_admin" cz-shortcut-listen="true">
+    <div class="label label-warning" id="loading" style="position: fixed; right: 20px; bottom: 20px; z-index: 100000; display: none;">Loading...</div>
+      <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a class="navbar-brand pjax" href="/admin/">Realifex<small>Admin</small></a>
+          </div>
+          <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-right root_links">
+              <li class="dashboard_root_link"><a class="pjax" href="/admin/">Dashboard</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
     <div class="container-fluid">
-      <div class="navbar-header">
-        <a class="navbar-brand pjax" href="/admin/">Realifex<small>Admin</small></a>
+    <div class="row">
+      <div class="col-sm-3 col-md-2 reset-left">
+        <div class="sidebar-nav">
+          <ul class="nav nav-pills nav-stacked">
+            <li class="dropdown-header">Navigation</li>
+            <li data-model="device" ><a class="pjax" href="/admin/device">Devices</a></li>
+            <li data-model="note"><a class="pjax" href="/admin/note">Notes</a></li>
+            <li data-model="product"><a class="pjax" href="/admin/product">Products</a></li>
+            <li data-model="receipt"><a class="pjax" href="/admin/receipt">Receipts</a></li>
+            <li data-model="subscription"><a class="pjax" href="/admin/subscription">Subscriptions</a></li>
+            <li data-model="suggested_hashtag"><a class="pjax" href="/admin/suggested_hashtag">Suggested hashtags</a></li>
+            <li data-model="tag"><a class="pjax" href="/admin/tag">Tags</a></li>
+            <li data-model="transaction"><a class="pjax" href="/admin/transaction">Transactions</a></li>
+            <li data-model="user"><a class="pjax" href="/admin/user">Users</a></li>
+            <li data-model="user_activity"><a class="pjax" href="/admin/user_activity">User activities</a></li>
+          </ul>
+          <ul class="nav nav-pills nav-stacked">
+            <li class= "<%= params["controller"]=="filters" ? "active" : ""%>"><a href="/filters">Filters</a></li>
+          </ul>
+          <ul class="nav nav-pills nav-stacked">
+            <li class= "<%= params["controller"]=="filter_groups" ? "active" : ""%>"><a href="/filter_groups">Groups</a></li>
+          </ul>
+          <ul class="nav nav-pills nav-stacked">
+            <li class= "<%= params["controller"]=="rule_engines" ? "active" : ""%>"><a href="/rule_engines">Rules</a></li>
+          </ul>
+           <ul class="nav nav-pills nav-stacked">
+            <li class= "<%= params["controller"]=="notification_templates" ? "active" : ""%>"><a href="/notification_templates">Admin Notification</a></li>
+          </ul>
+        </div>
       </div>
-      <div class="collapse navbar-collapse">
-        <ul class="nav navbar-nav navbar-right root_links">
-          <li class="dashboard_root_link"><a class="pjax" href="/admin/">Dashboard</a></li>
-        </ul>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
+      <div class="row">
+        <div class="content" data-pjax-container="">
+        <!-- <div class="page-header"> -->
+          <%= yield %>
+        </div>
       </div>
-    </div>
-  </nav>
-<div class="container-fluid">
-<div class="row">
-  <div class="col-sm-3 col-md-2 reset-left">
-    <div class="sidebar-nav">
-      <ul class="nav nav-pills nav-stacked">
-        <li class="dropdown-header">Navigation</li>
-        <li data-model="device" class="active"><a class="pjax" href="/admin/device">Devices</a></li>
-        <li data-model="note"><a class="pjax" href="/admin/note">Notes</a></li>
-        <li data-model="product"><a class="pjax" href="/admin/product">Products</a></li>
-        <li data-model="receipt"><a class="pjax" href="/admin/receipt">Receipts</a></li>
-        <li data-model="subscription"><a class="pjax" href="/admin/subscription">Subscriptions</a></li>
-        <li data-model="suggested_hashtag"><a class="pjax" href="/admin/suggested_hashtag">Suggested hashtags</a></li>
-        <li data-model="tag"><a class="pjax" href="/admin/tag">Tags</a></li>
-        <li data-model="transaction"><a class="pjax" href="/admin/transaction">Transactions</a></li>
-        <li data-model="user"><a class="pjax" href="/admin/user">Users</a></li>
-        <li data-model="user_activity"><a class="pjax" href="/admin/user_activity">User activities</a></li>
-      </ul>
-      <ul class="nav nav-pills nav-stacked">
-        <li class="nav-header"></li>
-        <li><a href="/filters">Filters</a></li>
-      </ul>
-      <ul class="nav nav-pills nav-stacked">
-        <li class="nav-header"></li>
-        <li><a href="/filter_groups">Groups</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
-<div class="row">
-<div class="content" data-pjax-container="">
-  <script>
-    $('.nav.nav-pills li.active').removeClass('active');
-    $('.nav.nav-pills li[data-model="device"]').addClass('active');
-  </script>
-<!-- <div class="page-header"> -->
-<%= yield %>
-</body>
+    </div>  
+  </body>
 </html>
