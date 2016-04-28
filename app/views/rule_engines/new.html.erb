@@ -1,57 +1,58 @@
 <h1>Make a New Rule</h1>
 <%= form_for @rule do |f| %>
-	<div class="form-group control-group belongs_to_association_type user_field col-sm-10">
-		<%= f.label :name, class: "col-sm-2 control-label" %>
-    <div class="col-sm-8 controls">
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-8">
+    <%= f.label :name, class: "col-sm-2 control-label" %>
+    <div class="col-sm-6 controls">
       <%= f.text_field :name, class: "form-control",required: true  %>
     </div>  
   </div>
   <div id="filter_1" style="display: none">
-    <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
-  		<%= f.label :filter_one, class: "col-sm-2 control-label" %>
-      <div class="col-sm-8 controls">
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-8">
+      <%= f.label :filter_one, class: "col-sm-2 control-label" %>
+      <div class="col-sm-6 controls">
         <%= f.select :filter_one,options_for_select([["",""]]+Filter.all.map{|x| [x.name,"Filter_" + x.id.to_s]}), class: "form-control" %><br />
       </div>  
     </div>
   </div>
 
   <div id="operator_1" style="display: none">
-    <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
-  		<%= f.label :conditional_operator_one, class: "col-sm-2 control-label" %>
-      <div class="col-sm-8 controls">
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-8">
+      <%= f.label "Operator", class: "col-sm-2 control-label" %>
+      <div class="col-sm-6 controls">
         <%= f.select :conditional_operator_one,options_for_select([[""],[" OR "],[" AND "]]), class: "form-control" %>
       </div>  
     </div>
   </div>
 
   <div id="group_1" style="display: none">
-    <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-8">
       <%= f.label :group_one, class: "col-sm-2 control-label" %>
-      <div class="col-sm-8 controls">
+      <div class="col-sm-6 controls">
         <%= f.select :group_one,options_for_select([["",""]]+FilterGroup.all.map{|x| [x.name,"Group_" + x.id.to_s]}), class: "form-control" %><br />
       </div>  
     </div>
   </div>
 
   <div id="operator_2" style="display: none">
-    <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
-      <%= f.label :conditional_operator_two, class: "col-sm-2 control-label" %>
-      <div class="col-sm-8 controls">
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-8">
+      <%= f.label "Operator", class: "col-sm-2 control-label" %>
+      <div class="col-sm-6 controls">
         <%= f.select :conditional_operator_two,options_for_select([[""],[" OR "],[" AND "]]), class: "form-control" %>
       </div>  
     </div>
   </div>
 
   <div id="group_2" style="display: none">
-    <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
-  		<%= f.label :group_two, class: "col-sm-2 control-label" %>
-      <div class="col-sm-8 controls">
-   		<%= f.select :group_two,options_for_select([["",""]]+FilterGroup.all.map{|x| [x.name,"Group_" + x.id.to_s]}), class: "form-control" %><br />
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-8">
+      <%= f.label :group_two, class: "col-sm-2 control-label" %>
+      <div class="col-sm-6 controls">
+      <%= f.select :group_two,options_for_select([["",""]]+FilterGroup.all.map{|x| [x.name,"Group_" + x.id.to_s]}), class: "form-control" %><br />
       </div>  
     </div>
   </div> 
-  <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
-    <%= f.submit %>
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-8">
+    <div class="col-sm-2"></div> 
+    <div class="col-sm-8"><%= f.submit class: "btn btn-primary" %></div>
   </div>
 <% end %>
 
