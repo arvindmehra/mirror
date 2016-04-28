@@ -12,8 +12,14 @@ class NotificationTemplate < ActiveRecord::Base
           ["Upgrade to new version","upgrate_to_a_new_version"]
         ]
 
+  CATEGORY = [["Activity","activity"],
+              ["Behaviour","behaviour"],
+              ["User","user"]
+              ]
 
- 
+  def get_scope_users
+    users = rule_engine.get_scope_users
+  end
 
 
 end

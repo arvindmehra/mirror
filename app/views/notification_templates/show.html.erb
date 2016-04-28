@@ -1,0 +1,41 @@
+<h1></h1>
+<h2>Name :  <%= @notification.title.try(:titleize) %> </h2> 
+<!-- <h2>Expression : <%#=@filter_group.readable_expression %></h2> -->
+<h3>Total Users : <%= @notification.get_scope_users.try(:count) %></h3>
+
+<h4>Execution Type : <%= @notification.execution_type %></h4>
+
+<h4>Merge Field Included : <%= @notification.merge_field? ? "YES" : "NO" %></h4></br>
+
+<% if @notification.category == "activity" %>
+  <% image_path = "activity-1x.png" %>
+<% elsif @notification.category == "behaviour" %>
+  <% image_path = "behaviour-1x.png" %>
+<% else  %>
+  <% image_path = "user-1x.png" %>
+<% end %>
+<div class="col-md-6 notification_box">
+  <b><%=@notification.title %></b></br></br>
+  <%= image_tag image_path %> <%=@notification.subtitle %> | <%= Date.today %> | <%= Time.now.strftime("%I:%M %p") %> </br></br>
+  <%=@notification.description %></br></br>
+  <span class="btn btn-sytle" ><%=@notification.cta %></span></br></br>
+
+  <% if @notification.useful? %>
+    <span>was this useful? &nbsp;&nbsp;&nbsp; <b>YES&nbsp;&nbsp;</b>|<b>&nbsp;&nbsp;NO</b></span>
+  <% end %>
+</div>
+
+<style type="text/css">
+  .notification_box {
+    color:#424242;
+    -webkit-box-shadow: 6px 13px 45px -1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 6px 13px 45px -1px rgba(0,0,0,0.75);
+    box-shadow: 6px 13px 45px -1px rgba(0,0,0,0.75);
+    padding:30px;
+    border-radius: 10px;
+  }
+  .btn-sytle
+  {
+    background-color:#767676; color:#fff;padding-right: 20px;padding-left: 20px;
+  }
+</style>

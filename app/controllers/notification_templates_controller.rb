@@ -7,6 +7,7 @@ class NotificationTemplatesController < ApplicationController
   end
 
   def show
+    @notification = NotificationTemplate.find(params[:id])
   end
 
   def new
