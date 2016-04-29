@@ -32,8 +32,10 @@ class Filter < ActiveRecord::Base
     segment_definition = "auth_token_created_at"
     if @condition == "today"
       s = User.where("Date(#{segment_definition}) #{@operator}  DATE(NOW())")
-    else
+    elsif @hour_day_week == "hour"
       s = User.where("#{segment_definition} #{@operator} DATE_SUB(NOW(), INTERVAL #{@digit} #{@hour_day_week})")
+    else
+      s = User.where("DATE(#{segment_definition}) #{@operator} DATE_SUB(CURDATE(), INTERVAL #{@digit} #{@hour_day_week})")
     end
     s
   end
@@ -154,6 +156,14 @@ class Filter < ActiveRecord::Base
 
   def process_steps
     User.joins(:notes).where("steps_walked #{@operator} #{@free_text}").uniq
+  end
+
+  def process_users_with_account
+    s = User.where.not(encrypted_email: nil)
+  end
+
+  def process_users_without_account
+     s = User.where(encrypted_email: nil)
   end
   
   LIST_KEYS = {
@@ -324,8 +334,8 @@ SEGMENT= [["Downloaded the app", "downloaded_the_app"],
           ["Last Connection", "last_connection"],
           ["Specific Users", "specific_users"],
           ["Steps", "steps"],
-          ["Activity of the day", "activity_of_the_day"],
-          ["Average activity", "average_activity"]
+          ["Users with account","users_with_account"],
+          ["Users w/o account","users_without_account"]
 
         ]
 

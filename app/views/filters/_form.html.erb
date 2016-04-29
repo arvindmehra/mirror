@@ -173,6 +173,13 @@ $(document).ready(function(){
         $("#filter_list_type_id").show();
         $("#filter_condition_id").show();
       }
+      else if ( this.value == 'users_with_account' || this.value == 'users_without_account')
+        {
+          $("#free_text_field").hide();
+          $("#filter_list_type_id").hide();
+          $("#filter_condition_id").hide();
+          $("#filter_operator_id").hide();
+        }
     });
 });
 

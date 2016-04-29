@@ -51,7 +51,13 @@ Rails.application.routes.draw do
     end
   end
   get 'temp_push_notifications/get_push' => 'temp_push_notifications#get_push' #temp url
-  resources :notification_templates
+  resources :notification_templates do
+    collection do 
+      get :blast_send
+      patch :deactivate
+      patch :activate
+    end
+  end
   resources :filter_groups
   resources :rule_engines
   resources :password_resets, only: [:edit, :update, :create]
