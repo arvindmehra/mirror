@@ -24,7 +24,7 @@ class Filter < ActiveRecord::Base
   end
 
   def process_weather_condition
-    s = User.joins(:notes).where(notes: {whether_type: "#{@condition}"})
+    s = User.joins(:notes).where(notes: {whether_type: "#{@condition}"}).uniq
     s
   end
 
@@ -32,8 +32,10 @@ class Filter < ActiveRecord::Base
     segment_definition = "auth_token_created_at"
     if @condition == "today"
       s = User.where("Date(#{segment_definition}) #{@operator}  DATE(NOW())")
-    else
+    elsif @hour_day_week == "hour"
       s = User.where("#{segment_definition} #{@operator} DATE_SUB(NOW(), INTERVAL #{@digit} #{@hour_day_week})")
+    else
+      s = User.where("DATE(#{segment_definition}) #{@operator} DATE_SUB(CURDATE(), INTERVAL #{@digit} #{@hour_day_week})")
     end
     s
   end
@@ -46,7 +48,7 @@ class Filter < ActiveRecord::Base
     else
       id = 3
     end
-    s =  User.joins(:transactions).where(transactions: {product_id: id})
+    s =  User.joins(:transactions).where(transactions: {product_id: id}).uniq
     s
   end
 
@@ -65,9 +67,9 @@ class Filter < ActiveRecord::Base
   def process_expired_subscription
     s = User.joins(:subscriptions)
     if @condition == "today"
-      s = s.where("end_date between CURDATE() and now()")
+      s = s.where("end_date between CURDATE() and now()").uniq
     else
-      s = s.where("subscriptions.end_date between DATE_SUB(NOW(), INTERVAL #{@digit} #{@hour_day_week}) and now()")
+      s = s.where("subscriptions.end_date between DATE_SUB(NOW(), INTERVAL #{@digit} #{@hour_day_week}) and now()").uniq
     end
     s
   end
@@ -79,17 +81,17 @@ class Filter < ActiveRecord::Base
   end
 
   def process_categories
-    s = User.joins(:notes).where(notes: {category: @condition})
+    s = User.joins(:notes).where(notes: {category: @condition}).uniq
     s
   end
 
   def process_feeling_score
-    s = User.joins(:notes).where("notes.feeling_score #{operator} ?","#{condition}")
+    s = User.joins(:notes).where("notes.feeling_score #{operator} ?","#{condition}").uniq
     s
   end
 
   def process_impact_score
-    s = User.joins(:notes).where("notes.impact_score #{operator} ?","#{condition}")
+    s = User.joins(:notes).where("notes.impact_score #{operator} ?","#{condition}").uniq
     s
   end
 
@@ -118,18 +120,18 @@ class Filter < ActiveRecord::Base
   end
 
   def process_well_being_score
-    s = User.joins(:notes).where("notes.perception_score #{operator} ?","#{condition}")
+    s = User.joins(:notes).where("notes.perception_score #{operator} ?","#{condition}").uniq
     s
   end
 
   def process_about_to_expire
     s = User.joins(:subscriptions)
     if @condition == "today"
-      s = s.where("Date(end_date) = CURDATE()")
+      s = s.where("Date(end_date) = CURDATE()").uniq
     elsif @condition == "tomorrow"
-      s = s.where("Date(end_date) = DATE_ADD(CURDATE(), INTERVAL 1 Day)")
+      s = s.where("Date(end_date) = DATE_ADD(CURDATE(), INTERVAL 1 Day)").uniq
     else
-      s = s.where("subscriptions.end_date between NOW() and DATE_ADD(NOW(), INTERVAL #{@digit} #{@hour_day_week})")
+      s = s.where("subscriptions.end_date between NOW() and DATE_ADD(NOW(), INTERVAL #{@digit} #{@hour_day_week})").uniq
     end
     s
   end
@@ -138,22 +140,30 @@ class Filter < ActiveRecord::Base
     s = User.find_by_sql("select unotes.*, user_notes from
         (select users.* , count(notes.id) as user_notes from users
         inner join notes
-        on users.id = notes.user_id group by users.id) as unotes where user_notes #{@operator} #{@free_text}")
+        on users.id = notes.user_id group by users.id) as unotes where user_notes #{@operator} #{@free_text}").uniq
     s
   end
 
   def process_last_connection
-    s =  User.where("Date(last_activity) #{@operator} DATE_SUB(now(), INTERVAL #{@digit} #{@hour_day_week})")
+    s =  User.where("Date(last_activity) #{@operator} DATE_SUB(now(), INTERVAL #{@digit} #{@hour_day_week})").uniq
     s
   end
 
   def process_last_note_created
-    s = User.joins(:notes).where("notes.recorded_at #{@operator} DATE_SUB(now(), INTERVAL #{@digit} #{@hour_day_week})")
+    s = User.joins(:notes).where("notes.recorded_at #{@operator} DATE_SUB(now(), INTERVAL #{@digit} #{@hour_day_week})").uniq
     s
   end
 
   def process_steps
-    User.joins(:notes).where("steps_walked #{@operator} #{@free_text}")
+    User.joins(:notes).where("steps_walked #{@operator} #{@free_text}").uniq
+  end
+
+  def process_users_with_account
+    s = User.where.not(encrypted_email: nil)
+  end
+
+  def process_users_without_account
+     s = User.where(encrypted_email: nil)
   end
   
   LIST_KEYS = {
@@ -324,8 +334,8 @@ SEGMENT= [["Downloaded the app", "downloaded_the_app"],
           ["Last Connection", "last_connection"],
           ["Specific Users", "specific_users"],
           ["Steps", "steps"],
-          ["Activity of the day", "activity_of_the_day"],
-          ["Average activity", "average_activity"]
+          ["Users with account","users_with_account"],
+          ["Users w/o account","users_without_account"]
 
         ]
 

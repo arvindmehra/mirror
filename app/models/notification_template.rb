@@ -21,5 +21,27 @@ class NotificationTemplate < ActiveRecord::Base
     users = rule_engine.get_scope_users
   end
 
+  def trigger
+    text = title << " " << description
+    get_scope_users.each_slice(100) do | batch |
+      batch.each do | user |
+        devices = user.devices.where.not("notification_token"=>nil)
+        devices.each do |device|
+          PushNotification.notify_ios(text,device.notification_token)
+          logger.debug  "Sending push to user_id #{user.id} token #{device.notification_token}" 
+        end
+      end
+    end
+  end
+
+  def deactivate
+    self.active = false
+    self.save
+  end
+
+  def activate
+    self.active = true
+    self.save
+  end
 
 end

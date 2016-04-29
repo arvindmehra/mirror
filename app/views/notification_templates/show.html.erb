@@ -23,6 +23,21 @@
   <% if @notification.useful? %>
     <span>was this useful? &nbsp;&nbsp;&nbsp; <b>YES&nbsp;&nbsp;</b>|<b>&nbsp;&nbsp;NO</b></span>
   <% end %>
+</div><br><br>
+
+<div></div>
+
+<div class="col-md-8 padder ">
+  <div class="col-md-4">
+    <%= link_to "Blast Send Now", blast_send_notification_templates_path({id: @notification}), class: "btn btn-primary" %>
+  </div>
+  <div class="col-md-4">
+    <% if @notification.active? %>
+      <%= link_to "Deactivate", deactivate_notification_templates_path({id: @notification}),method: :patch, class: "btn btn-danger" %>
+    <% else %>
+      <%= link_to "Activate", activate_notification_templates_path({id: @notification}),method: :patch, class: "btn btn-success" %>
+    <% end %>
+    </div>
 </div>
 
 <style type="text/css">
@@ -37,5 +52,12 @@
   .btn-sytle
   {
     background-color:#767676; color:#fff;padding-right: 20px;padding-left: 20px;
+  }
+  .padder{
+    padding-top: 50px;
+    padding-left: 100px;
+  }
+  .red {
+    color: red;
   }
 </style>
