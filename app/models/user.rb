@@ -61,4 +61,21 @@ class User < ActiveRecord::Base
     activity_goal.present? ? activity_goal : 3   #send 3 minutes if goal is not set
   end
 
+
+  def suggestion_notifications
+    user_notifications.for_suggestion_screen.non_deleted
+  end
+
+  def unread_suggestion_notifications
+    user_notifications.for_suggestion_screen.non_deleted.unread
+  end
+
+  def option_notifications
+    user_notifications.for_option_screen.non_deleted
+  end
+
+  def unread_option_notifications
+    user_notifications.for_option_screen.non_deleted.unread
+  end
+
 end

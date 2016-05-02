@@ -157,7 +157,7 @@ class V1::NotesController < V1::BaseController
   end
 
   def set_note
-    @note = Note.find(params[:id])
+    @note = Note.find_by(id: params[:id])
     if @note.user != @current_user
       head :unauthorized
     end

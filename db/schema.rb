@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160428094206) do
+ActiveRecord::Schema.define(version: 20160502061737) do
 
   create_table "devices", force: true do |t|
     t.integer  "user_id"
@@ -91,10 +91,12 @@ ActiveRecord::Schema.define(version: 20160428094206) do
     t.text     "description"
     t.string   "merge_field"
     t.string   "cta"
+    t.string   "cta_key"
     t.boolean  "useful"
     t.integer  "rule_engine_id"
     t.string   "execution_type"
     t.string   "category"
+    t.string   "display_screen"
     t.datetime "start_date"
     t.datetime "end_date"
     t.boolean  "active"
@@ -197,7 +199,7 @@ ActiveRecord::Schema.define(version: 20160428094206) do
     t.string   "description"
     t.string   "merge_field"
     t.integer  "user_id"
-    t.integer  "admin_notification_id"
+    t.integer  "notification_template_id"
     t.string   "cta"
     t.string   "cta_key"
     t.string   "category"
