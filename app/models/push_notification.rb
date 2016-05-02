@@ -12,7 +12,7 @@ class PushNotification < ActiveRecord::Base
     pn.save!
   end
 
-  def self.notify_ios(text,token,data=nil)
+  def self.notify_ios(text,token,badge,data=nil)
     apn = Rails.env.development? ? Houston::Client.development : Houston::Client.production
     environment = Rails.env.development? ? "development" : "production"
     apn.certificate = PushNotification.where(environment: environment).first.ios_certificate
@@ -21,7 +21,7 @@ class PushNotification < ActiveRecord::Base
       notification = Houston::Notification.new(device: device.notification_token)
       notification.alert = text
       # take a look at the docs about these params
-      notification.badge = 1
+      notification.badge = badge
       notification.sound = "sosumi.aiff"
       notification.custom_data = data unless data.nil?
       apn.push(notification)

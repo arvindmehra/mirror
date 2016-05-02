@@ -13,7 +13,7 @@ class FiltersController < ApplicationController
   end
 
   def show
-    @filter = Filter.find(params[:id])
+    @filter = Filter.find_by(id: params[:id])
     @users = @filter.get_scope_users if @filter.present?
   end
 

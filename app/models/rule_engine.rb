@@ -9,8 +9,7 @@ class RuleEngine < ActiveRecord::Base
   has_many :notification_templates
 
   def get_scope_users
-    expression = convert_groups_to_filters
-    FilterGroup.scope_users(expression)
+    unwind_expression
   end
 
 
@@ -20,11 +19,38 @@ class RuleEngine < ActiveRecord::Base
     expressions.each do |x|
       if x.include?("Group")
         group_id = x.split("_").last
-        x = FilterGroup.find(group_id).expression.split
+        x = FilterGroup.find_by(id: group_id).expression.split
       end
      query_exp << x 
     end
     query_exp.flatten.join(" ")
+  end
+
+  def unwind_expression
+    if self.expression.present?
+      exp = expression.gsub('AND', '&').split
+      klass_id =  exp.shift
+      if klass_id.include?("Group")
+        id = klass_id.gsub('Group_', '')
+        @users = FilterGroup.find_by(id: id).get_scope_users
+      else
+        id = klass_id.gsub('Filter_', '')
+        @users = Filter.find_by(id: id).get_scope_users
+      end
+      while exp.any?
+        operator = exp.shift
+        klass_id = exp.shift
+        if klass_id.include?("Group")
+          id = klass_id.gsub('Group_', '')
+          next_users = FilterGroup.find_by(id: id).get_scope_users
+        else
+          id = klass_id.gsub('Filter_', '')
+          next_users = Filter.find_by(id: id).get_scope_users
+        end
+        @users = @users.send(operator, next_users)
+      end
+      @users
+    end
   end
 
 end

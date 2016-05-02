@@ -17,7 +17,7 @@ class RuleEnginesController < ApplicationController
   end
 
   def show
-    @rule = RuleEngine.find(params[:id])
+    @rule = RuleEngine.find_by(id: params[:id])
   end
 
   def new

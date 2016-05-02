@@ -14,7 +14,7 @@ class FilterGroupsController < ApplicationController
   end
 
   def show
-    @filter_group = FilterGroup.find(params[:id])
+    @filter_group = FilterGroup.find_by(id: params[:id])
   end
 
   def new

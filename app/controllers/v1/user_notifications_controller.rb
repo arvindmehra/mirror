@@ -4,15 +4,13 @@ class V1::UserNotificationsController < V1::BaseController
 
   def get_all
     landmark = params[:landmark]
-    #notifications = UserNotification.non_deleted #temp for demo purpose use below line after demo
-    # notifications = @current_user.user_notifications.unread
-    render json: UserNotification.notification_response(landmark)
+    notifications = UserNotification.notification_response(@current_user,landmark)
+    render json: notifications
+    mark_notifications_read(notifications)
   end
 
   def get_unread_count
-     #temp for demo purpose use below line after demo
-    # unread_notifications = @current_user.user_notifications.unread.count
-    render json: UserNotification.unread_notification_response_count
+    render json: UserNotification.unread_notification_response_count(@current_user)
   end
 
   def update
@@ -25,13 +23,22 @@ class V1::UserNotificationsController < V1::BaseController
     end
   end
 
+  def mark_notifications_read(notifications)
+    notifications.values.each do |notification_records|
+      notification_records.each do |notification|
+        notification.read_status = true
+        notification.save
+      end
+    end
+  end
+
 
   private
 
   def set_notification
-    @notification = UserNotification.find(params[:id])
-    # if @notification.user != @current_user
-    #   head :unauthorized
-    # end
+    @notification = UserNotification.find_by(id: params[:id])
+    if @notification.user != @current_user
+      head :unauthorized
+    end
   end
 end 
