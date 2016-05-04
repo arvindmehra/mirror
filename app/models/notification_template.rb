@@ -3,6 +3,10 @@ class NotificationTemplate < ActiveRecord::Base
   has_many :user_notifications
 	belongs_to :rule_engine
 
+  CONDITION = [["When daily goal is reached","goal_reached"]]
+
+  ELAPSED_TIME = [1,2,3,4,5]
+
 	 DISPLAY_SCREEN = [["Option", "option"],
                     ["Suggestion","suggestion"]]
 
@@ -25,31 +29,7 @@ class NotificationTemplate < ActiveRecord::Base
   end
 
   def trigger
-    text = title << " " << description
-    get_scope_users.each_slice(100) do | batch |
-      batch.each do | user |
-        self.user_notifications.build.tap do |user_notification|
-          user_notification.title = title
-          user_notification.subtitle = subtitle
-          user_notification.description = description
-          user_notification.merge_field = merge_field
-          user_notification.cta = cta
-          user_notification.cta_key = cta_key
-          user_notification.useful = useful
-          user_notification.category = category
-          user_notification.display_screen = display_screen
-          user_notification.sent_at = Time.current
-          user_notification.user_id = user.id
-          user_notification.save
-        end
-        badge = (display_screen == "suggestion") ? user.unread_suggestion_notifications.count : unread_option_notifications.count
-        devices = user.devices.where.not("notification_token"=>nil)
-        devices.each do |device|
-          PushNotification.notify_ios(text,device.notification_token,badge,{screen: display_screen})
-          logger.debug  "Sending push to user_id #{user.id} token #{device.notification_token}" 
-        end
-      end
-    end
+    Pusher.perform_async(self.id)
   end
 
   def deactivate

@@ -26,6 +26,7 @@ gem 'rails_admin'
 gem 'grocer'
 gem 'rails-web-console'
 gem 'houston'
+gem 'sucker_punch', '~> 2.0'
 
 group :development do
   gem 'byebug'

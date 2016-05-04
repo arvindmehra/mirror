@@ -100,6 +100,8 @@ ActiveRecord::Schema.define(version: 20160502061737) do
     t.datetime "start_date"
     t.datetime "end_date"
     t.boolean  "active"
+    t.string   "condition_met"
+    t.string   "elapse_time"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
