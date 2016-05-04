@@ -78,4 +78,56 @@ class User < ActiveRecord::Base
     user_notifications.for_option_screen.non_deleted.unread
   end
 
+  def self.populate_temp_user_notes
+    ActiveRecord::Base.connection.execute(
+                          "INSERT INTO temp_user_notes
+                                  (user_id,
+                        encrypted_email,
+                          last_activity,
+                           activity_goal, 
+                                    auth_token_created_at, 
+                                    notes_id,
+                                    category,
+                                    impact,
+                                    feeling,
+                                    impact_score,
+                                    feeling_score,
+                                    city,
+                                    suburb,
+                                    country,
+                                    heart_rate,
+                                    sleep_time,
+                                    temperature,
+                                    whether_type,
+                                    steps_walked,
+                                    calories_burnt,
+                                    perception_score,
+                                    notes_recorded_at
+                                  )
+                              SELECT 
+                              users.id,
+                              users.encrypted_email,
+                              users.last_activity,
+                              users.activity_goal,
+                              users.auth_token_created_at, 
+                              notes.id,
+                              notes.category,
+                              notes.impact,
+                              notes.feeling,
+                              notes.impact_score,
+                              notes.feeling_score,
+                              notes.city,
+                              notes.suburb,
+                              notes.country,
+                              notes.heart_rate,
+                              notes.sleep_time,
+                              notes.temperature,
+                              notes.whether_type,
+                              notes.steps_walked,
+                              notes.calories_burnt,
+                              notes.perception_score,
+                              notes.recorded_at
+                          FROM users LEFT JOIN notes ON users.id = notes.user_id")
+  end
+
 end

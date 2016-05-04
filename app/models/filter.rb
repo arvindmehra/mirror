@@ -1,6 +1,7 @@
 class Filter < ActiveRecord::Base
 
-  def get_scope_users
+  def get_scope_users(group=nil,truncate_table=true)
+    prepare_temp_user_note_table if truncate_table
     @filter = self
     @segment = @filter.segment # downloaded_the_app  
     @list_type = @filter.list_type # recency_list
@@ -16,7 +17,12 @@ class Filter < ActiveRecord::Base
     end
     # begin
       users = send("process_#{@segment}")
-      users
+      if group.present?
+        logger.debug  "plucking user_ids from temp_user_notes" 
+        users.pluck(:user_id).uniq
+      else
+        users.map{|x| x.user_id}.uniq
+      end
     # rescue
     #   message = "Filter not Aplicable"
     # end
@@ -24,18 +30,18 @@ class Filter < ActiveRecord::Base
   end
 
   def process_weather_condition
-    s = User.joins(:notes).where(notes: {whether_type: "#{@condition}"}).uniq
+    s = TempUserNote.where(whether_type: "#{@condition}")
     s
   end
 
   def process_downloaded_the_app
     segment_definition = "auth_token_created_at"
     if @condition == "today"
-      s = User.where("Date(#{segment_definition}) #{@operator}  DATE(NOW())")
+      s = TempUserNote.where("Date(#{segment_definition}) #{@operator}  DATE(NOW())")
     elsif @hour_day_week == "hour"
-      s = User.where("#{segment_definition} #{@operator} DATE_SUB(NOW(), INTERVAL #{@digit} #{@hour_day_week})")
+      s = TempUserNote.where("#{segment_definition} #{@operator} DATE_SUB(NOW(), INTERVAL #{@digit} #{@hour_day_week})")
     else
-      s = User.where("DATE(#{segment_definition}) #{@operator} DATE_SUB(CURDATE(), INTERVAL #{@digit} #{@hour_day_week})")
+      s = TempUserNote.where("DATE(#{segment_definition}) #{@operator} DATE_SUB(CURDATE(), INTERVAL #{@digit} #{@hour_day_week})")
     end
     s
   end
@@ -48,7 +54,7 @@ class Filter < ActiveRecord::Base
     else
       id = 3
     end
-    s =  User.joins(:transactions).where(transactions: {product_id: id}).uniq
+    s = TempUserNote.joins("inner join transactions on transactions.user_id = temp_user_notes.user_id")
     s
   end
 
@@ -60,110 +66,109 @@ class Filter < ActiveRecord::Base
     else
       id = 3
     end
-    s = User.joins(:transactions).joins(:subscriptions).where(transactions: {product_id: id}).where("DATE(subscriptions.end_date) >= CURDATE()").uniq
+    s = TempUserNote.joins("inner join transactions on transactions.user_id = temp_user_notes.user_id inner join subscriptions on subscriptions.user_id = temp_user_notes.user_id")
+    s = s.where(transactions: {product_id: 2}).where("DATE(subscriptions.end_date) >= CURDATE()")
     s
   end
 
   def process_expired_subscription
-    s = User.joins(:subscriptions)
+    s = TempUserNote.joins("inner join subscriptions on subscriptions.user_id = temp_user_notes.user_id")
     if @condition == "today"
-      s = s.where("end_date between CURDATE() and now()").uniq
+      s = s.where("end_date between CURDATE() and now()")
     else
-      s = s.where("subscriptions.end_date between DATE_SUB(NOW(), INTERVAL #{@digit} #{@hour_day_week}) and now()").uniq
+      s = s.where("subscriptions.end_date between DATE_SUB(NOW(), INTERVAL #{@digit} #{@hour_day_week}) and now()")
     end
     s
   end
 
   def process_havent_subscribed
     s = users = User.joins(:receipts)
-    s = User.where.not(id: users.pluck(:user_id))
+    s = TempUserNote.where.not(id: users.pluck(:user_id))
     s
   end
 
   def process_categories
-    s = User.joins(:notes).where(notes: {category: @condition}).uniq
+    s = TempUserNote.where(category: "#{@condition}")
     s
   end
 
   def process_feeling_score
-    s = User.joins(:notes).where("notes.feeling_score #{operator} ?","#{condition}").uniq
+    s = TempUserNote.where("temp_user_notes.feeling_score #{operator} ?","#{condition}")
     s
   end
 
   def process_impact_score
-    s = User.joins(:notes).where("notes.impact_score #{operator} ?","#{condition}").uniq
+    s = TempUserNote.where("temp_user_notes.impact_score #{operator} ?","#{condition}")
     s
   end
 
   def process_average_impact_score
-    s = User.find_by_sql("select user_avg_table.* from
-          (select users.*, avg(impact_score) as avg from users
-          inner join notes
-          on notes.user_id  = users.id group by user_id) as user_avg_table where avg #{@operator} #{@condition}")
+    s = TempUserNote.find_by_sql("select user_avg_table.* from
+          (select temp_user_notes.*, avg(impact_score) as avg from temp_user_notes group by user_id)
+          as user_avg_table where avg #{@operator} #{@condition}")
     s
   end
 
   def process_average_feeling_score
-    s = User.find_by_sql("select user_avg_table.* from
-          (select users.*, avg(feeling_score) as avg from users
-          inner join notes
-          on notes.user_id  = users.id group by user_id) as user_avg_table where avg #{@operator} #{@condition}")
+    s = TempUserNote.find_by_sql("select user_avg_table.* from
+          (select temp_user_notes.*, avg(feeling_score) as avg from temp_user_notes group by user_id)
+          as user_avg_table where avg #{@operator} #{@condition}")
     s
   end
 
   def process_average_well_being_score
-    s = User.find_by_sql("select user_avg_table.* from
-          (select users.*, avg(perception_score) as avg from users
-          inner join notes
-          on notes.user_id  = users.id group by user_id) as user_avg_table where avg #{@operator} #{@condition}")
+    s = TempUserNote.find_by_sql("select user_avg_table.* from
+          (select temp_user_notes.*, avg(perception_score) as avg from temp_user_notes group by user_id)
+          as user_avg_table where avg #{@operator} #{@condition}")
     s
   end
 
   def process_well_being_score
-    s = User.joins(:notes).where("notes.perception_score #{operator} ?","#{condition}").uniq
+    s = TempUserNote.where("temp_user_notes.perception_score #{operator} ?","#{condition}")
     s
   end
 
   def process_about_to_expire
-    s = User.joins(:subscriptions)
+    s = TempUserNote.joins("inner join subscriptions on subscriptions.user_id = temp_user_notes.user_id")
     if @condition == "today"
-      s = s.where("Date(end_date) = CURDATE()").uniq
+      s = s.where("Date(end_date) = CURDATE()")
     elsif @condition == "tomorrow"
-      s = s.where("Date(end_date) = DATE_ADD(CURDATE(), INTERVAL 1 Day)").uniq
+      s = s.where("Date(end_date) = DATE_ADD(CURDATE(), INTERVAL 1 Day)")
     else
-      s = s.where("subscriptions.end_date between NOW() and DATE_ADD(NOW(), INTERVAL #{@digit} #{@hour_day_week})").uniq
+      s = s.where("subscriptions.end_date between NOW() and DATE_ADD(NOW(), INTERVAL #{@digit} #{@hour_day_week})")
     end
     s
   end
 
   def process_total_notes
-    s = User.find_by_sql("select unotes.*, user_notes from
-        (select users.* , count(notes.id) as user_notes from users
-        inner join notes
-        on users.id = notes.user_id group by users.id) as unotes where user_notes #{@operator} #{@free_text}").uniq
+    s = TempUserNote.find_by_sql("select unotes.*, user_notes from
+        (select temp_user_notes.* , count(notes_id) as user_notes from temp_user_notes group by user_id)
+        as unotes where user_notes #{@operator} #{@free_text}")
     s
   end
 
   def process_last_connection
-    s =  User.where("Date(last_activity) #{@operator} DATE_SUB(now(), INTERVAL #{@digit} #{@hour_day_week})").uniq
+    s =  TempUserNote.where("Date(last_activity) #{@operator} DATE_SUB(now(), INTERVAL #{@digit} #{@hour_day_week})")
     s
   end
 
   def process_last_note_created
-    s = User.joins(:notes).where("notes.recorded_at #{@operator} DATE_SUB(now(), INTERVAL #{@digit} #{@hour_day_week})").uniq
+    s = TempUserNote.where("notes_recorded_at #{@operator} DATE_SUB(now(), INTERVAL #{@digit} #{@hour_day_week})")
     s
   end
 
   def process_steps
-    User.joins(:notes).where("steps_walked #{@operator} #{@free_text}").uniq
+    TempUserNote.where("steps_walked #{@operator} #{@free_text}").uniq
   end
 
   def process_users_with_account
-    s = User.where.not(encrypted_email: nil)
+    s = TempUserNote.where.not(encrypted_email: nil)
+    s
   end
 
   def process_users_without_account
-     s = User.where(encrypted_email: nil)
+     s = TempUserNote.where(encrypted_email: nil)
+     s
   end
   
   LIST_KEYS = {
@@ -345,6 +350,11 @@ SEGMENT= [["Downloaded the app", "downloaded_the_app"],
 
   def self.collective_list(key)
     LIST_KEYS[key]
+  end
+
+  def prepare_temp_user_note_table
+    ActiveRecord::Base.connection.execute("TRUNCATE temp_user_notes")
+    User.populate_temp_user_notes
   end
 
 end

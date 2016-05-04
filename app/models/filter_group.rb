@@ -11,8 +11,9 @@ class FilterGroup < ActiveRecord::Base
   attr_accessor :filter_five
 
   
-  def get_scope_users
-    unwind_expression
+  def get_scope_users(rule=nil,truncate_table=true)
+    prepare_temp_user_note_table if truncate_table
+    unwind_expression(rule)
   end
 
   def self.scope_users(query_exp=nil)
@@ -20,17 +21,22 @@ class FilterGroup < ActiveRecord::Base
   end
 
 
-  def unwind_expression
+  def unwind_expression(rule=nil)
     if self.expression.present?
       exp = expression.gsub('Filter_', '').gsub('OR', '|').split
-      @users = Filter.find_by(id: exp.shift).get_scope_users
+      @users = Filter.find_by(id: exp.shift).get_scope_users(rule,false)
       while exp.any?
         operator = exp.shift
-        next_users = Filter.find_by(id: exp.shift).get_scope_users
+        next_users = Filter.find_by(id: exp.shift).get_scope_users(rule,false)
         @users = @users.send(operator, next_users)
       end
       @users
     end
+  end
+
+  def prepare_temp_user_note_table
+    ActiveRecord::Base.connection.execute("TRUNCATE temp_user_notes")
+    User.populate_temp_user_notes
   end
 
 
