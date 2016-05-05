@@ -79,13 +79,13 @@
     <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
       <%= f.label :condition_met, class: "col-sm-2 control-label" %>
       <div class="col-sm-8 controls">
-        <%= f.text_field :condition_met,options_for_select(NotificationTemplate::CONDITION), class: "form-control" %><br />
+        <%= f.select :condition_met,options_for_select(NotificationTemplate::CONDITION), class: "form-control" %><br />
       </div>  
     </div>
     <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
-      <%= f.label :time_elapse, class: "col-sm-2 control-label" %>
+      <%= f.label :elapse_time, class: "col-sm-2 control-label" %>
       <div class="col-sm-8 controls">
-        <%= f.text_field :time_elapse, class: "form-control",placeholder: "yyyy-mm-dd"  %>
+        <%= f.text_field :elapse_time, class: "form-control",placeholder: "yyyy-mm-dd"  %>
       </div>  
     </div>
   </div>  
