@@ -1,11 +1,5 @@
 class RuleEngine < ActiveRecord::Base
-	attr_accessor :conditional_operator_one
-  attr_accessor :conditional_operator_two
   attr_accessor :filter_one
-  attr_accessor :filter_two
-  attr_accessor :group_one
-  attr_accessor :group_two
-
   has_many :notification_templates
 
   def get_scope_users

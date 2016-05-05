@@ -1,16 +1,17 @@
 class RuleEnginesController < ApplicationController
 
-	layout 'cms_layout'
+  layout 'cms_layout'
 
-	def index 
+  def index
     @rules = RuleEngine.all
   end
 
   def create
-    @rule = RuleEngine.new(rule_params)
-    if rule_params.present? || !rule_params.nil?
-      rules = rule_params.reject{|k,v| v.blank? || k == "name"}
-      @rule.expression = rules.values.join if rules.present?
+    rule_parameters = rule_params
+    @rule = RuleEngine.new(rule_parameters)
+    if rule_parameters.present? || !rule_parameters.nil?
+      rules = rule_parameters["expression"]
+      @rule.expression = rules.join.strip.gsub(" "," AND ") if rules.present?
       @rule.save if @rule.expression.present?
     end
     redirect_to rule_engines_path
@@ -28,7 +29,7 @@ class RuleEnginesController < ApplicationController
   private
 
   def rule_params
-    params.require(:rule_engine).permit(:name, :filter_one, :conditional_operator_one, :group_one,:conditional_operator_two,:group_two)
+    params.require(:rule_engine).permit(:name, expression: [])
   end
 
 end
