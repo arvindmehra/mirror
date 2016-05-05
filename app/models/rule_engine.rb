@@ -20,10 +20,20 @@ class RuleEngine < ActiveRecord::Base
       end
       if (index != (exp_size - 1) && !@users.blank?)
         if !@users.is_a?(Hash)
-          ActiveRecord::Base.connection.execute("delete from temp_user_notes where user_id NOT IN (#{@users.join(",")})")
+          if @users.blank?
+            ActiveRecord::Base.connection.execute("truncate temp_user_notes")
+            return []
+          else
+            ActiveRecord::Base.connection.execute("delete from temp_user_notes where user_id NOT IN (#{@users.join(",")})")
+          end
         else
-          @users = @users[:temp_user_notes_ids].flatten
-          ActiveRecord::Base.connection.execute("delete from temp_user_notes where id NOT IN (#{@users.join(",")})")
+          if @users[:temp_user_notes_ids].blank?
+            ActiveRecord::Base.connection.execute("truncate temp_user_notes")
+            return []
+          else
+            @users = @users[:temp_user_notes_ids].flatten
+            ActiveRecord::Base.connection.execute("delete from temp_user_notes where id NOT IN (#{@users.join(",")})")
+          end
         end
       end
     end
