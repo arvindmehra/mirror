@@ -5,7 +5,8 @@ class Pusher
     notification_template = NotificationTemplate.find_by(id: notification_template_id)
     if notification_template.present?
       text = notification_template.title << " " << notification_template.description
-      notification_template.get_scope_users.each_slice(100) do | batch |
+      users = User.where(id: notification_template.get_scope_users).includes(:devices)
+      users.each_slice(100) do | batch |
         batch.each do | user |
           notification_template.user_notifications.build.tap do |user_notification|
             user_notification.title = notification_template.title

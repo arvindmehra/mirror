@@ -17,7 +17,9 @@ class Filter < ActiveRecord::Base
     end
     # begin
       users = send("process_#{@segment}")
-      if group.present?
+      if users.is_a?(Hash)
+        users
+      elsif group.present? && !users.is_a?(Array)
         logger.debug  "plucking user_ids from temp_user_notes" 
         users.pluck(:user_id).uniq
       else
@@ -83,7 +85,7 @@ class Filter < ActiveRecord::Base
 
   def process_havent_subscribed
     s = users = User.joins(:receipts)
-    s = TempUserNote.where.not(id: users.pluck(:user_id))
+    s = TempUserNote.where.not(id: users.pluck(:user_id).uniq)
     s
   end
 
@@ -154,6 +156,7 @@ class Filter < ActiveRecord::Base
 
   def process_last_note_created
     s = TempUserNote.where("notes_recorded_at #{@operator} DATE_SUB(now(), INTERVAL #{@digit} #{@hour_day_week})")
+    s = {temp_user_notes_ids: s.pluck(:id), user_ids: s.pluck(:user_id).uniq }
     s
   end
 

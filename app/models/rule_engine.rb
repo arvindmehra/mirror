@@ -24,8 +24,13 @@ class RuleEngine < ActiveRecord::Base
         id = klass_id.gsub('Filter_', '')
         @users = Filter.find_by(id: id).get_scope_users(true,false)
       end
-      if index != (exp_size - 1) && !@users.blank?
-        ActiveRecord::Base.connection.execute("delete from temp_user_notes where id NOT IN (#{@users.join(",")})")
+      if (index != (exp_size - 1) && !@users.blank?)
+        if !@users.is_a?(Hash)
+          ActiveRecord::Base.connection.execute("delete from temp_user_notes where user_id NOT IN (#{@users.join(",")})")
+        else
+          @users = @users[:temp_user_notes_ids].flatten
+          ActiveRecord::Base.connection.execute("delete from temp_user_notes where id NOT IN (#{@users.join(",")})")
+        end
       end
     end
     @users

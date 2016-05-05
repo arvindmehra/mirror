@@ -25,9 +25,15 @@ class FilterGroup < ActiveRecord::Base
     if self.expression.present?
       exp = expression.gsub('Filter_', '').gsub('OR', '|').split
       @users = Filter.find_by(id: exp.shift).get_scope_users(rule,false)
+      if @users.is_a?(Hash)
+        @users = @users[:user_ids].flatten
+      end
       while exp.any?
         operator = exp.shift
         next_users = Filter.find_by(id: exp.shift).get_scope_users(rule,false)
+        if next_users.is_a?(Hash)
+          next_users = next_users[:user_ids].flatten
+        end
         @users = @users.send(operator, next_users)
       end
       @users
