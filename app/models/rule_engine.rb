@@ -1,56 +1,38 @@
 class RuleEngine < ActiveRecord::Base
-	attr_accessor :conditional_operator_one
-  attr_accessor :conditional_operator_two
   attr_accessor :filter_one
-  attr_accessor :filter_two
-  attr_accessor :group_one
-  attr_accessor :group_two
-
   has_many :notification_templates
 
   def get_scope_users
+    prepare_temp_user_note_table
     unwind_expression
   end
 
-
-  def convert_groups_to_filters
-    expressions = expression.split
-    query_exp = []
-    expressions.each do |x|
-      if x.include?("Group")
-        group_id = x.split("_").last
-        x = FilterGroup.find_by(id: group_id).expression.split
-      end
-     query_exp << x 
-    end
-    query_exp.flatten.join(" ")
-  end
-
   def unwind_expression
-    if self.expression.present?
-      exp = expression.gsub('AND', '&').split
-      klass_id =  exp.shift
+    exp = expression.gsub("AND","").split(" ")
+    exp_size = exp.size
+    exp.each_with_index do |klass_id,index|
       if klass_id.include?("Group")
         id = klass_id.gsub('Group_', '')
-        @users = FilterGroup.find_by(id: id).get_scope_users
+        @users = FilterGroup.find_by(id: id).get_scope_users(true,false)
       else
         id = klass_id.gsub('Filter_', '')
-        @users = Filter.find_by(id: id).get_scope_users
+        @users = Filter.find_by(id: id).get_scope_users(true,false)
       end
-      while exp.any?
-        operator = exp.shift
-        klass_id = exp.shift
-        if klass_id.include?("Group")
-          id = klass_id.gsub('Group_', '')
-          next_users = FilterGroup.find_by(id: id).get_scope_users
+      if (index != (exp_size - 1) && !@users.blank?)
+        if !@users.is_a?(Hash)
+          ActiveRecord::Base.connection.execute("delete from temp_user_notes where user_id NOT IN (#{@users.join(",")})")
         else
-          id = klass_id.gsub('Filter_', '')
-          next_users = Filter.find_by(id: id).get_scope_users
+          @users = @users[:temp_user_notes_ids].flatten
+          ActiveRecord::Base.connection.execute("delete from temp_user_notes where id NOT IN (#{@users.join(",")})")
         end
-        @users = @users.send(operator, next_users)
       end
-      @users
     end
+    @users
+  end
+
+  def prepare_temp_user_note_table
+    ActiveRecord::Base.connection.execute("TRUNCATE temp_user_notes")
+    User.populate_temp_user_notes
   end
 
 end

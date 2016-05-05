@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160502061737) do
+ActiveRecord::Schema.define(version: 20160503063925) do
 
   create_table "devices", force: true do |t|
     t.integer  "user_id"
@@ -169,6 +169,33 @@ ActiveRecord::Schema.define(version: 20160502061737) do
 
   add_index "tags", ["name"], name: "index_tags_on_name", using: :btree
   add_index "tags", ["note_id"], name: "index_tags_on_note_id", using: :btree
+
+  create_table "temp_user_notes", force: true do |t|
+    t.integer  "user_id"
+    t.string   "encrypted_email"
+    t.string   "last_activity"
+    t.string   "activity_goal"
+    t.datetime "auth_token_created_at"
+    t.integer  "notes_id"
+    t.string   "category"
+    t.string   "impact"
+    t.string   "feeling"
+    t.integer  "impact_score"
+    t.integer  "feeling_score"
+    t.string   "city"
+    t.string   "suburb"
+    t.string   "country"
+    t.float    "heart_rate",            limit: 24
+    t.float    "sleep_time",            limit: 24
+    t.float    "temperature",           limit: 24
+    t.string   "whether_type"
+    t.float    "steps_walked",          limit: 24
+    t.float    "calories_burnt",        limit: 24
+    t.float    "perception_score",      limit: 24
+    t.datetime "notes_recorded_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "transactions", force: true do |t|
     t.integer  "user_id"
