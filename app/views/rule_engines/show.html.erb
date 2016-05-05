@@ -1,3 +1,8 @@
 <h1></h1>
 <h2>Name :  <%=@rule.name.try(:titleize) %> </h2>
-<h3>Total_users : <%=@rule.get_scope_users.try(:count) %></h3>
+<%= users = @rule.get_scope_users %>
+<% if users.is_a?(Hash) %>
+    <h3>Total_users : <%= users[:user_ids].flatten.size %></h3>
+  <% else %>
+    <h3>Total_users :  <%= users.count%></h3>
+  <% end %>

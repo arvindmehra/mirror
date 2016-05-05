@@ -1,7 +1,8 @@
 
 <h2>Total users for <%=@filter.name.try(:titleize) %> :</h2> 
+<%= @users  %>
   <% if @users.is_a?(Hash) %>
-    <h1><%= @users.values.flatten.size %></h1>
+    <h1><%= @users[:user_ids].flatten.size %></h1>
   <% else %>
     <h1> <%= @users.count%></h1>
   <% end %>

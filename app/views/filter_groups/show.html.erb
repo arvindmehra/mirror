@@ -1,5 +1,11 @@
   <h1></h1>
   <h2>Name :  <%= @filter_group.name.try(:titleize) %> </h2> 
   <!-- <h2>Expression : <%#=@filter_group.readable_expression %></h2> -->
-  <h3>Total_users : <%= @filter_group.get_scope_users.try(:count) %></h3>
+  <%= users =  @filter_group.get_scope_users %>
+
+  <% if users.is_a?(Hash) %>
+    <h3>Total_users : <%= users[:user_ids].flatten.size %></h3>
+  <% else %>
+    <h3>Total_users : <%= users.try(:count)%></h3>
+  <% end %>
 
