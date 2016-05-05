@@ -81,11 +81,11 @@ class User < ActiveRecord::Base
   def self.populate_temp_user_notes
     ActiveRecord::Base.connection.execute(
                           "INSERT INTO temp_user_notes
-                                  (user_id,
-                        encrypted_email,
-                          last_activity,
-                           activity_goal, 
-                                    auth_token_created_at, 
+                                  ( user_id,
+                                    encrypted_email,
+                                    last_activity,
+                                    activity_goal,
+                                    auth_token_created_at,
                                     notes_id,
                                     category,
                                     impact,
@@ -104,12 +104,12 @@ class User < ActiveRecord::Base
                                     perception_score,
                                     notes_recorded_at
                                   )
-                              SELECT 
+                              SELECT
                               users.id,
                               users.encrypted_email,
                               users.last_activity,
                               users.activity_goal,
-                              users.auth_token_created_at, 
+                              users.auth_token_created_at,
                               notes.id,
                               notes.category,
                               notes.impact,

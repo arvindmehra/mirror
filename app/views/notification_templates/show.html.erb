@@ -1,11 +1,17 @@
 <h1></h1>
 <h2>Name :  <%= @notification.title.try(:titleize) %> </h2> 
 <!-- <h2>Expression : <%#=@filter_group.readable_expression %></h2> -->
-<h3>Total Users : <%= @notification.get_scope_users.try(:count) %></h3>
+<%= users = @notification.get_scope_users %>
+<% if users.is_a?(Hash) %>
+    <h3>Total_users : <%= users[:user_ids].flatten.size %></h3>
+  <% else %>
+    <h3>Total_users :  <%= users.count%></h3>
+  <% end %>
+
 
 <h4>Execution Type : <%= @notification.execution_type %></h4>
 
-<h4>Merge Field Included : <%= @notification.merge_field? ? "YES" : "NO" %></h4></br>
+<h4>Display Screen : <%= @notification.display_screen %></h4></br>
 
 <% if @notification.category == "activity" %>
   <% image_path = "activity-1x.png" %>

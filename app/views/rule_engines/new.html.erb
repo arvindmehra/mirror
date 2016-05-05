@@ -11,7 +11,7 @@
     <div id="filter_1">
       <%= f.label "Select", class: "col-sm-2 control-label" %>
       <div class="col-sm-8 controls">
-        <%= f.select :expression ,options_for_select([Filter.all.map{|x| ["FILTER " + x.name,"Filter_" + x.id.to_s+" "]} + FilterGroup.all.map{|x| ["GROUP " + x.name,"GROUP_" + x.id.to_s+" "]}].pop),{},{multiple: true} %><br />
+        <%= f.select :expression ,options_for_select([Filter.all.map{|x| ["Filter " + x.name,"Filter_" + x.id.to_s+" "]} + FilterGroup.all.map{|x| ["Group " + x.name,"Group_" + x.id.to_s+" "]}].pop),{},{multiple: true} %><br />
       </div>  
     </div>
   </div>
@@ -25,45 +25,5 @@
 
 
 <script type="text/javascript">
-$('#filter_1').multiSelect()
-  // $(document).ready(function(){
-      
-  //     $("#reset").click(function(){
-  //         $("#filter_1").hide();
-  //         $("#add_filter_single").show();
-  //         $("#add_group_single").show();
-  //         $("#group_1").hide();
-  //         $("#reset").hide();
-  //         $("#add_group_1").hide();
-  //         $("#operator_2").hide();
-  //         $("#group_2").hide();
-  //     });
-  //     $("#add_filter_single").click(function(){
-  //         $("#filter_1").show();
-  //         $("#add_filter_1").hide();
-  //         $("#add_filter_single").hide();
-  //         $("#add_group_single").hide();
-  //         $("#add_group_1").show();
-  //         $("#reset").show();
-  //     });
-  //     $("#add_group_single").click(function(){
-  //         $("#group_1").show();
-  //         $("#add_group_single").hide();
-  //         $("#add_filter_single").hide();
-  //         $("#add_filter_1").hide();
-  //         $("#add_group_1").show();
-  //         $("#reset").show();
-  //     })
-  //     $("#add_group_1").click(function(){
-  //         $("#operator_2").show();
-  //         $("#group_2").show();
-  //         $("#add_group_single").hide();
-  //         $("#add_group_1").hide();
-  //         $("#reset").show();
-  //         $("#add_filter_1").hide();
-  //         $("#add_filter_single").hide();
-  //     });
-
-      
-  // });
+  $('#filter_1').multiSelect({ keepOrder: true });
 </script>
