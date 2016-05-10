@@ -204,7 +204,7 @@ class Filter < ActiveRecord::Base
     "useful_list" => "Useful List",
     "group_list" => "Group List"
   }
-
+  EMPTY = ""
   IN = "in"
   LESS_THAN = "<"
   LESS_THAN_OR_EQUAL_TO = "<="
@@ -212,7 +212,7 @@ class Filter < ActiveRecord::Base
   MORE_THAN_OR_EQUAL_TO = ">="
   EQUAL_TO = "="
   BETWEEN_OP = "between"
-  RELATION_OPERATOR = [LESS_THAN,LESS_THAN_OR_EQUAL_TO,MORE_THAN,MORE_THAN_OR_EQUAL_TO,EQUAL_TO]
+  RELATION_OPERATOR = [EMPTY,LESS_THAN,LESS_THAN_OR_EQUAL_TO,MORE_THAN,MORE_THAN_OR_EQUAL_TO,EQUAL_TO]
   NON_RELATION_OPERATOR = ["yes","no"]
 
   TEXT_OPERATOR_LIST = {
@@ -222,15 +222,16 @@ class Filter < ActiveRecord::Base
     "contains" => "Contains"
   }
 
-  FAMILY = [["Usage","usage"],
-                    ["Life Activity in Realifex","life_activity_in_realifex"],
-                    ["Time","time"],
-                    ["Places","places"],
-                    ["Category,Topics,Score","category_topic_score"],
-                    ["Weather","weather"],
-                    ["Steps","steps"],
-                    ["Inclusion/Exclusion","inclusion_exclusion"]
-                  ]
+  FAMILY = [ 
+              ["Usage","usage"],
+              ["Life Activity in Realifex","life_activity_in_realifex"],
+              ["Time","time"],
+              ["Places","places"],
+              ["Category,Topics,Score","category_topic_score"],
+              ["Weather","weather"],
+              ["Steps","steps"],
+              ["Inclusion/Exclusion","inclusion_exclusion"]
+            ]
   
 
   KEY_OPERATORS = {
