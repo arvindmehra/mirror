@@ -30,8 +30,11 @@ gem 'sucker_punch', '~> 2.0'
 gem 'serial_preference', '>= 1.2.0'
 
 group :development do
+  gem "better_errors"
+  gem "binding_of_caller"
   gem 'byebug'
   gem 'quiet_assets'
+  gem "bullet"
 end
 
 # Use jquery as the JavaScript library

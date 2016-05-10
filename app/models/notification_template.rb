@@ -9,6 +9,7 @@ class NotificationTemplate < ActiveRecord::Base
   include SerialPreference::HasSerialPreferences
 
   preferences(:filter_preferences) do
+    boolean :well_being
     string :categories
     string :dashboard
     string :days_from_now
@@ -23,10 +24,21 @@ class NotificationTemplate < ActiveRecord::Base
     string :sleep_time_min
     string :sleep_time_medium
     string :sleep_time_max
-    string :whether
+    string :weather
     string :temperature_min
     string :temperature_medium
     string :temperature_max
+    string :calories_min
+    string :calories_medium
+    string :calories_max
+  end
+
+  preferences(:cta_preferences) do
+    string :provide_feedback_email
+    string :chat_email
+    string :learn_more_url
+    string :take_the_survey_url
+    string :anonymous_feedback_url
   end
 
   CATEGORY_LIST = ["","Experiences","Actions","Emotions","Decisions","Discoveries"]
