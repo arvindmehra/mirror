@@ -1,5 +1,7 @@
 class UserNotification < ActiveRecord::Base
 
+  include SerialPreference::HasSerialPreferences
+
   belongs_to :user
   belongs_to :notification_template
   scope :read, -> { where(read_status: 1) }

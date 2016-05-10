@@ -1,15 +1,6 @@
 class FilterGroup < ActiveRecord::Base
 
-  attr_accessor :conditional_operator_one
-  attr_accessor :conditional_operator_two
-  attr_accessor :conditional_operator_three
-  attr_accessor :conditional_operator_four
-  attr_accessor :filter_one
-  attr_accessor :filter_two
-  attr_accessor :filter_three
-  attr_accessor :filter_four
-  attr_accessor :filter_five
-
+  attr_accessor :filter_series
   
   def get_scope_users(rule=nil,truncate_table=true)
     prepare_temp_user_note_table if truncate_table

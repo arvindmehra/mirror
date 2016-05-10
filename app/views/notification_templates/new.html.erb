@@ -88,7 +88,116 @@
         <%= f.text_field :elapse_time, class: "form-control",placeholder: "yyyy-mm-dd"  %>
       </div>  
     </div>
-  </div>  
+  </div>
+<!-- ###################################################       Autofocus Segment      ############################################ -->
+  <div id=autofocus style="display: none">
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
+      <%= f.label "Filter Categories", class: "col-sm-2 control-label" %>
+      <div class="col-sm-8 controls">
+         <%= f.select :category,options_for_select(NotificationTemplate::CATEGORY_LIST), class: "form-control" %>
+      </div>  
+    </div>
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
+      <%= f.label "Filter Whether", class: "col-sm-2 control-label" %>
+      <div class="col-sm-8 controls">
+          <%= f.select :whether,options_for_select(NotificationTemplate::WEATHER_LIST), class: "form-control" %>
+      </div>  
+    </div>
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
+      <%= f.label "Filter Dashboard", class: "col-sm-2 control-label" %>
+      <div class="col-sm-8 controls">
+         <%= f.select :dashboard,options_for_select(NotificationTemplate::DASHBOARD), class: "form-control" %>
+      </div>  
+    </div>
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
+      <%= f.label "Filter TimePeriod", class: "col-sm-2 control-label" %>
+      <div class="col-sm-8 controls">
+         <%= f.select :days_from_now,options_for_select(NotificationTemplate::FUTURE_DATE_LIST), class: "form-control" %>
+      </div>  
+    </div>
+
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
+      <%= f.label "Filter Topics", class: "col-sm-2 control-label" %>
+      <div class="col-sm-8 controls">
+         <%= f.text_field :topic, class: "form-control",placeholder: "comma seperated values" %>
+      </div>  
+    </div>
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
+      <%= f.label "Filter Perception Score", class: "col-sm-2 control-label" %>
+      <div class="col-sm-8 controls">
+         <%= f.text_field :score_data, class: "form-control" %>
+      </div>  
+    </div>
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
+      <%= f.label "Filter Heart Rate", class: "col-sm-2 control-label" %>
+      <div class="col-sm-8 controls">
+        <div class="col-sm-2">
+          <%= f.label "Min" %>
+          <%= f.check_box :heart_rate_min %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label "Medium" %>
+          <%= f.check_box :heart_rate_medium %>
+        </div>
+        <div class="col-sm-2">  
+          <%= f.label "Max" %>
+          <%= f.check_box :heart_rate_max %>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
+      <%= f.label "Filter Steps Walked", class: "col-sm-2 control-label" %>
+      <div class="col-sm-8 controls">
+        <div class="col-sm-2">
+          <%= f.label "Min" %>
+          <%= f.check_box :steps_walked_min %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label "Medium" %>
+          <%= f.check_box :steps_walked_medium %>
+        </div>
+        <div class="col-sm-2">  
+          <%= f.label "Max" %>
+          <%= f.check_box :steps_walked_max %>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
+      <%= f.label "Filter Steps Walked", class: "col-sm-2 control-label" %>
+      <div class="col-sm-8 controls">
+        <div class="col-sm-2">
+          <%= f.label "Min" %>
+          <%= f.check_box :sleep_time_min %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label "Medium" %>
+          <%= f.check_box :sleep_time_medium %>
+        </div>
+        <div class="col-sm-2">  
+          <%= f.label "Max" %>
+          <%= f.check_box :sleep_time_max %>
+        </div>
+      </div>
+    </div>
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
+      <%= f.label "Filter temperature", class: "col-sm-2 control-label" %>
+      <div class="col-sm-8 controls">
+        <div class="col-sm-2">
+          <%= f.label "Min" %>
+          <%= f.check_box :temperature_min %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label "Medium" %>
+          <%= f.check_box :temperature_medium %>
+        </div>
+        <div class="col-sm-2">  
+          <%= f.label "Max" %>
+          <%= f.check_box :temperature_max %>
+        </div>
+      </div>
+    </div>
     <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
       <div class="col-sm-2"></div>
       <div class="col-sm-8"><%= f.submit class: "btn btn-primary" %></div>
@@ -108,6 +217,16 @@
         {
           $("#real_time_group").show()
           $("#date_group").hide();
+        }
+      })
+    $('#notification_template_cta_key').on('change', function() {
+      if ( this.value == 'autofocus')
+        {
+          $("#autofocus").show();
+        }
+      else
+        {
+          $("#autofocus").hide();
         }
       })
     });

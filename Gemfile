@@ -27,6 +27,7 @@ gem 'grocer'
 gem 'rails-web-console'
 gem 'houston'
 gem 'sucker_punch', '~> 2.0'
+gem 'serial_preference', '>= 1.2.0'
 
 group :development do
   gem 'byebug'

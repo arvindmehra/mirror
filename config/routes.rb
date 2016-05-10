@@ -34,6 +34,7 @@ Rails.application.routes.draw do
     get "user_activities/keyboard" => "user_activities#keyboard"
 
     get "user_notifications/get_all" => "user_notifications#get_all"
+    get "user_notifications/template" => "user_notifications#template"
 
     resources :user_notifications, :only => [:update] do 
       collection do

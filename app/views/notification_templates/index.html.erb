@@ -29,7 +29,7 @@
 <% if @notifications.present? %>
   <% @notifications.each do |template| %>
     <tr class="device_row">
-      <td class="vendor_id_field string_type" title="iosSimulator"><%= link_to template.title, notification_template_path(template) %></td>
+      <td class="vendor_id_field string_type"><%= link_to template.title, notification_template_path(template) %></td>
       
     </tr>
   <% end %>
