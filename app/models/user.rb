@@ -78,6 +78,22 @@ class User < ActiveRecord::Base
     user_notifications.for_option_screen.non_deleted.unread
   end
 
+  def todays_activity_time(date=nil)
+    today_date = date.present? ? date : Time.current.strftime("%Y-%m-%d")
+    activity_for_today = user_activities.where(activity_date: today_date)
+    activity_for_today.present? ? activity_for_today.first.time_spent : 0
+  end
+
+  def achieved_activity_target?
+    targeted_time = activity_goal || 0
+    todays_activity_time > targeted_time
+  end
+
+  def is_in_filter_scope?(notification_template)
+    filter_scoped_users = notification_template.get_scope_users
+    filter_scoped_users.include?(self.id)
+  end
+
   def self.populate_temp_user_notes
     ActiveRecord::Base.connection.execute(
                           "INSERT INTO temp_user_notes

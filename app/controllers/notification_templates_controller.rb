@@ -43,7 +43,7 @@ class NotificationTemplatesController < ApplicationController
 private
     
   def notification_params
-    params.require(:notification_template).permit(:title, :subtitle, :description, :merge_field,
+    params.require(:notification_template).permit(:title, :subtitle, :description,
                   :cta,:useful, :rule_engine_id,:execution_type, :start_date, :end_date, :active,
                   :category, :cta_key, :display_screen,:condition_met,:time_elapse,:filter_preferences,
                   :elapse_time, :whether, :dashboard, :days_from_now, :topic, :score_data, :heart_rate_min,

@@ -21,6 +21,15 @@ class RuleEnginesController < ApplicationController
     @rule = RuleEngine.find(params[:id])
   end
 
+  def update
+    @rule = RuleEngine.find(params[:id])
+    if @rule.update(rule_params)
+      redirect_to rule_engines_path
+    else
+      redirect_to rule_engines_path
+    end
+  end
+
   def show
     @rule = RuleEngine.find_by(id: params[:id])
   end

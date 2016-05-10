@@ -2,28 +2,32 @@ class NotificationTemplate < ActiveRecord::Base
 
   has_many :user_notifications
   belongs_to :rule_engine
+  scope :realtime, -> {where(execution_type: "realtime")}
+  scope :alive, -> {where(active: true)}
+
+
   include SerialPreference::HasSerialPreferences
 
-    preferences(:filter_preferences) do
-      string :categories
-      string :dashboard
-      string :days_from_now
-      string :topic
-      string :score_data
-      string :heart_rate_min
-      string :heart_rate_max
-      string :heart_rate_medium
-      string :steps_walked_min
-      string :steps_walked_medium
-      string :steps_walked_max
-      string :sleep_time_min
-      string :sleep_time_medium
-      string :sleep_time_max
-      string :whether
-      string :temperature_min
-      string :temperature_medium
-      string :temperature_max
-    end
+  preferences(:filter_preferences) do
+    string :categories
+    string :dashboard
+    string :days_from_now
+    string :topic
+    string :score_data
+    string :heart_rate_min
+    string :heart_rate_max
+    string :heart_rate_medium
+    string :steps_walked_min
+    string :steps_walked_medium
+    string :steps_walked_max
+    string :sleep_time_min
+    string :sleep_time_medium
+    string :sleep_time_max
+    string :whether
+    string :temperature_min
+    string :temperature_medium
+    string :temperature_max
+  end
 
   CATEGORY_LIST = ["","Experiences","Actions","Emotions","Decisions","Discoveries"]
   WEATHER_LIST = [  ["","Please Select"],
