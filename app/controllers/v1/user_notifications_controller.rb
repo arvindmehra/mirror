@@ -12,13 +12,13 @@ class V1::UserNotificationsController < V1::BaseController
   def template
     render json:
     {
-      "dashboard_screen": "life_path",
-      "wbs": 7,
+      dashboard_screen: "life_path",
+      wbs: 7,
       filter: {
         days_from_now: 4,
         topic: ["worldcup","ipl"],
-        "score_data": ["3-7","4-7","5-7"],
-        "categories":["Actions","Discoveries","Experiences","Decisions"],
+        score_data: ["3-7","4-7","5-7"],
+        categories:["Actions","Discoveries","Experiences","Decisions"],
         whether:["cloudy","overcast"],
         steps_walked: {
                         min: 0,
