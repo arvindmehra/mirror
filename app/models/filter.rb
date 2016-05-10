@@ -3,7 +3,7 @@ class Filter < ActiveRecord::Base
   def get_scope_users(group=nil,truncate_table=true)
     prepare_temp_user_note_table if truncate_table
     @filter = self
-    @segment = @filter.segment # downloaded_the_app  
+    @segment = @filter.segment # downloaded_the_app
     @list_type = @filter.list_type # recency_list
     @condition = @filter.condition # 12_day_ago
     @operator = @filter.operator # <

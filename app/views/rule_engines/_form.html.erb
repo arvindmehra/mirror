@@ -1,0 +1,29 @@
+<h1>Make a New Rule</h1>
+<%= form_for @rule do |f| %>
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
+    <%= f.label :name, class: "col-sm-2 control-label" %>
+    <div class="col-sm-6 controls">
+      <%= f.text_field :name, class: "form-control",required: true  %>
+    </div>  
+  </div>
+
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-8">
+    <div id="filter_1">
+      <%= f.label "Select", class: "col-sm-2 control-label" %>
+      <div class="col-sm-8 controls">
+        <%= f.select :expression ,options_for_select([Filter.all.map{|x| ["Filter " + x.name,"Filter_" + x.id.to_s+" "]} + FilterGroup.all.map{|x| ["Group " + x.name,"Group_" + x.id.to_s+" "]}].pop),{},{multiple: true} %><br />
+      </div>  
+    </div>
+  </div>
+
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-8">
+    <div class="col-sm-2"></div> 
+    <div class="col-sm-8"><%= f.submit class: "btn btn-primary" %></div>
+  </div>
+<% end %>
+
+
+
+<script type="text/javascript">
+  $('#filter_1').multiSelect({ keepOrder: true });
+</script>

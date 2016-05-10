@@ -6,6 +6,7 @@ class Note < ActiveRecord::Base
   has_many :tags, dependent: :destroy
 
   after_save :calculate_tags
+  after_save :check_for_realtime_notifications
 
   scope :heart_rate_range, -> (range) {where(heart_rate: range)}
   scope :sleep_time_range, -> (range) {where(sleep_time: range)}
@@ -36,6 +37,10 @@ class Note < ActiveRecord::Base
       @feeling_score_value=feeling_score-5
     end
     return impact_score*@feeling_score_value
+  end
+
+  def check_for_realtime_notifications
+    RealtimeNotificationChecker.perform_async(self.id)
   end
 
 end

@@ -18,7 +18,7 @@ class NotificationTemplatesController < ApplicationController
     @notification_template = NotificationTemplate.new(notification_params)
     @notification_template.cta = NotificationTemplate::CTA[notification_params[:cta_key]]
     if @notification_template.save
-      redirect_to notification_templates_path 
+      redirect_to notification_templates_path
     end
   end
 
@@ -43,9 +43,12 @@ class NotificationTemplatesController < ApplicationController
 private
     
   def notification_params
-    params.require(:notification_template).permit(:title, :subtitle, :description, :merge_field,
+    params.require(:notification_template).permit(:title, :subtitle, :description,
                   :cta,:useful, :rule_engine_id,:execution_type, :start_date, :end_date, :active,
-                  :category, :cta_key, :display_screen,:condition_met,:time_elapse)
+                  :category, :cta_key, :display_screen,:condition_met,:time_elapse,:filter_preferences,
+                  :elapse_time, :whether, :dashboard, :days_from_now, :topic, :score_data, :heart_rate_min,
+                  :heart_rate_medium, :heart_rate_max, :steps_walked_min, :steps_walked_medium, :steps_walked_max,
+                  :sleep_time_min, :sleep_time_medium, :sleep_time_max, :temperature_min, :temperature_medium, :temperature_max)
   end
 
 end
