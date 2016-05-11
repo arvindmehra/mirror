@@ -18,11 +18,11 @@ class RuleEnginesController < ApplicationController
   end
 
   def edit
-    @rule = RuleEngine.find(params[:id])
+    @rule = RuleEngine.find_by(id: params[:id])
   end
 
   def update
-    @rule = RuleEngine.find(params[:id])
+    @rule = RuleEngine.find_by(id: params[:id])
     if @rule.update(rule_params)
       redirect_to rule_engines_path
     else
@@ -37,6 +37,16 @@ class RuleEnginesController < ApplicationController
   def new
     @rule = RuleEngine.new
     @filters_list = FilterGroup.all
+  end
+
+  def destroy
+    @rule = RuleEngine.find(params[:id])
+    if @rule.destroy
+      flash[:notice] = "Campaign deleted"
+    else
+      flash[:error] = "Error deleting campaign"
+    end
+    redirect_to rule_engines_path
   end
 
   private

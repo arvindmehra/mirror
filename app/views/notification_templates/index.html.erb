@@ -1,6 +1,6 @@
 <h1>Admin Notification</h1>
   <ol class="breadcrumb"><li class="false"><a class="pjax" href="/admin/">Dashboard</a></li>
-    <li class="active">Rules</li>
+    <li class="active">Admin Notifications</li>
   </ol>
   <ul class="nav nav-tabs">
     <li title="" rel="" class="icon index_collection_link active">
@@ -9,19 +9,15 @@
         <span>List</span>
       </a>
     </li>
-
     <li title="" rel="" class="icon new_collection_link ">
       <%= link_to ("<i class='icon-plus'></i> Add New").html_safe, new_notification_template_path %>
     </li>
   </ul>
-
-<form accept-charset="UTF-8" action="/admin/device/bulk_action" class="form" id="bulk_form" method="post"><div style="display:none"><input name="utf8" type="hidden" value="✓"><input name="authenticity_token" type="hidden" value="ozaU2R4O/5rZF+nN2ve7kRhlqTwvtAimQck9RPJE7U4="></div>
-<input id="bulk_action" name="bulk_action" type="hidden">
 <table class="table table-condensed table-striped">
 <thead>
   <tr>
-    <th class="header pjax  user_field belongs_to_association_type" data-href="/admin/device?sort=user" rel="tooltip" title="" data-original-title="">Name</th>
-
+    <th class="header pjax  user_field belongs_to_association_type">Name</th>
+    <th class="header pjax  user_field belongs_to_association_type">Type</th>
   </tr>
 </tr>
 </thead>
@@ -29,13 +25,18 @@
 <% if @notifications.present? %>
   <% @notifications.each do |template| %>
     <tr class="device_row">
-      <td class="vendor_id_field string_type"><%= link_to template.title, notification_template_path(template) %></td>
-      
+      <td class="vendor_id_field string_type"><%= link_to template.title.try(:titleize), notification_template_path(template) %></td>
+      <td class="vendor_id_field string_type"><%= template.execution_type.try(:titleize) %></td>
+      <td class="vendor_id_field string_type" ><%= link_to "Edit", edit_notification_template_path(template), class: "btn btn-primary" %></td>
+      <td class="vendor_id_field string_type">
+        <% if template.active? %>
+          <%= link_to "Deactivate", deactivate_notification_templates_path({id: template}),method: :patch, class: "btn btn-danger" %>
+        <% else %>
+          <%= link_to "Activate", activate_notification_templates_path({id: template}),method: :patch, class: "btn btn-success" %>
+        <% end %>
+      </td>
     </tr>
   <% end %>
 <% end %>
 </tbody>
 </table>
-</div>
-</div>
-</div>

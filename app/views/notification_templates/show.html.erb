@@ -23,9 +23,8 @@
 <div class="col-md-6 notification_box">
   <b><%=@notification.title %></b></br></br>
   <%= image_tag image_path %> <%=@notification.subtitle %> | <%= Date.today %> | <%= Time.now.strftime("%I:%M %p") %> </br></br>
-  <%=@notification.description %></br></br>
+  <%= @notification.description %></br></br>
   <span class="btn btn-sytle" ><%=@notification.cta %></span></br></br>
-
   <% if @notification.useful? %>
     <span>was this useful? &nbsp;&nbsp;&nbsp; <b>YES&nbsp;&nbsp;</b>|<b>&nbsp;&nbsp;NO</b></span>
   <% end %>
@@ -35,7 +34,9 @@
 
 <div class="col-md-8 padder ">
   <div class="col-md-4">
+  <% if @notification.execution_type == "batch" %>
     <%= link_to "Blast Send Now", blast_send_notification_templates_path({id: @notification}), class: "btn btn-primary" %>
+  <% end %>
   </div>
   <div class="col-md-4">
     <% if @notification.active? %>

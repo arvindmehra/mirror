@@ -60,6 +60,9 @@ class V1::UserNotificationsController < V1::BaseController
   def mark_notifications_read(notifications)
     notifications.values.each do |notification_records|
       notification_records.each do |notification|
+        if notification.is_a?(Hash)
+          notification = UserNotification.find_by(id: notification[:id])
+        end
         notification.read_status = true
         notification.save
       end
