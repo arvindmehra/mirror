@@ -3,6 +3,8 @@ class NotificationTemplate < ActiveRecord::Base
   has_many :user_notifications
   belongs_to :rule_engine
   scope :realtime, -> {where(execution_type: "realtime")}
+  scope :for_notes, -> {where(trigger: "note_created")}
+  scope :for_activity, -> {where(trigger: "activity_recorded")}
   scope :alive, -> {where(active: true)}
 
 
@@ -70,39 +72,36 @@ class NotificationTemplate < ActiveRecord::Base
                           "in_9_day"
                       ]
 
-  DASHBOARD = ["","Life Path","Life Flow"]
+  DASHBOARD = ["","Life Path","Life Map","Life Focus","Life Summary","Life Activity"]
 
-  CONDITION = [["When daily goal is reached","goal_reached"]]
+  TRIGGERS = [["",""],["When notes is created","note_created"],["When activity is recorded","activity_recorded"]]
 
   ELAPSED_TIME = [1,2,3,4,5]
 
-  DISPLAY_SCREEN = [["Option", "option"],
-                    ["Suggestion","suggestion"]
-                    
-                  ]
+  DISPLAY_SCREEN = [["",""],["Option", "option"],["Suggestion","suggestion"]]
 
-
-    CTA = {
-      "reflect"=>"Reflect",
-          "create_a_note"=>"Create a note",
-          "convert_to_a_note"=>"Convert to a note",
-          "provide_feedback"=>"Provide feedback",
-          "set_a_new_goal"=>"Set a new goal",
-          "subscribed"=>"Subscribe",
-          "chat_with_alexs"=>"Chat with Alex",
-          "upgrate_to_a_new_version"=>"Upgrade to new version",
-          "autofocus"=> "AutoFocus"
-        }
+  CTA = {
+        "reflect"=>"Reflect",
+        "create_a_note"=>"Create a note",
+        "convert_to_a_note"=>"Convert to a note",
+        "provide_feedback"=>"Provide feedback",
+        "set_a_new_goal"=>"Set a new goal",
+        "subscribed"=>"Subscribe",
+        "chat_with_alexs"=>"Chat with Alex",
+        "upgrate_to_a_new_version"=>"Upgrade to new version",
+        "autofocus"=> "AutoFocus"
+      }
 
   CATEGORY = [["Activity","activity"],
               ["Behaviour","behaviour"],
-              ["User","user"]]
+              ["User","user"],
+              ["LifeAutoFocus","lifeautofocus"]]
 
   def get_scope_users
     users = rule_engine.get_scope_users
   end
 
-  def trigger
+  def fire
     Pusher.perform_async(self.id)
   end
 
