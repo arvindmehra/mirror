@@ -31,6 +31,7 @@ class Notifier
       user_notification.display_screen = notification_template.display_screen
       user_notification.sent_at = Time.current
       user_notification.user_id = user.id
+      user_notification.filter_preferences = notification_template.filter_preferences
       user_notification.save
     end
   end

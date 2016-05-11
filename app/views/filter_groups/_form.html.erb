@@ -1,0 +1,29 @@
+<h1>Make a New Group</h1>
+<%= form_for @filter_group do |f| %>
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
+    <%= f.label :name, class: "col-sm-2 control-label" %>
+    <div class="col-sm-8 controls">
+      <%= f.text_field :name, class: "form-control" , required: true  %>
+    </div>  
+  </div>
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
+    <div id="filter_1">
+      <%= f.label "Filters", class: "col-sm-2 control-label" %>
+      <div class="col-sm-8 controls">
+        <%= f.select :filter_series,options_for_select([["",""]]+Filter.all.map{|x| [x.name,"Filter_" + x.id.to_s+" "]}),{},{multiple: true, class: "form-control"} %><br />
+      </div>
+    </div>  
+  </div>
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
+    <div class="col-sm-2"></div> 
+    <div class="col-sm-8"><%= f.submit class: "btn btn-primary" %></div>
+  </div>
+<% end %>
+
+
+<script type="text/javascript">
+  $('#filter_1').multiSelect({ keepOrder: true });
+</script>
+
+
+

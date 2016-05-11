@@ -6,7 +6,7 @@ class Note < ActiveRecord::Base
   has_many :tags, dependent: :destroy
 
   after_save :calculate_tags
-  after_save :check_for_realtime_notifications
+  after_create :check_for_realtime_notifications
 
   scope :heart_rate_range, -> (range) {where(heart_rate: range)}
   scope :sleep_time_range, -> (range) {where(sleep_time: range)}

@@ -15,7 +15,7 @@ class NotificationTemplate < ActiveRecord::Base
     string :categories
     string :dashboard
     string :days_from_now
-    string :topic
+    string :topics
     string :score_data
     string :heart_rate_min
     string :heart_rate_max
@@ -33,9 +33,6 @@ class NotificationTemplate < ActiveRecord::Base
     string :calories_min
     string :calories_medium
     string :calories_max
-  end
-
-  preferences(:cta_preferences) do
     string :provide_feedback_email
     string :chat_email
     string :learn_more_url
@@ -55,21 +52,23 @@ class NotificationTemplate < ActiveRecord::Base
                     ["snow","Snow"]
                   ]
 
+
+
   FUTURE_DATE_LIST = [    "",
-                          "today",
-                          "tomorrow",
-                          "in_1_hour",
-                          "in_2_hour",
-                          "in_4_hour",
-                          "in_1_day",
-                          "in_2_day",
-                          "in_3_day",
-                          "in_4_day",
-                          "in_5_day",
-                          "in_6_day",
-                          "in_7_day",
-                          "in_8_day",
-                          "in_9_day"
+                          "Today",
+                          "Yesterday",
+                          "Last 2 Days",
+                          "Last 3 Days",
+                          "Last 4 Days",
+                          "Last 5 Days",
+                          "Last 6 Days",
+                          "Last 7 Days",
+                          "Last 14 Days",
+                          "Last 21 Days",
+                          "Last 30 Days",
+                          "Last 3 Months",
+                          "Last 6 Months",
+                          "Last 12 Months"
                       ]
 
   DASHBOARD = ["","Life Path","Life Map","Life Focus","Life Summary","Life Activity"]
