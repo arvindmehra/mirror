@@ -37,7 +37,7 @@ class NotificationTemplatesController < ApplicationController
     notification = NotificationTemplate.find_by(id: params[:id])
     notification.fire
     flash[:success] = "Blast Send Triggered. Sit Tight!!"
-    redirect_to notification_template_path(notification)
+    redirect_to notification_templates_path
   end
 
   def deactivate
@@ -50,7 +50,7 @@ class NotificationTemplatesController < ApplicationController
   def activate
     notification = NotificationTemplate.find_by(id: params[:id])
     notification.activate
-    flash[:success] = "Activated. Keep Calm!!"
+    flash[:success] = "Activated. Careful!"
     redirect_to notification_templates_path
   end
 

@@ -7,6 +7,7 @@ class Notifier
       users = User.where(id: notification_template.get_scope_users).includes(:devices)
       users.each_slice(100) do | batch |
         batch.each do | user |
+          Rails.logger.info  "constructing notifications"
           construct_user_notifications(notification_template,user)
           badge = (notification_template.display_screen == "suggestion") ? user.unread_suggestion_notifications.count : user.unread_option_notifications.count
           devices = user.devices.where.not("notification_token"=>nil)
