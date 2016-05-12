@@ -28,6 +28,7 @@ class NotificationTemplatesController < ApplicationController
     @notification_template = NotificationTemplate.new(notification_params)
     @notification_template.cta = NotificationTemplate::CTA[notification_params[:cta_key]]
     if @notification_template.save
+      flash[:success] = "New Notification Created. Superb!!"
       redirect_to notification_templates_path
     end
   end
@@ -35,18 +36,21 @@ class NotificationTemplatesController < ApplicationController
   def blast_send
     notification = NotificationTemplate.find_by(id: params[:id])
     notification.fire
+    flash[:success] = "Blast Send Triggered. Sit Tight!!"
     redirect_to notification_template_path(notification)
   end
 
   def deactivate
     notification = NotificationTemplate.find_by(id: params[:id])
     notification.deactivate
+    flash[:success] = "Deactivated. Relax!!"
     redirect_to notification_templates_path
   end
 
   def activate
     notification = NotificationTemplate.find_by(id: params[:id])
     notification.activate
+    flash[:success] = "Activated. Keep Calm!!"
     redirect_to notification_templates_path
   end
 
