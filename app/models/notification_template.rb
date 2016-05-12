@@ -80,15 +80,18 @@ class NotificationTemplate < ActiveRecord::Base
   DISPLAY_SCREEN = [["",""],["Option", "option"],["Suggestion","suggestion"]]
 
   CTA = {
-        "reflect"=>"Reflect",
+        "view_insights"=>"View Insights",
         "create_a_note"=>"Create a note",
         "convert_to_a_note"=>"Convert to a note",
         "provide_feedback"=>"Provide feedback",
         "set_a_new_goal"=>"Set a new goal",
-        "subscribed"=>"Subscribe",
-        "chat_with_alexs"=>"Chat with Alex",
+        "activate"=>"Activate",
+        "chat"=>"Chat",
         "upgrate_to_a_new_version"=>"Upgrade to new version",
-        "autofocus"=> "AutoFocus"
+        "autofocus"=> "AutoFocus",
+        "learn_more"=> "Learn More",
+        "take_survey"=> "Take the survey",
+        "anonymous_feedback" => "Anonymous Feedback"
       }
 
   CATEGORY = [["Activity","activity"],

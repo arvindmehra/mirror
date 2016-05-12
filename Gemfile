@@ -28,6 +28,7 @@ gem 'rails-web-console'
 gem 'houston'
 gem 'sucker_punch', '~> 2.0'
 gem 'serial_preference', '>= 1.2.0'
+gem 'figaro'
 
 group :development do
   gem "better_errors"
