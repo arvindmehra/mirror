@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160510131558) do
+ActiveRecord::Schema.define(version: 20160512120013) do
 
   create_table "devices", force: true do |t|
     t.integer  "user_id"
@@ -227,7 +227,7 @@ ActiveRecord::Schema.define(version: 20160510131558) do
   create_table "user_notifications", force: true do |t|
     t.string   "title"
     t.string   "subtitle"
-    t.string   "description"
+    t.text     "description"
     t.string   "merge_field"
     t.integer  "user_id"
     t.integer  "notification_template_id"
