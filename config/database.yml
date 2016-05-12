@@ -13,7 +13,7 @@ default: &default
   adapter: mysql2
   encoding: utf8mb4
   collation: utf8mb4_general_ci
-  pool: 50
+  pool: 5
   username: root
   password:
   socket: /tmp/mysql.sock
@@ -38,6 +38,7 @@ staging:
   password: <%= ENV["DB_PASSWORD"] %>
   host: <%= ENV["DB_HOSTNAME"] %>
   port: <%= ENV["DB_PORT"] %>
+  pool: <%= ENV["DB_POOL"] %>
   
 production:
   adapter: mysql2
@@ -48,3 +49,4 @@ production:
   password: <%= ENV["DB_PASSWORD"] %>
   host: <%= ENV["DB_HOSTNAME"] %>
   port: <%= ENV["DB_PORT"] %>
+  pool: <%= ENV["DB_POOL"] %>
