@@ -12,7 +12,7 @@ class UserNotification < ActiveRecord::Base
 
   preferences(:filter_preferences) do
     boolean :well_being
-    string :categories
+    string :autofocus_categories
     string :dashboard
     string :days_from_now
     string :topics
@@ -71,7 +71,7 @@ class UserNotification < ActiveRecord::Base
 
   def data_hash
     score_data = self.score_data.split(",") if self.score_data.present?
-    categories = self.categories.split(",") if self.categories.present?
+    categories = self.autofocus_categories.split(",") if self.autofocus_categories.present?
     wheather = self.weather.split(",") if self.weather.present?
     topics = self.topics.split(",") if self.topics.present?
     {

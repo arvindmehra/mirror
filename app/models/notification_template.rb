@@ -12,7 +12,7 @@ class NotificationTemplate < ActiveRecord::Base
 
   preferences(:filter_preferences) do
     boolean :well_being
-    string :categories
+    string :autofocus_categories
     string :dashboard
     string :days_from_now
     string :topics
@@ -40,8 +40,8 @@ class NotificationTemplate < ActiveRecord::Base
     string :anonymous_feedback_url
   end
 
-  CATEGORY_LIST = ["","Experiences","Actions","Emotions","Decisions","Discoveries"]
-  WEATHER_LIST = [  ["","Please Select"],
+  CATEGORY_LIST = ["Experiences","Actions","Emotions","Decisions","Discoveries"]
+  WEATHER_LIST = [
                     ["clear","Clear"],
                     ["overcast","Overcast"],
                     ["wind","Wind"],
