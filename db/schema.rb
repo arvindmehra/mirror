@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160512120013) do
+ActiveRecord::Schema.define(version: 20160517134901) do
 
   create_table "devices", force: true do |t|
     t.integer  "user_id"
@@ -106,6 +106,10 @@ ActiveRecord::Schema.define(version: 20160512120013) do
     t.string   "elapse_time"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "in_exclusion_segment"
+    t.string   "in_exclusion_operator"
+    t.string   "in_exclusion_condition"
+    t.integer  "in_exclusion_notification_id"
   end
 
   create_table "products", force: true do |t|

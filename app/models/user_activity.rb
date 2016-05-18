@@ -7,7 +7,7 @@ class UserActivity < ActiveRecord::Base
 
 
   def check_for_realtime_notifications
-  	RealtimeNotificationChecker.perform_async(user.id,"activity_recorded")
+  	RealtimeNotificationChecker.performer(user.id,"activity_recorded")
   end
 
 end

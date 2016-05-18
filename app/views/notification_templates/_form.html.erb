@@ -1,5 +1,12 @@
 <h1>Make a New Notification</h1>
+
 <%= form_for @notification_template do |f| %>
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
+    <%= f.label "Category", class: "col-sm-3 control-label" %>
+    <div class="col-sm-6 controls">
+    <%= f.select :category,options_for_select(NotificationTemplate::CATEGORY), class: "form-control" %><br />
+    </div>
+  </div>
   <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
     <%= f.label :title, class: "col-sm-3 control-label" %>
     <div class="col-sm-6 controls">
@@ -31,11 +38,32 @@
     <%= f.select :rule_engine_id,options_for_select(RuleEngine.all.map{|x| [x.name, x.id]}), class: "form-control" %><br />
     </div>  
   </div>
-  <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
-    <%= f.label :cta_key, class: "col-sm-3 control-label" %>
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-12" id="inex_segment">
+    <%= f.label "Include Or Exclude", class: "col-sm-3 control-label" %>
     <div class="col-sm-6 controls">
-      <%= f.select :cta_key,options_for_select(NotificationTemplate::CTA.invert.to_a), class: "form-control" %><br />
+    <%= f.select :in_exclusion_segment,options_for_select([""]+NotificationTemplate::IN_EX_LIST),class: "form-control" %><br />
     </div>  
+  </div>
+
+  <div id ="in_ex_segment">
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-12" id="inex_operator" style="display:none">
+      <%= f.label "InEx Operator", class: "col-sm-3 control-label" %>
+      <div class="col-sm-6 controls">
+        <%= f.select :in_exclusion_operator,options_for_select(Filter::RELATION_OPERATOR),class: "form-control" %><br />
+      </div>
+    </div>
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-12" id="inex_condition" style="display:none">
+      <%= f.label "InEx Condition", class: "col-sm-3 control-label" %>
+      <div class="col-sm-6 controls">
+        <%= f.select :in_exclusion_condition,options_for_select(NotificationTemplate::KEY_OPERATORS["already_targeted_list"]),class: "form-control" %><br />
+      </div>
+    </div>
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-12" id="inex_exclusion_notification_id"  style="display:none">
+      <%= f.label "Notifications", class: "col-sm-3 control-label" %>
+      <div class="col-sm-6 controls">
+        <%= f.select :in_exclusion_notification_id,options_for_select([["",""]]+NotificationTemplate.all.map{|x| [x.title,x.id]}),class: "form-control" %><br />
+      </div>
+    </div>
   </div>
   <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
     <%= f.label "Display Screen", class: "col-sm-3 control-label" %>
@@ -75,7 +103,7 @@
     <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
       <%= f.label :elapse_time, class: "col-sm-3 control-label" %>
       <div class="col-sm-6 controls">
-        <%= f.text_field :elapse_time, class: "form-control" %>
+        <%= f.select :elapse_time,options_for_select(NotificationTemplate::ELAPSE_TIME), class: "form-control" %>
       </div>  
     </div>
   </div>
@@ -110,13 +138,13 @@
       <%= f.text_field :anonymous_feedback_url, class: "form-control"  %>
     </div>  
   </div>
+
   <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
-    <%= f.label "Category", class: "col-sm-3 control-label" %>
+    <%= f.label :cta_key, class: "col-sm-3 control-label" %>
     <div class="col-sm-6 controls">
-    <%= f.select :category,options_for_select(NotificationTemplate::CATEGORY), class: "form-control" %><br />
+      <%= f.select :cta_key,options_for_select(NotificationTemplate::CTA.invert.to_a), class: "form-control" %><br />
     </div>  
   </div>
-
 <!-- ############################################       Autofocus Segment ############################ -->
 
   <div id=autofocus style="display: none">
@@ -256,9 +284,43 @@
 
 <script type="text/javascript">
   $(document).ready(function(){
-     $('#notification_template_autofocus_categories').multiSelect({ keepOrder: true });
-     $('#notification_template_weather').multiSelect({ keepOrder: true });
+    $('#notification_template_autofocus_categories').multiSelect({ keepOrder: true });
+    $('#notification_template_weather').multiSelect({ keepOrder: true });
 
+    $('#notification_template_in_exclusion_segment').on('change', function() {
+    if ( this.value == "include_already_targeted" || this.value == "exclude_already_targeted")
+      {
+        $("#inex_operator").show();
+        $("#inex_condition").show();
+        $("#inex_exclusion_notification_id").show();
+      }
+    else if (this.value == "include_found_useful" || this.value == "exclude_found_useful")
+     {
+        $("#inex_operator").hide();
+        $("#inex_condition").show();
+        $("#inex_exclusion_notification_id").hide()
+    }
+    else if (this.value == "include_targeted_by_another_notification" ||
+            this.value == "exclude_targeted_by_another_notification")
+      {
+        $("#inex_operator").hide();
+        $("#inex_condition").hide();
+        $("#inex_exclusion_notification_id").show();
+      }
+      else if (this.value == "include_already_targeted_elapsed_time" ||
+            this.value == "exclude_already_targeted_elapsed_time")
+      {
+        $("#inex_operator").show();
+        $("#inex_condition").show();
+        $("#inex_exclusion_notification_id").show();
+      }
+    else
+      {
+        $("#inex_operator").hide();
+        $("#inex_condition").hide();
+        $("#inex_exclusion_notification_id").hide()
+      }
+    })
     $('#notification_template_execution_type').on('change', function() {
       if ( this.value == 'batch')
         {
@@ -271,9 +333,8 @@
           $("#date_group").hide();
         }
       })
-    $('#notification_template_category').on('change', function() {
-      debugger
-      if ( this.value == 'lifeautofocus')
+    $('#notification_template_cta_key').on('change', function() {
+      if ( this.value == 'autofocus')
         {
           $("#autofocus").show();
         }
@@ -283,5 +344,44 @@
         }
       })
     });
+
+  $(function() {
+  return $(document).on('change', '#notification_template_in_exclusion_segment', function(evt) {
+    var list_val = $("#notification_template_in_exclusion_segment option:selected").val()
+    switch (list_val) {
+    case "include_already_targeted":
+        list_type = "already_targeted_list";
+        break;
+    case "exclude_already_targeted":
+        list_type = "already_targeted_list";
+        break;
+    case"include_found_useful":
+        list_type = "useful_list";
+        break;
+    case"exclude_found_useful":
+        list_type = "useful_list";
+        break;
+    default:
+        list_type = "recency_list";
+        break;
+}
+    console.log(list_val)
+    return $.ajax({
+      url: '/notification_templates/get_list',
+      type: 'GET',
+      dataType: 'script',
+      data: {
+        list_type: list_type //$("#filter_list_type option:selected").val()
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        return console.log("AJAX Error: " + textStatus);
+      },
+      success: function(data, textStatus, jqXHR) {
+        return console.log("Dynamic collective_list select OK!");
+      }
+    });
+  });
+});
+
 
 </script>

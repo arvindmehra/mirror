@@ -7,8 +7,8 @@ class Filter < ActiveRecord::Base
     @list_type = @filter.list_type # recency_list
     @condition = @filter.condition # 12_day_ago
     @operator = @filter.operator # <
-    @start_date = @filter.start_date
-    @end_date = @filter.end_date
+    @start_date = @filter.start_date.strftime("%Y-%m-%d") if !@filter.start_date.nil?
+    @end_date = @filter.end_date.strftime("%Y-%m-%d") if !@filter.end_date.nil?
     @free_text = @filter.free_text
     if @list_type == "recency_list"
       @digit, @hour_day_week = @condition.split("_")
@@ -173,6 +173,37 @@ class Filter < ActiveRecord::Base
      s = TempUserNote.where(encrypted_email: nil)
      s
   end
+
+  def process_created_notes_during_time_period_date
+    s = TempUserNote.where("notes_recorded_at between Date('#{@start_date}') and Date('#{@end_date}')")
+    s
+  end
+
+  def process_created_notes_during_time_period
+    s = TempUserNote.where("notes_recorded_at between Date('#{@start_date}') and Date('#{@end_date}')")
+    s
+  end
+
+  def process_recorded_daily_activity_during_time_period_date
+    s = TempUserNote.joins("inner join user_activities on user_activities.user_id = temp_user_notes.user_id")
+    s = s.where("user_activities.activity_date between Date('#{@start_date}') and Date('#{@end_date}')")
+    s
+  end
+
+  def process_specific_users
+    @free_text = @free_text.strip.gsub(" ","").split(",")
+    s = TempUserNote.where(user_id: @free_text)
+    s
+  end
+
+  def process_notes_with_topics
+    @free_text = @free_text.strip.gsub(" ","").split(",")
+    clauses = (["(tags.name like ?)"] * @free_text.size).join(" or ")
+    args = @free_text.map{|x| ["%#{x}%"]}
+    sql_clause =  [clauses,*args.flatten]
+    s = TempUserNote.joins("inner join tags").where(sql_clause).where("tags.note_id = temp_user_notes.notes_id")
+    s
+  end
   
   LIST_KEYS = {
     "numeric_operator_list" => "Numeric Operator List",
@@ -298,13 +329,14 @@ class Filter < ActiveRecord::Base
     "well_being_score_list" => [-24, -23, -22, -21, -20, -19, -18, -17, -16, -15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0,
                                  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
     "weather_condition_list" => ["clear",
-                          "overcast",
-                          "wind",
-                          "cloudy",
-                          "rain",
-                          "thunderstorm",
-                          "fog",
-                          "snow"],
+                                  "overcast",
+                                  "wind",
+                                  "cloudy",
+                                  "rain",
+                                  "thunderstorm",
+                                  "fog",
+                                  "snow"
+                                ],
     "future_date_list" => [ "in_1_hour",
                             "in_2_hour",
                             "in_4_hour",
@@ -320,11 +352,35 @@ class Filter < ActiveRecord::Base
                             "in_8_day",
                             "in_9_day"
                           ],
-    "purchase_list" => [12,6,3]
-  }
+    "purchase_list" => [12,6,3],
+
+    "pre_defined_time_period" => [
+                              "today",
+                              "yesterday",
+                              "1_hour_ago",
+                              "2_hour_ago",
+                              "3_hour_ago",
+                              "4_hour_ago",
+                              "5_hour_ago",
+                              "6_hour_ago",
+                              "7_hour_ago", 
+                              "8_hour_ago",
+                              "2_day_ago",
+                              "3_day_ago",
+                              "4_day_ago",
+                              "5_day_ago",
+                              "6_day_ago",
+                              "7_day_ago",
+                              "14_day_ago",
+                              "21_day_ago",
+                              "30_day_ago",
+                              "3_month_ago",
+                              "6_month_ago",
+                              "12_month_ago"
+                            ]
+      }
 
 SEGMENT= [["Downloaded the app", "downloaded_the_app"],
-          ["Upgraded the app","upgraded_the_app"],
           ["Last note created","last_note_created"],
           ["Users subscribed atleast once","subscribed_alteast_once"],
           ["Users with active subscription","active_subscription"],
@@ -344,7 +400,11 @@ SEGMENT= [["Downloaded the app", "downloaded_the_app"],
           ["Specific Users", "specific_users"],
           ["Steps", "steps"],
           ["Users with account","users_with_account"],
-          ["Users w/o account","users_without_account"]
+          ["Users w/o account","users_without_account"],
+          ["Notes with topics","notes_with_topics"],
+          ["Created Notes during Time period (date)","created_notes_during_time_period_date"],
+          ["Created Notes during Time period (period)","created_notes_during_time_period"],
+          ["Recorded Daily Activity during Time period (date)","recorded_daily_activity_during_time_period_date"]
 
         ]
 

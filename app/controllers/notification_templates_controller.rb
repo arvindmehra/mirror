@@ -54,6 +54,13 @@ class NotificationTemplatesController < ApplicationController
     redirect_to notification_templates_path
   end
 
+  def get_list
+    @filter_list = NotificationTemplate.drop_down_list(params[:list_type])
+    respond_to do |format|
+      format.js
+    end
+  end
+
 private
     
   def notification_params
@@ -64,7 +71,8 @@ private
                   :heart_rate_medium, :heart_rate_max, :steps_walked_min, :steps_walked_medium, :steps_walked_max,
                   :sleep_time_min, :sleep_time_medium, :sleep_time_max, :temperature_min, :temperature_medium, :temperature_max,
                   :chat_email, :provide_feedback_email, :learn_more_url, :take_the_survey_url, :anonymous_feedback_url,[:autofocus_categories => []],
-                  :well_being, :topics, [:weather=> []], :calories_min, :calories_medium, :calories_max)
+                  :well_being, :topics, [:weather=> []], :calories_min, :calories_medium, :calories_max,:list_type,
+                  :in_exclusion_operator,:in_exclusion_segment,:in_exclusion_condition,:in_exclusion_notification_id)
   end
 
 end

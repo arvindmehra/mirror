@@ -1,0 +1,1 @@
+$("#notification_template_in_exclusion_condition").empty().append("<%= escape_javascript(render :partial => 'collective_list') %>")

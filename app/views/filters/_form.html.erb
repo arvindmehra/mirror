@@ -42,6 +42,18 @@
       <%= f.text_field :free_text, class: "form-control" %><br />
     </div>
   </div>
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-10" id="start_date_field" style="display:none;">
+    <%= f.label :start_date, class: "col-sm-2 control-label" %>
+    <div class="col-sm-8 controls">
+      <%= f.text_field :start_date, class: "form-control", placeholder: "yy-mm-dd" %><br />
+    </div>
+  </div>
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-10" id="end_date_field" style="display:none;">
+    <%= f.label :end_date, class: "col-sm-2 control-label" %>
+    <div class="col-sm-8 controls">
+      <%= f.text_field :end_date, class: "form-control", placeholder: "yy-mm-dd" %><br />
+    </div>
+  </div>
   <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
     <div class="col-sm-2"></div> 
     <div class="col-sm-8"><%= f.submit class: "btn btn-primary" %></div>
@@ -49,7 +61,7 @@
 <% end %>
 
 <script type="text/javascript">
-  $(function() {
+$(function() {
   return $(document).on('change', '#filter_list_type', function(evt) {
     return $.ajax({
       url: '/filters/get_list',
@@ -110,11 +122,14 @@ $(function() {
     case "havent_subscribed":
         list_type = "purchase_list";
         break;
+    case "created_notes_during_time_period":
+        list_type = "pre_defined_time_period";
+        break;
     default: 
         list_type = "recency_list";
         break;
 }
-    console.log(list_type)
+    console.log(list_val)
     return $.ajax({
       url: '/filters/get_collective_list',
       type: 'GET',
@@ -159,13 +174,13 @@ $(document).ready(function(){
           $("#filter_condition_id").show();
           $("#filter_operator_id").hide();
         }
-      else if ( this.value == 'total_notes' || this.value == 'steps')
+      else if (this.value == 'total_notes' || this.value == 'steps')
         {
           $("#free_text_field").show();
           $("#filter_list_type_id").hide();
           $("#filter_condition_id").hide();
         }
-      else if ( this.value == 'weather_condition' || this.value == 'categories' ||
+      else if (this.value == 'weather_condition' || this.value == 'categories' ||
           this.value == 'about_to_expire')
       {
         $("#free_text_field").hide();
@@ -173,13 +188,35 @@ $(document).ready(function(){
         $("#filter_list_type_id").show();
         $("#filter_condition_id").show();
       }
-      else if ( this.value == 'users_with_account' || this.value == 'users_without_account')
+      else if (this.value == 'users_with_account' || this.value == 'users_without_account')
         {
           $("#free_text_field").hide();
           $("#filter_list_type_id").hide();
           $("#filter_condition_id").hide();
           $("#filter_operator_id").hide();
         }
+      else if (this.value == 'notes_with_topics' || this.value == 'specific_users')
+      {
+        $("#free_text_field").show();
+        $("#filter_list_type_id").hide();
+        $("#filter_condition_id").hide();
+        $("#filter_operator_id").hide();
+      }
+      else if (this.value == 'created_notes_during_time_period_date' || this.value == 'recorded_daily_activity_during_time_period_date')
+      {
+        $("#start_date_field").show();
+        $("#end_date_field").show();
+        $("#filter_list_type_id").hide();
+        $("#filter_condition_id").hide();
+        $("#filter_operator_id").hide();
+      }
+     else if (this.value == 'created_notes_during_time_period')
+      {
+        $("#free_text_field").hide();
+        $("#filter_list_type_id").show();
+        $("#filter_condition_id").show();
+        $("#filter_operator_id").hide();
+      }
     });
 });
 
