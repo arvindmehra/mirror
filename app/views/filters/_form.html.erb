@@ -125,6 +125,9 @@ $(function() {
     case "created_notes_during_time_period":
         list_type = "pre_defined_time_period";
         break;
+    case "recorded_daily_activity_during_time_period":
+        list_type = "pre_defined_time_period";
+        break;
     default: 
         list_type = "recency_list";
         break;
@@ -158,7 +161,8 @@ $(document).ready(function(){
           this.value == 'average_impact_score' ||
           this.value == 'average_well_being_score' ||
           this.value == 'well_being_score' ||
-          this.value == 'expired_subscription')
+          this.value == 'expired_subscription' ||
+          this.value == 'suburb_visited')
         {
           $("#free_text_field").hide();
           $("#filter_list_type_id").show();
@@ -174,7 +178,7 @@ $(document).ready(function(){
           $("#filter_condition_id").show();
           $("#filter_operator_id").hide();
         }
-      else if (this.value == 'total_notes' || this.value == 'steps')
+      else if (this.value == 'total_notes' || this.value == 'steps' || this.value == 'suburb_visited_frequency')
         {
           $("#free_text_field").show();
           $("#filter_list_type_id").hide();
@@ -210,7 +214,7 @@ $(document).ready(function(){
         $("#filter_condition_id").hide();
         $("#filter_operator_id").hide();
       }
-     else if (this.value == 'created_notes_during_time_period')
+     else if (this.value == 'created_notes_during_time_period' || this.value == 'recorded_daily_activity_during_time_period')
       {
         $("#free_text_field").hide();
         $("#filter_list_type_id").show();

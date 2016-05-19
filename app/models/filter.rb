@@ -10,13 +10,13 @@ class Filter < ActiveRecord::Base
     @start_date = @filter.start_date.strftime("%Y-%m-%d") if !@filter.start_date.nil?
     @end_date = @filter.end_date.strftime("%Y-%m-%d") if !@filter.end_date.nil?
     @free_text = @filter.free_text
-    if @list_type == "recency_list"
+    if @list_type == "recency_list" || @list_type == "pre_defined_time_period"
       @digit, @hour_day_week = @condition.split("_")
     elsif @list_type == "future_date_list"
       @in, @digit, @hour_day_week = @condition.split("_")
     end
     # begin
-      users = send("process_#{@segment}")
+      users = send("process_#{@segment}") 
       if users.is_a?(Hash)
         users
       elsif group.present? && !users.is_a?(Array)
@@ -180,13 +180,36 @@ class Filter < ActiveRecord::Base
   end
 
   def process_created_notes_during_time_period
-    s = TempUserNote.where("notes_recorded_at between Date('#{@start_date}') and Date('#{@end_date}')")
+    segment_definition = "notes_recorded_at"
+    if @condition == "today"
+      s = TempUserNote.where("Date(#{segment_definition}) >  DATE(NOW())")
+    elsif @condition == "yesterday"
+      s = s.where("Date(#{segment_definition} >  DATE_SUB(CURDATE(), INTERVAL 1 day)")
+    elsif @hour_day_week == "hour"
+      s = TempUserNote.where("#{segment_definition} > DATE_SUB(NOW(), INTERVAL #{@digit} #{@hour_day_week})")
+    else
+      s = TempUserNote.where("DATE(#{segment_definition}) > DATE_SUB(CURDATE(), INTERVAL #{@digit} #{@hour_day_week})")
+    end
     s
   end
 
   def process_recorded_daily_activity_during_time_period_date
     s = TempUserNote.joins("inner join user_activities on user_activities.user_id = temp_user_notes.user_id")
     s = s.where("user_activities.activity_date between Date('#{@start_date}') and Date('#{@end_date}')")
+    s
+  end
+
+  def process_recorded_daily_activity_during_time_period
+    s = TempUserNote.joins("inner join user_activities on user_activities.user_id = temp_user_notes.user_id")
+    if @condition == "today"
+      s = s.where("Date(user_activities.activity_date) >  DATE(NOW())")
+    elsif @condition == "yesterday"
+      s = s.where("Date(user_activities.activity_date) >  DATE_SUB(CURDATE(), INTERVAL 1 day)")
+    elsif @hour_day_week == "hour"
+      s = s.where("user_activities.activity_date > DATE_SUB(NOW(), INTERVAL #{@digit} #{@hour_day_week})")
+    else
+      s = s.where("DATE(user_activities.activity_date) > DATE_SUB(CURDATE(), INTERVAL #{@digit} #{@hour_day_week})")
+    end
     s
   end
 
@@ -202,6 +225,28 @@ class Filter < ActiveRecord::Base
     args = @free_text.map{|x| ["%#{x}%"]}
     sql_clause =  [clauses,*args.flatten]
     s = TempUserNote.joins("inner join tags").where(sql_clause).where("tags.note_id = temp_user_notes.notes_id")
+    s
+  end
+
+  def process_suburb_visited
+    s = TempUserNote.where("suburb is not null and suburb != ' '")
+    if @condition == "today"
+      s = s.where("Date(notes_recorded_at) #{@operator}  DATE(NOW())")
+    elsif @hour_day_week == "hour"
+      s = s.where("notes_recorded_at #{@operator} DATE_SUB(NOW(), INTERVAL #{@digit} #{@hour_day_week})")
+    else
+      s = s.where("DATE(notes_recorded_at) #{@operator} DATE_SUB(CURDATE(), INTERVAL #{@digit} #{@hour_day_week})")
+    end
+    s
+  end
+
+  def process_suburb_visited_frequency
+    s = TempUserNote.find_by_sql("select roman.user_id from 
+                              (SELECT user_id, COUNT(*) AS visit_count 
+                              FROM temp_user_notes
+                              where suburb is not null and suburb != ' '
+                              GROUP BY user_id) as roman
+                              where visit_count > 15;")
     s
   end
   
@@ -402,9 +447,12 @@ SEGMENT= [["Downloaded the app", "downloaded_the_app"],
           ["Users with account","users_with_account"],
           ["Users w/o account","users_without_account"],
           ["Notes with topics","notes_with_topics"],
+          ["Notes with Suburb visit recency","suburb_visited"],
+          ["Notes with Suburb visit frequency","suburb_visited_frequency"],
           ["Created Notes during Time period (date)","created_notes_during_time_period_date"],
           ["Created Notes during Time period (period)","created_notes_during_time_period"],
-          ["Recorded Daily Activity during Time period (date)","recorded_daily_activity_during_time_period_date"]
+          ["Recorded Daily Activity during Time period (date)","recorded_daily_activity_during_time_period_date"],
+          ["Recorded Daily Activity during Time period (period)","recorded_daily_activity_during_time_period"]
 
         ]
 
