@@ -6,6 +6,9 @@ class UserNotification < ActiveRecord::Base
   belongs_to :notification_template
   scope :read, -> { where(read_status: 1) }
   scope :unread, -> { where("read_status is ? or read_status = ?",nil,0) }
+  scope :useful, -> { where(useful: 1) }
+  scope :not_useful, -> { where("useful = ?",0) }
+  scope :not_commented_on_useful, -> { where("useful is ?",nil) }
   scope :non_deleted, -> { where("mark_deleted is ? or mark_deleted = ?",nil,0) }
   scope :for_option_screen, -> { where(display_screen: :option).order(:created_at => :desc) }
   scope :for_suggestion_screen, -> { where(display_screen: :suggestion).order(:created_at => :desc) }

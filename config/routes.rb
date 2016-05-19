@@ -57,6 +57,7 @@ Rails.application.routes.draw do
       get :blast_send
       patch :deactivate
       patch :activate
+      get :get_list
     end
   end
   resources :filter_groups

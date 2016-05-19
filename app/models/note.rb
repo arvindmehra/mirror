@@ -40,7 +40,7 @@ class Note < ActiveRecord::Base
   end
 
   def check_for_realtime_notifications
-    RealtimeNotificationChecker.perform_async(user.id,"note_created")
+    RealtimeNotificationChecker.performer(user.id,"note_created")
   end
 
 end

@@ -1,0 +1,5 @@
+<% if @filter_list.present? %>
+  <%= @filter_list.each do |f| %>
+    <option value="<%= f %>"><%= f %></option>
+  <% end %>
+<% end %>
