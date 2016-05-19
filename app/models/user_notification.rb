@@ -52,13 +52,11 @@ class UserNotification < ActiveRecord::Base
   end
 
   def self.option_notifications(current_user)
-    UserNotification.all
-    # current_user.user_notifications.for_option_screen.limit(3).non_deleted
+    current_user.user_notifications.for_option_screen.limit(3).non_deleted
   end
 
   def self.suggestion_notifications(current_user,landmark=nil)
-    UserNotification.all
-    # landmark.present? ? current_user.user_notifications.for_suggestion_screen.non_deleted.where("id > ?",landmark) : current_user.user_notifications.for_suggestion_screen.non_deleted
+    landmark.present? ? current_user.user_notifications.for_suggestion_screen.non_deleted.where("id > ?",landmark) : current_user.user_notifications.for_suggestion_screen.non_deleted
   end
 
   def self.unread_notification_response_count(current_user)

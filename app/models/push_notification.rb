@@ -17,6 +17,7 @@ class PushNotification < ActiveRecord::Base
     environment = Rails.env.development? ? "development" : "production"
     apn.certificate = PushNotification.where(environment: environment).first.ios_certificate
     device = Device.find_by(notification_token: token)
+    Rails.logger.info  "Sending push with badge #{badge}" 
     if device.present?
       notification = Houston::Notification.new(device: device.notification_token)
       notification.alert = text

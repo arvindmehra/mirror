@@ -29,6 +29,7 @@ gem 'houston'
 gem 'sucker_punch', '~> 2.0'
 gem 'serial_preference', '>= 1.2.0'
 gem 'figaro'
+gem 'whenever', :require => false
 
 group :development do
   gem "better_errors"
