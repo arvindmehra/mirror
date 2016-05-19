@@ -2,10 +2,12 @@ class NotificationTemplate < ActiveRecord::Base
 
   has_many :user_notifications
   belongs_to :rule_engine
+  
   scope :realtime, -> {where(execution_type: "realtime")}
   scope :for_notes, -> {where(trigger: "note_created")}
   scope :for_activity, -> {where(trigger: "activity_recorded")}
   scope :alive, -> {where(active: true)}
+  scope :batch, ->{where(execution_type: "batch")}
 
   include SerialPreference::HasSerialPreferences
 
@@ -184,7 +186,7 @@ FUTURE_DATE_LIST = [  "",
 
   def get_scope_users
     users_fulfilling_filters = rule_engine.get_scope_users
-    if in_exclusion_segment
+    if in_exclusion_segment.present?
       users_fulfilling_filters = check_inclusion_exclusion_list_for(users_fulfilling_filters)
     end
     users_fulfilling_filters
