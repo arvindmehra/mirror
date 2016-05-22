@@ -27,7 +27,6 @@ class NotificationTemplatesController < ApplicationController
   def create
     @notification_template = NotificationTemplate.new(notification_params)
     @notification_template.cta = NotificationTemplate::CTA[notification_params[:cta_key]]
-    @notification_template.scheduled_time = Time.current + 5
     if @notification_template.save
       flash[:success] = "New Notification Created. Superb!!"
       redirect_to notification_templates_path

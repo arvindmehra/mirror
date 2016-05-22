@@ -1,6 +1,6 @@
 class TempUserNotes < ActiveRecord::Migration
   def change
-  	create_table :temp_user_notes do |t|
+    create_table :temp_user_notes do |t|
       t.integer :user_id
       t.string :encrypted_email
       t.string :last_activity

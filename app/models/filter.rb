@@ -20,7 +20,7 @@ class Filter < ActiveRecord::Base
       if users.is_a?(Hash)
         users
       elsif group.present? && !users.is_a?(Array)
-        logger.debug  "plucking user_ids from temp_user_notes" 
+        logger.debug  "plucking user_ids FROM temp_user_notes"
         users.pluck(:user_id).uniq
       else
         users.map{|x| x.user_id}.uniq
@@ -32,7 +32,7 @@ class Filter < ActiveRecord::Base
   end
 
   def process_weather_condition
-    s = TempUserNote.where(whether_type: "#{@condition}")
+    s = TempUserNote.where(whether_type: @condition)
     s
   end
 
@@ -56,7 +56,8 @@ class Filter < ActiveRecord::Base
     else
       id = 3
     end
-    s = TempUserNote.joins("inner join transactions on transactions.user_id = temp_user_notes.user_id")
+    s = TempUserNote.joins("INNER JOIN transactions ON transactions.user_id = temp_user_notes.user_id")
+    s = s.where(transactions: {product_id: id})
     s
   end
 
@@ -68,13 +69,13 @@ class Filter < ActiveRecord::Base
     else
       id = 3
     end
-    s = TempUserNote.joins("inner join transactions on transactions.user_id = temp_user_notes.user_id inner join subscriptions on subscriptions.user_id = temp_user_notes.user_id")
-    s = s.where(transactions: {product_id: 2}).where("DATE(subscriptions.end_date) >= CURDATE()")
+    s = TempUserNote.joins("INNER JOIN transactions ON transactions.user_id = temp_user_notes.user_id INNER JOIN subscriptions ON subscriptions.user_id = temp_user_notes.user_id")
+    s = s.where(transactions: {product_id: id}).where("DATE(subscriptions.end_date) >= CURDATE()")
     s
   end
 
   def process_expired_subscription
-    s = TempUserNote.joins("inner join subscriptions on subscriptions.user_id = temp_user_notes.user_id")
+    s = TempUserNote.joins("INNER JOIN subscriptions ON subscriptions.user_id = temp_user_notes.user_id")
     if @condition == "today"
       s = s.where("end_date between CURDATE() and now()")
     else
@@ -84,13 +85,23 @@ class Filter < ActiveRecord::Base
   end
 
   def process_havent_subscribed
-    s = users = User.joins(:receipts)
-    s = TempUserNote.where.not(id: users.pluck(:user_id).uniq)
-    s
+    if @condition == "12"
+      id = 1
+    elsif @condition == "3"
+      id = 2
+    else
+      id = 3
+    end
+    s = TempUserNote.joins("INNER JOIN transactions ON transactions.user_id = temp_user_notes.user_id")
+    s = s.where(transactions: {product_id: id})
+    s = s.pluck(:user_id).uniq
+    as = TempUserNote.joins("INNER JOIN transactions ON transactions.user_id = temp_user_notes.user_id")
+    as = as.where.not(transactions: {user_id: s})
+    as
   end
 
   def process_categories
-    s = TempUserNote.where(category: "#{@condition}")
+    s = TempUserNote.where(category: @condition)
     s
   end
 
@@ -105,22 +116,22 @@ class Filter < ActiveRecord::Base
   end
 
   def process_average_impact_score
-    s = TempUserNote.find_by_sql("select user_avg_table.* from
-          (select temp_user_notes.*, avg(impact_score) as avg from temp_user_notes group by user_id)
+    s = TempUserNote.find_by_sql("SELECT user_avg_table.* FROM
+          (SELECT temp_user_notes.*, avg(impact_score) as avg FROM temp_user_notes group by user_id)
           as user_avg_table where avg #{@operator} #{@condition}")
     s
   end
 
   def process_average_feeling_score
-    s = TempUserNote.find_by_sql("select user_avg_table.* from
-          (select temp_user_notes.*, avg(feeling_score) as avg from temp_user_notes group by user_id)
+    s = TempUserNote.find_by_sql("SELECT user_avg_table.* FROM
+          (SELECT temp_user_notes.*, avg(feeling_score) as avg FROM temp_user_notes group by user_id)
           as user_avg_table where avg #{@operator} #{@condition}")
     s
   end
 
   def process_average_well_being_score
-    s = TempUserNote.find_by_sql("select user_avg_table.* from
-          (select temp_user_notes.*, avg(perception_score) as avg from temp_user_notes group by user_id)
+    s = TempUserNote.find_by_sql("SELECT user_avg_table.* FROM
+          (SELECT temp_user_notes.*, avg(perception_score) as avg FROM temp_user_notes group by user_id)
           as user_avg_table where avg #{@operator} #{@condition}")
     s
   end
@@ -131,7 +142,7 @@ class Filter < ActiveRecord::Base
   end
 
   def process_about_to_expire
-    s = TempUserNote.joins("inner join subscriptions on subscriptions.user_id = temp_user_notes.user_id")
+    s = TempUserNote.joins("INNER JOIN subscriptions ON subscriptions.user_id = temp_user_notes.user_id")
     if @condition == "today"
       s = s.where("Date(end_date) = CURDATE()")
     elsif @condition == "tomorrow"
@@ -143,8 +154,8 @@ class Filter < ActiveRecord::Base
   end
 
   def process_total_notes
-    s = TempUserNote.find_by_sql("select unotes.*, user_notes from
-        (select temp_user_notes.* , count(notes_id) as user_notes from temp_user_notes group by user_id)
+    s = TempUserNote.find_by_sql("SELECT unotes.*, user_notes FROM
+        (SELECT temp_user_notes.* , count(notes_id) as user_notes FROM temp_user_notes group by user_id)
         as unotes where user_notes #{@operator} #{@free_text}")
     s
   end
@@ -194,13 +205,13 @@ class Filter < ActiveRecord::Base
   end
 
   def process_recorded_daily_activity_during_time_period_date
-    s = TempUserNote.joins("inner join user_activities on user_activities.user_id = temp_user_notes.user_id")
+    s = TempUserNote.joins("INNER JOIN user_activities ON user_activities.user_id = temp_user_notes.user_id")
     s = s.where("user_activities.activity_date between Date('#{@start_date}') and Date('#{@end_date}')")
     s
   end
 
   def process_recorded_daily_activity_during_time_period
-    s = TempUserNote.joins("inner join user_activities on user_activities.user_id = temp_user_notes.user_id")
+    s = TempUserNote.joins("INNER JOIN user_activities ON user_activities.user_id = temp_user_notes.user_id")
     if @condition == "today"
       s = s.where("Date(user_activities.activity_date) >  DATE(NOW())")
     elsif @condition == "yesterday"
@@ -210,6 +221,33 @@ class Filter < ActiveRecord::Base
     else
       s = s.where("DATE(user_activities.activity_date) > DATE_SUB(CURDATE(), INTERVAL #{@digit} #{@hour_day_week})")
     end
+    s
+  end
+
+  def process_recorded_daily_activity
+    s = TempUserNote.joins("INNER JOIN user_activities ON user_activities.user_id = temp_user_notes.user_id")
+    s = s.where("user_activities.time_spent #{@operator} temp_user_notes.activity_goal")
+    s = s.where("user_activities.activity_date = CURDATE()")
+    s
+  end
+
+  # users for same date record will not be fetched as datediff will be zero so start date end date need to have 1 day diff
+
+  def process_recorded_avg_daily_activity
+    s = TempUserNote.find_by_sql("SELECT t3.user_id, t3.goal, t3.avg_time_spent FROM
+        (SELECT t2.user_id,(t2.ts / t2.total_days) as avg_time_spent, t2.ts, t2.total_days, t2.goal FROM
+        (SELECT t1.user_id, datediff(t1.max_activity_date, t1.min_activity_date) as total_days,
+        t1.total_time_spent as ts, t1.goal as goal  FROM
+         (SELECT
+            temp_user_notes.user_id as user_id, temp_user_notes.activity_goal as goal,
+            MIN(date(activity_date)) AS min_activity_date,
+            MAX(date(activity_date)) AS max_activity_date,
+            sum(time_spent) as total_time_spent
+        FROM temp_user_notes
+        INNER JOIN user_activities
+        ON temp_user_notes.user_id = user_activities.user_id
+        GROUP BY user_id, goal) as t1) as t2) as t3
+        where t3.goal #{@operator} t3.avg_time_spent")
     s
   end
 
@@ -224,7 +262,7 @@ class Filter < ActiveRecord::Base
     clauses = (["(tags.name like ?)"] * @free_text.size).join(" or ")
     args = @free_text.map{|x| ["%#{x}%"]}
     sql_clause =  [clauses,*args.flatten]
-    s = TempUserNote.joins("inner join tags").where(sql_clause).where("tags.note_id = temp_user_notes.notes_id")
+    s = TempUserNote.joins("INNER JOIN tags").where(sql_clause).where("tags.note_id = temp_user_notes.notes_id")
     s
   end
 
@@ -241,12 +279,28 @@ class Filter < ActiveRecord::Base
   end
 
   def process_suburb_visited_frequency
-    s = TempUserNote.find_by_sql("select roman.user_id from 
+    s = TempUserNote.find_by_sql("SELECT roman.user_id FROM
                               (SELECT user_id, COUNT(*) AS visit_count 
                               FROM temp_user_notes
                               where suburb is not null and suburb != ' '
                               GROUP BY user_id) as roman
                               where visit_count > 15;")
+    s
+  end
+
+  def process_wbs_standard_deviation
+    s = TempUserNote.find_by_sql("SELECT t2.user_id, t2.std_deviation FROM
+            (SELECT t1.user_id, (t1.max - t1.min) as std_deviation FROM
+            (SELECT user_id,  max(perception_score) as max, min(perception_score) as min FROM temp_user_notes group by user_id) as t1) as t2
+            where t2.std_deviation #{@operator} #{free_text}")
+    s
+  end
+
+  def process_notes_with_steps_standard_deviation
+    s = TempUserNote.find_by_sql("SELECT t2.user_id, t2.std_deviation FROM
+            (SELECT t1.user_id, (t1.max - t1.min) as std_deviation FROM
+            (SELECT user_id,  max(steps_walked) as max, min(steps_walked) as min FROM temp_user_notes group by user_id) as t1) as t2
+            where t2.std_deviation #{@operator} #{free_text}")
     s
   end
   
@@ -398,6 +452,7 @@ class Filter < ActiveRecord::Base
                             "in_9_day"
                           ],
     "purchase_list" => [12,6,3],
+    "recorded_activity" => ["current_goal_set"],
 
     "pre_defined_time_period" => [
                               "today",
@@ -429,7 +484,7 @@ SEGMENT= [["Downloaded the app", "downloaded_the_app"],
           ["Last note created","last_note_created"],
           ["Users subscribed atleast once","subscribed_alteast_once"],
           ["Users with active subscription","active_subscription"],
-          ["Users havent yet subscribed","havent_subscribed"],
+          ["Not yet subscribed to","havent_subscribed"],
           ["User with subscription about to expire","about_to_expire"],
           ["User with expired subscription","expired_subscription"],
           ["Categories","categories"],
@@ -452,8 +507,11 @@ SEGMENT= [["Downloaded the app", "downloaded_the_app"],
           ["Created Notes during Time period (date)","created_notes_during_time_period_date"],
           ["Created Notes during Time period (period)","created_notes_during_time_period"],
           ["Recorded Daily Activity during Time period (date)","recorded_daily_activity_during_time_period_date"],
-          ["Recorded Daily Activity during Time period (period)","recorded_daily_activity_during_time_period"]
-
+          ["Recorded Daily Activity during Time period (period)","recorded_daily_activity_during_time_period"],
+          ["Recorded Daily Activity", "recorded_daily_activity"],
+          ["Recorded an average daily Activity (mins)","recorded_avg_daily_activity"],
+          ["Well-being score standard deviation (Max-Min)","wbs_standard_deviation"],
+          ["Notes with Steps standard deviation (Max-Min)", "notes_with_steps_standard_deviation"]
         ]
 
   def self.drop_down_list(key)

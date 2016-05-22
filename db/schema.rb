@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160519075339) do
+ActiveRecord::Schema.define(version: 20160520120300) do
 
   create_table "devices", force: true do |t|
     t.integer  "user_id"
@@ -193,16 +193,21 @@ ActiveRecord::Schema.define(version: 20160519075339) do
     t.string   "city"
     t.string   "suburb"
     t.string   "country"
-    t.float    "heart_rate",            limit: 24
-    t.float    "sleep_time",            limit: 24
-    t.float    "temperature",           limit: 24
+    t.float    "heart_rate",                limit: 24
+    t.float    "sleep_time",                limit: 24
+    t.float    "temperature",               limit: 24
     t.string   "whether_type"
-    t.float    "steps_walked",          limit: 24
-    t.float    "calories_burnt",        limit: 24
-    t.float    "perception_score",      limit: 24
+    t.float    "steps_walked",              limit: 24
+    t.float    "calories_burnt",            limit: 24
+    t.float    "perception_score",          limit: 24
     t.datetime "notes_recorded_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "region"
+    t.string   "language"
+    t.float    "version_number",            limit: 24
+    t.datetime "version_number_updated_at"
+    t.string   "time_zone"
   end
 
   create_table "transactions", force: true do |t|
@@ -263,6 +268,11 @@ ActiveRecord::Schema.define(version: 20160519075339) do
     t.integer  "app_opens_count"
     t.datetime "auth_token_created_at"
     t.integer  "activity_goal"
+    t.string   "region"
+    t.string   "language"
+    t.float    "version_number",            limit: 24
+    t.datetime "version_number_updated_at"
+    t.string   "time_zone"
   end
 
   add_index "users", ["auth_token"], name: "index_users_on_auth_token", using: :btree
