@@ -70,7 +70,7 @@ FUTURE_DATE_LIST = [  "",
                       "Last 12 Months"
                     ]
 
-  DASHBOARD = [["",""],["life_path","Life Path"],["life_map","Life Map"],["life_focus","Life Focus"],["life_summary","Life Summary"],["life_activity","Life Activity"]]
+  DASHBOARD = [["",""],["Life Path","life_path"],["Life Map","life_map"],["Life Focus","life_focus"],["Life Summary","life_summary"],["Life Activity","life_activity"]]
 
   TRIGGERS = [["",""],["When notes is created","note_created"],["When activity is recorded","activity_recorded"]]
 

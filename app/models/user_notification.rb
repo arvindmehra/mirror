@@ -74,8 +74,8 @@ class UserNotification < ActiveRecord::Base
 
   def data_hash
     score_data = self.score_data.split(",") if self.score_data.present?
-    categories = self.autofocus_categories.split(",") if self.autofocus_categories.present?
-    wheather = self.weather.split(",") if self.weather.present?
+    categories = JSON.parse(self.autofocus_categories) if self.autofocus_categories.present?
+    weather = JSON.parse(self.weather) if self.weather.present?
     topics = self.topics.split(",") if self.topics.present?
     {
       id: self.id,

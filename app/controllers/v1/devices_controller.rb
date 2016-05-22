@@ -22,7 +22,8 @@ class V1::DevicesController < V1::BaseController
     end
     set_device
     if @current_device.update(notification_token: params[:notification_token])
-
+      @current_user.update(language: params[:language], region: params[:region], time_zone: params[:time_zone], version_number: params[:version_number])
+      @current_user.update(version_number_updated_at: Time.current) if !@current_user.version_number_updated_at.present?
       render :show
     else
       render json: {errors: @current_device.errors.full_messages}, status: :unprocessable_entity
@@ -32,7 +33,7 @@ class V1::DevicesController < V1::BaseController
   private
 
   def device_params
-    params.require(:device).permit(:notification_token, :location_enabled, :locale)
+    params.require(:device).permit(:notification_token, :location_enabled, :locale, :language, :region, :time_zone, :version_number)
   end
 
 end

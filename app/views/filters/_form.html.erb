@@ -128,6 +128,12 @@ $(function() {
     case "recorded_daily_activity_during_time_period":
         list_type = "pre_defined_time_period";
         break;
+    case "recorded_daily_activity":
+        list_type = "recorded_activity";
+        break;
+    case "recorded_avg_daily_activity":
+        list_type = "recorded_activity";
+        break;
     default: 
         list_type = "recency_list";
         break;
@@ -178,7 +184,8 @@ $(document).ready(function(){
           $("#filter_condition_id").show();
           $("#filter_operator_id").hide();
         }
-      else if (this.value == 'total_notes' || this.value == 'steps' || this.value == 'suburb_visited_frequency')
+      else if (this.value == 'total_notes' || this.value == 'steps' || this.value == 'suburb_visited_frequency' ||
+          this.value == 'process_wbs_standard_deviation')
         {
           $("#free_text_field").show();
           $("#filter_list_type_id").hide();
@@ -220,6 +227,13 @@ $(document).ready(function(){
         $("#filter_list_type_id").show();
         $("#filter_condition_id").show();
         $("#filter_operator_id").hide();
+      }
+      else if (this.value == 'recorded_daily_activity' || this.value == 'recorded_avg_daily_activity')
+      {
+        $("#free_text_field").hide();
+        $("#filter_list_type_id").show();
+        $("#filter_condition_id").show();
+        $("#filter_operator_id").show();
       }
     });
 });
