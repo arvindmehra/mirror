@@ -35,6 +35,13 @@ class FiltersController < ApplicationController
     end
   end
 
+  def get_segments
+    @segment_list = Filter.find_segment(params[:list_type])
+    respond_to do |format|
+      format.js
+    end
+  end
+
   def get_collective_list
     @collective_list = params[:list_type]
     respond_to do |format|

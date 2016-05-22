@@ -15,7 +15,7 @@
   <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
     <%= f.label :segment, class: "col-sm-2 control-label" %>
     <div class="col-sm-8 controls">
-      <%= f.select :segment,options_for_select(Filter::SEGMENT), class: "form-control"%>
+      <%= f.select :segment,options_for_select(Filter::SEGMENT_FINDER), class: "form-control"%>
     </div>
   </div>
   <div class="form-group control-group belongs_to_association_type user_field col-sm-10" id ="filter_operator_id">
@@ -80,6 +80,24 @@ $(function() {
   });
 });
 $(function() {
+  return $(document).on('change', '#filter_family', function(evt) {
+    return $.ajax({
+      url: '/filters/get_segments',
+      type: 'GET',
+      dataType: 'script',
+      data: {
+        list_type: $("#filter_family option:selected").val()
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        return console.log("AJAX Error: " + textStatus);
+      },
+      success: function(data, textStatus, jqXHR) {
+        return console.log("Dynamic List select OK!");
+      }
+    });
+  });
+});
+$(function() {
   return $(document).on('change', '#filter_segment', function(evt) {
     var list_val = $("#filter_segment option:selected").val()
     switch (list_val) {
@@ -87,6 +105,9 @@ $(function() {
         list_type = "category_list";
         break;
     case "downloaded_the_app":
+        list_type = "recency_list";
+        break;
+     case "upgraded_the_app":
         list_type = "recency_list";
         break;
     case "feeling_score":
@@ -133,6 +154,12 @@ $(function() {
         break;
     case "recorded_avg_daily_activity":
         list_type = "recorded_activity";
+        break;
+    case "used_app_version":
+        list_type = "version_list";
+        break;
+    case "primary_location":
+        list_type = "regions";
         break;
     default: 
         list_type = "recency_list";
@@ -192,13 +219,14 @@ $(document).ready(function(){
           $("#filter_condition_id").hide();
         }
       else if (this.value == 'weather_condition' || this.value == 'categories' ||
-          this.value == 'about_to_expire')
+          this.value == 'about_to_expire' || this.value == "used_app_version" || this.value == "primary_location")
       {
         $("#free_text_field").hide();
         $("#filter_operator_id").hide();
         $("#filter_list_type_id").show();
         $("#filter_condition_id").show();
       }
+
       else if (this.value == 'users_with_account' || this.value == 'users_without_account')
         {
           $("#free_text_field").hide();

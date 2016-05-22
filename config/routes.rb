@@ -49,6 +49,7 @@ Rails.application.routes.draw do
     collection do
       get :get_list
       get :get_collective_list
+      get :get_segments
     end
   end
   get 'temp_push_notifications/get_push' => 'temp_push_notifications#get_push' #temp url

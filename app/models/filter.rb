@@ -36,8 +36,25 @@ class Filter < ActiveRecord::Base
     s
   end
 
+  def process_used_app_version
+    s = TempUserNote.where(version_number: @condition)
+    s
+  end
+
   def process_downloaded_the_app
     segment_definition = "auth_token_created_at"
+    if @condition == "today"
+      s = TempUserNote.where("Date(#{segment_definition}) #{@operator}  DATE(NOW())")
+    elsif @hour_day_week == "hour"
+      s = TempUserNote.where("#{segment_definition} #{@operator} DATE_SUB(NOW(), INTERVAL #{@digit} #{@hour_day_week})")
+    else
+      s = TempUserNote.where("DATE(#{segment_definition}) #{@operator} DATE_SUB(CURDATE(), INTERVAL #{@digit} #{@hour_day_week})")
+    end
+    s
+  end
+
+  def process_upgraded_the_app
+    segment_definition = "version_number_updated_at"
     if @condition == "today"
       s = TempUserNote.where("Date(#{segment_definition}) #{@operator}  DATE(NOW())")
     elsif @hour_day_week == "hour"
@@ -224,6 +241,8 @@ class Filter < ActiveRecord::Base
     s
   end
 
+
+# this is for today always otherwise it will trigger for past goals achieved also.
   def process_recorded_daily_activity
     s = TempUserNote.joins("INNER JOIN user_activities ON user_activities.user_id = temp_user_notes.user_id")
     s = s.where("user_activities.time_spent #{@operator} temp_user_notes.activity_goal")
@@ -279,12 +298,12 @@ class Filter < ActiveRecord::Base
   end
 
   def process_suburb_visited_frequency
-    s = TempUserNote.find_by_sql("SELECT roman.user_id FROM
+    s = TempUserNote.find_by_sql("SELECT roman.user_id distance_from_last_suburb_visited
                               (SELECT user_id, COUNT(*) AS visit_count 
                               FROM temp_user_notes
                               where suburb is not null and suburb != ' '
                               GROUP BY user_id) as roman
-                              where visit_count > 15;")
+                              where visit_count #{@operator} #{@free_text}")
     s
   end
 
@@ -301,6 +320,11 @@ class Filter < ActiveRecord::Base
             (SELECT t1.user_id, (t1.max - t1.min) as std_deviation FROM
             (SELECT user_id,  max(steps_walked) as max, min(steps_walked) as min FROM temp_user_notes group by user_id) as t1) as t2
             where t2.std_deviation #{@operator} #{free_text}")
+    s
+  end
+
+  def process_primary_location
+    s = TempUserNote.where(region: @condition)
     s
   end
   
@@ -352,15 +376,14 @@ class Filter < ActiveRecord::Base
     "contains" => "Contains"
   }
 
-  FAMILY = [ 
+  FAMILY = [  ["",""],
               ["Usage","usage"],
               ["Life Activity in Realifex","life_activity_in_realifex"],
               ["Time","time"],
               ["Places","places"],
               ["Category,Topics,Score","category_topic_score"],
               ["Weather","weather"],
-              ["Steps","steps"],
-              ["Inclusion/Exclusion","inclusion_exclusion"]
+              ["Steps","steps"]
             ]
   
 
@@ -413,15 +436,16 @@ class Filter < ActiveRecord::Base
                     "subscribe", 
                     "chat_with_alex", 
                     "upgrade_to_new_version"],
-    "version_list" => [ "V1.0",
-                        "V1.01",
-                        "V1.02",
-                        "V1.03",
-                        "V1.04",
-                        "V2.0",
-                        "V2.5",
-                        "V2.6",
-                        "V3.0"],
+    "version_list" => [ "1.0",
+                        "1.01",
+                        "1.02",
+                        "1.03",
+                        "1.04",
+                        "2.0",
+                        "2.5",
+                        "2.6",
+                        "3.0",
+                        "4.0"],
     "category_list" => ["Experiences","Actions","Emotions","Decisions","Discoveries"],
     "feeling_score_list" => [1,2,3,4,5,6,7,8],
     "impact_score_list" => [1,2,3,4,5,6],
@@ -453,6 +477,7 @@ class Filter < ActiveRecord::Base
                           ],
     "purchase_list" => [12,6,3],
     "recorded_activity" => ["current_goal_set"],
+    "regions" =>  TempUserNote.where.not(region: nil).select(:region).uniq.pluck(:region),
 
     "pre_defined_time_period" => [
                               "today",
@@ -480,39 +505,62 @@ class Filter < ActiveRecord::Base
                             ]
       }
 
-SEGMENT= [["Downloaded the app", "downloaded_the_app"],
-          ["Last note created","last_note_created"],
-          ["Users subscribed atleast once","subscribed_alteast_once"],
-          ["Users with active subscription","active_subscription"],
-          ["Not yet subscribed to","havent_subscribed"],
-          ["User with subscription about to expire","about_to_expire"],
-          ["User with expired subscription","expired_subscription"],
-          ["Categories","categories"],
-          ["Feeling score","feeling_score"],
-          ["Impact score","impact_score"],
-          ["Average Feeling score","average_feeling_score"],
-          ["Average Impact score","average_impact_score"],
-          ["Well being score","well_being_score"],
-          ["Average Well-being score","average_well_being_score"],
-          ["Weather Condition", "weather_condition"],
-          ["Notes in Realifex", "total_notes"],
-          ["Last Connection", "last_connection"],
-          ["Specific Users", "specific_users"],
-          ["Steps", "steps"],
-          ["Users with account","users_with_account"],
-          ["Users w/o account","users_without_account"],
-          ["Notes with topics","notes_with_topics"],
-          ["Notes with Suburb visit recency","suburb_visited"],
-          ["Notes with Suburb visit frequency","suburb_visited_frequency"],
-          ["Created Notes during Time period (date)","created_notes_during_time_period_date"],
-          ["Created Notes during Time period (period)","created_notes_during_time_period"],
-          ["Recorded Daily Activity during Time period (date)","recorded_daily_activity_during_time_period_date"],
-          ["Recorded Daily Activity during Time period (period)","recorded_daily_activity_during_time_period"],
-          ["Recorded Daily Activity", "recorded_daily_activity"],
-          ["Recorded an average daily Activity (mins)","recorded_avg_daily_activity"],
-          ["Well-being score standard deviation (Max-Min)","wbs_standard_deviation"],
-          ["Notes with Steps standard deviation (Max-Min)", "notes_with_steps_standard_deviation"]
-        ]
+  SEGMENT_FINDER = {
+    "usage" => [
+                  ["Downloaded the app", "downloaded_the_app"],
+                  ["Upgraded the app","upgraded_the_app"],
+                  ["Created Notes", "total_notes"],
+                  ["Last Connection", "last_connection"],
+                  ["Created their Last Note","last_note_created"],
+                  ["Used App Version","used_app_version"],
+                  ["At least once subscribed","subscribed_alteast_once"],
+                  ["An active subscription","active_subscription"],
+                  ["Not yet subscribed to","havent_subscribed"],
+                  ["Their current subscription which is about to expire","about_to_expire"],
+                  ["Their current subscription expired","expired_subscription"],
+                  ["Users with account","users_with_account"],
+                  ["Users w/o account","users_without_account"],
+                  ["With User ID", "specific_users"]
+    
+                ],
+    "life_activity_in_realifex" => [
+                                    ["Recorded Daily Activity", "recorded_daily_activity"],
+                                    ["Recorded an average daily Activity (mins)","recorded_avg_daily_activity"]
+                                    ],
+
+    "time" => [
+                ["Created Notes during Time period (date)","created_notes_during_time_period_date"],
+                ["Recorded Daily Activity during Time period (date)","recorded_daily_activity_during_time_period_date"],
+                ["Created Notes during Time period (period)","created_notes_during_time_period"],
+                ["Recorded Daily Activity during Time period (period)","recorded_daily_activity_during_time_period"]
+
+              ],
+     "places" => [
+                  ["Notes with Suburb visit recency","suburb_visited"],
+                  ["Notes with Suburb visit frequency","suburb_visited_frequency"],
+                  ["As Primary Location","primary_location"]
+                ],
+      "category_topic_score" => [
+                                  ["Notes with Categories","categories"],
+                                  ["Notes with Feeling score","feeling_score"],
+                                  ["Notes with Impact score","impact_score"],
+                                  ["Average Feeling score from their notes","average_feeling_score"],
+                                  ["Average Impact score from their notes","average_impact_score"],
+                                  ["Well-being score from their notes","well_being_score"],
+                                  ["Well-being score standard deviation (Max-Min)","wbs_standard_deviation"],
+                                  ["Average Well-being score  from their notes","average_well_being_score"],
+                                  
+                                  ["Notes with topics","notes_with_topics"],
+                                ],
+      "weather" => [
+                      ["Notes with Weather condition", "weather_condition"]
+                    ],
+      "steps" => [
+                    ["Notes with Steps", "steps"],
+                    ["Notes with Steps standard deviation (Max-Min)", "notes_with_steps_standard_deviation"]
+                  ]                                    
+
+}
 
   def self.drop_down_list(key)
     KEY_OPERATORS[key]
@@ -520,6 +568,10 @@ SEGMENT= [["Downloaded the app", "downloaded_the_app"],
 
   def self.collective_list(key)
     LIST_KEYS[key]
+  end
+
+  def self.find_segment(key)
+    SEGMENT_FINDER[key]
   end
 
   def prepare_temp_user_note_table
