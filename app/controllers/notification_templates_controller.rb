@@ -27,6 +27,7 @@ class NotificationTemplatesController < ApplicationController
   def create
     @notification_template = NotificationTemplate.new(notification_params)
     @notification_template.cta = NotificationTemplate::CTA[notification_params[:cta_key]]
+    @notification_template.secondary_cta = NotificationTemplate::CTA[notification_params[:secondary_cta_key]]
     if @notification_template.save
       flash[:success] = "New Notification Created. Superb!!"
       redirect_to notification_templates_path
@@ -73,7 +74,7 @@ private
                   :chat_email, :provide_feedback_email, :learn_more_url, :take_the_survey_url, :anonymous_feedback_url,[:autofocus_categories => []],
                   :well_being, :topics, [:weather=> []], :calories_min, :calories_medium, :calories_max,:list_type,
                   :in_exclusion_operator,:in_exclusion_segment,:in_exclusion_condition,:in_exclusion_notification_id,
-                  :recurring,:scheduled_time)
+                  :recurring,:scheduled_time,:secondary_cta_key)
   end
 
 end

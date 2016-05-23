@@ -327,6 +327,20 @@ class Filter < ActiveRecord::Base
     s = TempUserNote.where(region: @condition)
     s
   end
+
+  def process_notes_in_currently_used_version
+    []
+  end
+
+  def process_notes_with_topics_frequency
+    ActiveRecord::Base.connection.execute("delete tmp from temp_user_notes tmp left join tags t on tmp.notes_id=t.note_id 
+                    where t.name not in ('#{@free_text}') or t.name is null")
+    s = TempUserNote.find_by_sql("select user_id from 
+                    (select user_id, count(*) as total from temp_user_notes
+                    group by user_id) as t1
+                    where t1.total > #{@condition}")
+    s
+  end
   
   LIST_KEYS = {
     "numeric_operator_list" => "Numeric Operator List",
@@ -451,6 +465,34 @@ class Filter < ActiveRecord::Base
     "impact_score_list" => [1,2,3,4,5,6],
     "well_being_score_list" => [-24, -23, -22, -21, -20, -19, -18, -17, -16, -15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0,
                                  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+    "occurence_of_each_topic_list" => [ 1,
+                                        2,
+                                        3,
+                                        4,
+                                        5,
+                                        6,
+                                        7,
+                                        8,
+                                        9,
+                                        10,
+                                        11,
+                                        12,
+                                        13,
+                                        14,
+                                        15,
+                                        16,
+                                        17,
+                                        18,
+                                        19,
+                                        20,
+                                        25,
+                                        30,
+                                        35,
+                                        50,
+                                        75,
+                                        100
+                                      ],
+
     "weather_condition_list" => ["clear",
                                   "overcast",
                                   "wind",
@@ -510,6 +552,7 @@ class Filter < ActiveRecord::Base
                   ["Downloaded the app", "downloaded_the_app"],
                   ["Upgraded the app","upgraded_the_app"],
                   ["Created Notes", "total_notes"],
+                  ["Created # Notes  in the currently used app version","notes_in_currently_used_version"],
                   ["Last Connection", "last_connection"],
                   ["Created their Last Note","last_note_created"],
                   ["Used App Version","used_app_version"],
@@ -520,13 +563,13 @@ class Filter < ActiveRecord::Base
                   ["Their current subscription expired","expired_subscription"],
                   ["Users with account","users_with_account"],
                   ["Users w/o account","users_without_account"],
-                  ["With User ID", "specific_users"]
-    
+                  ["With User ID", "specific_users"],
+                  ["Notes with Topics Frequency","notes_with_topics_frequency"]
                 ],
     "life_activity_in_realifex" => [
                                     ["Recorded Daily Activity", "recorded_daily_activity"],
                                     ["Recorded an average daily Activity (mins)","recorded_avg_daily_activity"]
-                                    ],
+                                   ],
 
     "time" => [
                 ["Created Notes during Time period (date)","created_notes_during_time_period_date"],
