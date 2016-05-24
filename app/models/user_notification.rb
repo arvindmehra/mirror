@@ -84,6 +84,8 @@ class UserNotification < ActiveRecord::Base
       description: self.description,
       cta: self.cta,
       cta_key: self.cta_key,
+      secondary_cta: self.cta,
+      secondary_cta_key: self.cta_key,
       category: self.category,
       display_screen: self.display_screen,
       read_status: self.read_status,
@@ -123,6 +125,11 @@ class UserNotification < ActiveRecord::Base
                   min: self.calories_min,
                   medium: self.calories_medium,
                   max: self.calories_max,
+                },
+        sleep_time: {
+                  min: self.sleep_time_min,
+                  medium: self.sleep_time_medium,
+                  max: self.sleep_time_max,
                 }
           }
     }

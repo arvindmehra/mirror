@@ -158,8 +158,17 @@ $(function() {
     case "used_app_version":
         list_type = "version_list";
         break;
+    case "notes_in_currently_used_version":
+        list_type = "version_list";
+        break;
     case "primary_location":
         list_type = "regions";
+        break;
+    case "notes_with_topics_frequency":
+        list_type = "occurence_of_each_topic_list";
+        break;
+    case "suburb_visited":
+        list_type = "suburb_visit_recency";
         break;
     default: 
         list_type = "recency_list";
@@ -193,6 +202,7 @@ $(document).ready(function(){
           this.value == 'average_feeling_score' ||
           this.value == 'average_impact_score' ||
           this.value == 'average_well_being_score' ||
+          this.value == 'notes_with_same_weather_condition' ||
           this.value == 'well_being_score' ||
           this.value == 'expired_subscription' ||
           this.value == 'suburb_visited')
@@ -259,6 +269,13 @@ $(document).ready(function(){
       else if (this.value == 'recorded_daily_activity' || this.value == 'recorded_avg_daily_activity')
       {
         $("#free_text_field").hide();
+        $("#filter_list_type_id").show();
+        $("#filter_condition_id").show();
+        $("#filter_operator_id").show();
+      }
+       else if (this.value == 'notes_with_topics_frequency')
+      {
+        $("#free_text_field").show();
         $("#filter_list_type_id").show();
         $("#filter_condition_id").show();
         $("#filter_operator_id").show();

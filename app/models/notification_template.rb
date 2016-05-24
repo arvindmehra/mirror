@@ -160,7 +160,7 @@ FUTURE_DATE_LIST = [  "",
                                 ],
 
       "useful_list" => [true,false,"NC"],
-      "recency_list" => ["today",
+      "recency_list" => [ "today",
                           "1_hour_ago",
                           "2_hour_ago",
                           "3_hour_ago",

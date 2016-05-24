@@ -50,6 +50,16 @@ class RuleEnginesController < ApplicationController
     redirect_to rule_engines_path
   end
 
+  def duplicate_me
+    rule = RuleEngine.find_by(id: params[:id])
+    new_rule = rule.dup
+    new_rule.name = "Duplicate " + rule.name
+    if new_rule.save
+      flash[:success] = "Done!!"
+      redirect_to rule_engines_path
+    end
+  end
+
   private
 
   def rule_params

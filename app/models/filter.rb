@@ -178,7 +178,12 @@ class Filter < ActiveRecord::Base
   end
 
   def process_last_connection
-    s =  TempUserNote.where("Date(last_activity) #{@operator} DATE_SUB(now(), INTERVAL #{@digit} #{@hour_day_week})")
+    if @condition == "today"
+      s = TempUserNote.where("Date(last_activity) #{@operator}  CURDATE()")
+    else
+      s = TempUserNote.where("Date(last_activity) #{@operator} DATE_SUB(now(), INTERVAL #{@digit} #{@hour_day_week})")
+    end
+
     s
   end
 
@@ -230,13 +235,13 @@ class Filter < ActiveRecord::Base
   def process_recorded_daily_activity_during_time_period
     s = TempUserNote.joins("INNER JOIN user_activities ON user_activities.user_id = temp_user_notes.user_id")
     if @condition == "today"
-      s = s.where("Date(user_activities.activity_date) >  DATE(NOW())")
+      s = s.where("Date(user_activities.activity_date) #{@operator}  DATE(NOW())")
     elsif @condition == "yesterday"
-      s = s.where("Date(user_activities.activity_date) >  DATE_SUB(CURDATE(), INTERVAL 1 day)")
+      s = s.where("Date(user_activities.activity_date) #{@operator}  DATE_SUB(CURDATE(), INTERVAL 1 day)")
     elsif @hour_day_week == "hour"
-      s = s.where("user_activities.activity_date > DATE_SUB(NOW(), INTERVAL #{@digit} #{@hour_day_week})")
+      s = s.where("user_activities.activity_date #{@operator} DATE_SUB(NOW(), INTERVAL #{@digit} #{@hour_day_week})")
     else
-      s = s.where("DATE(user_activities.activity_date) > DATE_SUB(CURDATE(), INTERVAL #{@digit} #{@hour_day_week})")
+      s = s.where("DATE(user_activities.activity_date) #{@operator} DATE_SUB(CURDATE(), INTERVAL #{@digit} #{@hour_day_week})")
     end
     s
   end
@@ -326,6 +331,50 @@ class Filter < ActiveRecord::Base
   def process_primary_location
     s = TempUserNote.where(region: @condition)
     s
+  end
+
+  def process_notes_in_currently_used_version
+    []
+  end
+
+  def process_notes_with_topics_frequency
+    ActiveRecord::Base.connection.execute("delete tmp from temp_user_notes tmp left join tags t on tmp.notes_id=t.note_id 
+                    where t.name not in ('#{@free_text}') or t.name is null")
+    s = TempUserNote.find_by_sql("select user_id from 
+                    (select user_id, count(*) as total from temp_user_notes
+                    group by user_id) as t1
+                    where t1.total > #{@condition}")
+    s
+  end
+
+  def process_notes_with_same_weather_condition
+    if @condition == "today"
+      user_ids = TempUserNote.find_by_sql("select user_id from temp_user_notes
+            where whether_type in ('Overcast','Fog','Cloudy','Clear','Wind','Rain','Thunderstorm','Snow') and Date(notes_recorded_at) #{@operator} DATE(NOW())
+            group by user_id
+            having   count(distinct whether_type) = 8")
+    elsif @condition == "yesterday"
+      user_ids = TempUserNote.find_by_sql("select user_id from temp_user_notes
+            where whether_type in ('Overcast','Fog','Cloudy','Clear','Wind','Rain','Thunderstorm','Snow') and Date(notes_recorded_at) #{@operator} DATE_SUB(CURDATE(), INTERVAL 1 day)
+            group by user_id
+            having   count(distinct whether_type) = 8")
+    elsif @hour_day_week == "hour"
+      user_ids = TempUserNote.find_by_sql("select user_id from temp_user_notes
+            where whether_type in ('Overcast','Fog','Cloudy','Clear','Wind','Rain','Thunderstorm','Snow') and Date(notes_recorded_at) #{@operator} DATE_SUB(NOW(), INTERVAL #{@digit} #{@hour_day_week})
+            group by user_id
+            having   count(distinct whether_type) = 8")
+    else
+      user_ids = TempUserNote.find_by_sql("select user_id from temp_user_notes
+            where whether_type in ('Overcast','Fog','Cloudy','Clear','Wind','Rain','Thunderstorm','Snow') and Date(notes_recorded_at) #{@operator} DATE_SUB(CURDATE(), INTERVAL #{@digit} #{@hour_day_week})
+            group by user_id
+            having   count(distinct whether_type) = 8")
+      user_ids = user_ids.map{|x| x.user_id}.uniq
+      ActiveRecord::Base.connection.execute("delete from temp_user_notes
+                    where user_id in ('#{user_ids.join}')")
+      s = TempUserNote.all
+      s
+    end
+
   end
   
   LIST_KEYS = {
@@ -451,6 +500,34 @@ class Filter < ActiveRecord::Base
     "impact_score_list" => [1,2,3,4,5,6],
     "well_being_score_list" => [-24, -23, -22, -21, -20, -19, -18, -17, -16, -15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0,
                                  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+    "occurence_of_each_topic_list" => [ 1,
+                                        2,
+                                        3,
+                                        4,
+                                        5,
+                                        6,
+                                        7,
+                                        8,
+                                        9,
+                                        10,
+                                        11,
+                                        12,
+                                        13,
+                                        14,
+                                        15,
+                                        16,
+                                        17,
+                                        18,
+                                        19,
+                                        20,
+                                        25,
+                                        30,
+                                        35,
+                                        50,
+                                        75,
+                                        100
+                                      ],
+
     "weather_condition_list" => ["clear",
                                   "overcast",
                                   "wind",
@@ -502,7 +579,28 @@ class Filter < ActiveRecord::Base
                               "3_month_ago",
                               "6_month_ago",
                               "12_month_ago"
-                            ]
+                            ],
+                            
+        "suburb_visit_recency" => [
+                                    "never",
+                                    "today",
+                                    "1_day_ago",
+                                    "2_day_ago",
+                                    "3_day_ago",
+                                    "4_day_ago",
+                                    "5_day_ago",
+                                    "6_day_ago",
+                                    "7_day_ago",
+                                    "8_day_ago",
+                                    "9_day_ago",
+                                    "10_day_ago",
+                                    "11_day_ago",
+                                    "12_day_ago",
+                                    "13_day_ago",
+                                    "2_week_ago",
+                                    "3_week_ago",
+                                    "4_week_ago"
+                                  ]
       }
 
   SEGMENT_FINDER = {
@@ -510,6 +608,7 @@ class Filter < ActiveRecord::Base
                   ["Downloaded the app", "downloaded_the_app"],
                   ["Upgraded the app","upgraded_the_app"],
                   ["Created Notes", "total_notes"],
+                  ["Created # Notes  in the currently used app version","notes_in_currently_used_version"],
                   ["Last Connection", "last_connection"],
                   ["Created their Last Note","last_note_created"],
                   ["Used App Version","used_app_version"],
@@ -520,13 +619,13 @@ class Filter < ActiveRecord::Base
                   ["Their current subscription expired","expired_subscription"],
                   ["Users with account","users_with_account"],
                   ["Users w/o account","users_without_account"],
-                  ["With User ID", "specific_users"]
-    
+                  ["With User ID", "specific_users"],
+                  ["Notes with Topics Frequency","notes_with_topics_frequency"]
                 ],
     "life_activity_in_realifex" => [
                                     ["Recorded Daily Activity", "recorded_daily_activity"],
                                     ["Recorded an average daily Activity (mins)","recorded_avg_daily_activity"]
-                                    ],
+                                   ],
 
     "time" => [
                 ["Created Notes during Time period (date)","created_notes_during_time_period_date"],
@@ -553,7 +652,8 @@ class Filter < ActiveRecord::Base
                                   ["Notes with topics","notes_with_topics"],
                                 ],
       "weather" => [
-                      ["Notes with Weather condition", "weather_condition"]
+                      ["Notes with Weather condition", "weather_condition"],
+                      ["Notes with same weather condition","notes_with_same_weather_condition"]
                     ],
       "steps" => [
                     ["Notes with Steps", "steps"],
