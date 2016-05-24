@@ -4,7 +4,9 @@ class Notifier
     Rails.logger.info  "Batch Notification Triggered"
     if notification_template.present?
       text = notification_template.title << " " << notification_template.description
-      users = User.where(id: notification_template.get_scope_users).includes(:devices)
+      scope_users = notification_template.get_scope_users
+      scope_users = scope_users.is_a?(Hash) ? scope_users[:user_ids] : scope_users
+      users = User.where(id: scope_users).includes(:devices)
       if users.present?
         users.each_slice(100) do | batch |
           batch.each do | user |

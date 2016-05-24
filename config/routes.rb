@@ -59,16 +59,18 @@ Rails.application.routes.draw do
       patch :deactivate
       patch :activate
       get :get_list
+    end
+    member do 
       post :duplicate_me
     end
   end
   resources :filter_groups do
-    collection do
+    member do
       post :duplicate_me
     end
   end
   resources :rule_engines do
-    collection do
+    member do
       post :duplicate_me
     end
   end
