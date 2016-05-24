@@ -78,6 +78,12 @@
       <%= f.select :execution_type,options_for_select([["Batch","batch"],["Realtime","realtime"]]), class: "form-control" %><br />
     </div>  
   </div>
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
+      <%= f.label :scheduled_time, class: "col-sm-3 control-label" %>
+      <div class="col-sm-6 controls">
+        <%= f.text_field :scheduled_time, class: "form-control",placeholder: "2:00"  %>
+      </div>
+    </div>
   <div id="date_group">
     <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
       <%= f.label :start_date, class: "col-sm-3 control-label" %>
@@ -396,48 +402,6 @@
       $('#id_chat').hide();
     }
 
-    // secondary cta
-    $('#notification_template_cta_key').on('change',function() {
-    if(this.value == 'provide_feedback')
-    {
-      $('#id_provide_feedback').show();
-      $('#id_chat').hide();
-      $('#id_learn_more').hide();
-      $('#id_take_the_survey').hide();
-      $('#id_anonymous_feedback').hide();
-    }
-    else if(this.value == 'chat')
-    {
-      $('#id_provide_feedback').hide();
-      $('#id_chat').show();
-      $('#id_learn_more').hide();
-      $('#id_take_the_survey').hide();
-      $('#id_anonymous_feedback').hide();
-    }
-    else if(this.value == 'learn_more')
-    {
-      $('#id_learn_more').show();
-      $('#id_provide_feedback').hide();
-      $('#id_chat').hide();
-      $('#id_take_the_survey').hide();
-      $('#id_anonymous_feedback').hide();
-    }
-    else if(this.value == 'take_survey')
-    {
-      $('#id_take_the_survey').show();
-      $('#id_learn_more').hide();
-      $('#id_provide_feedback').hide();
-      $('#id_chat').hide();
-      $('#id_anonymous_feedback').hide();
-    }
-    else if(this.value == 'anonymous_feedback')
-    {
-      $('#id_anonymous_feedback').show();
-      $('#id_take_the_survey').hide();
-      $('#id_learn_more').hide();
-      $('#id_provide_feedback').hide();
-      $('#id_chat').hide();
-    }
 
   })
 

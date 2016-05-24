@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160523052224) do
+ActiveRecord::Schema.define(version: 20160524071115) do
 
   create_table "devices", force: true do |t|
     t.integer  "user_id"
@@ -246,6 +246,8 @@ ActiveRecord::Schema.define(version: 20160523052224) do
     t.integer  "notification_template_id"
     t.string   "cta"
     t.string   "cta_key"
+    t.string   "secondary_cta"
+    t.string   "secondary_cta_key"
     t.string   "category"
     t.string   "display_screen"
     t.boolean  "read_status"

@@ -34,6 +34,19 @@ class FilterGroupsController < ApplicationController
   def update
   end
 
+  def duplicate_me
+    group = FilterGroup.find_by(id: params[:id])
+    new_group = group.dup
+    new_group.name = "Duplicate " + group.name
+    if new_group.save
+      flash[:success] = "Done!!"
+      redirect_to filter_groups_path
+    else
+      flash[:danger] = "oh oh something not right!!"
+      redirect_to filter_groups_path
+    end
+  end
+
   private
 
   def filter_group_params

@@ -62,6 +62,16 @@ class NotificationTemplatesController < ApplicationController
     end
   end
 
+  def duplicate_me
+    notification = NotificationTemplate.find_by(id: params[:id])
+    new_notification = notification.dup
+    new_notification.title = "Duplicate " + notification.title
+    if new_notification.save
+      flash[:success] = "Done!!"
+      redirect_to notification_templates_path
+    end
+  end
+
 private
     
   def notification_params

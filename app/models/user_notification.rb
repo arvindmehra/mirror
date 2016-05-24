@@ -125,6 +125,11 @@ class UserNotification < ActiveRecord::Base
                   min: self.calories_min,
                   medium: self.calories_medium,
                   max: self.calories_max,
+                },
+        sleep_time: {
+                  min: self.sleep_time_min,
+                  medium: self.sleep_time_medium,
+                  max: self.sleep_time_max,
                 }
           }
     }
