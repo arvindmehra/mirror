@@ -33,6 +33,8 @@ class Notifier
         user_notification.merge_field = notification_template.merge_field
         user_notification.cta = notification_template.cta
         user_notification.cta_key = notification_template.cta_key
+        user_notification.secondary_cta = notification_template.secondary_cta
+        user_notification.secondary_cta_key = notification_template.secondary_cta_key
         user_notification.useful = notification_template.useful
         user_notification.category = notification_template.category
         user_notification.display_screen = notification_template.display_screen

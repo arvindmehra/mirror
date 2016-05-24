@@ -108,42 +108,12 @@
     </div>
   </div>
 
-  <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
-    <%= f.label :chat_email, class: "col-sm-3 control-label" %>
-    <div class="col-sm-6 controls">
-      <%= f.text_field :chat_email, class: "form-control"  %>
-    </div>  
-  </div>
-  <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
-    <%= f.label :provide_feedback_email, class: "col-sm-3 control-label" %>
-    <div class="col-sm-6 controls">
-      <%= f.text_field :provide_feedback_email, class: "form-control"  %>
-    </div>  
-  </div>
-  <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
-    <%= f.label :learn_more_url, class: "col-sm-3 control-label" %>
-    <div class="col-sm-6 controls">
-      <%= f.text_field :learn_more_url, class: "form-control"  %>
-    </div>  
-  </div>
-  <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
-    <%= f.label :take_the_survey_url, class: "col-sm-3 control-label" %>
-    <div class="col-sm-6 controls">
-      <%= f.text_field :take_the_survey_url, class: "form-control"  %>
-    </div>  
-  </div>
-  <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
-    <%= f.label :anonymous_feedback_url, class: "col-sm-3 control-label" %>
-    <div class="col-sm-6 controls">
-      <%= f.text_field :anonymous_feedback_url, class: "form-control"  %>
-    </div>  
-  </div>
 
   <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
     <%= f.label :cta_key, class: "col-sm-3 control-label" %>
     <div class="col-sm-6 controls">
       <%= f.select :cta_key,options_for_select(NotificationTemplate::CTA.invert.to_a), class: "form-control" %><br />
-    </div>  
+    </div>
   </div>
   <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
     <%= f.label :secondary_cta_key, class: "col-sm-3 control-label" %>
@@ -151,6 +121,39 @@
       <%= f.select :secondary_cta_key,options_for_select([["",""]]+NotificationTemplate::CTA.invert.to_a), class: "form-control" %><br />
     </div>
   </div>
+
+
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: none" id ="id_chat">
+    <%= f.label :chat_email, class: "col-sm-3 control-label" %>
+    <div class="col-sm-6 controls">
+      <%= f.text_field :chat_email, class: "form-control"  %>
+    </div>  
+  </div>
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: none" id ="id_provide_feedback">
+    <%= f.label :provide_feedback_email, class: "col-sm-3 control-label" %>
+    <div class="col-sm-6 controls">
+      <%= f.text_field :provide_feedback_email, class: "form-control"  %>
+    </div>  
+  </div>
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: none" id ="id_learn_more">
+    <%= f.label :learn_more_url, class: "col-sm-3 control-label" %>
+    <div class="col-sm-6 controls">
+      <%= f.text_field :learn_more_url, class: "form-control"  %>
+    </div>  
+  </div>
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: none" id ="id_take_the_survey">
+    <%= f.label :take_the_survey_url, class: "col-sm-3 control-label" %>
+    <div class="col-sm-6 controls">
+      <%= f.text_field :take_the_survey_url, class: "form-control"  %>
+    </div>  
+  </div>
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: none" id ="id_anonymous_feedback">
+    <%= f.label :anonymous_feedback_url, class: "col-sm-3 control-label" %>
+    <div class="col-sm-6 controls">
+      <%= f.text_field :anonymous_feedback_url, class: "form-control"  %>
+    </div>  
+  </div>
+
 <!-- ############################################       Autofocus Segment ############################ -->
 
   <div id=autofocus style="display: none">
@@ -350,6 +353,93 @@
         }
       })
     });
+
+  $('#notification_template_cta_key').on('change',function() {
+    if(this.value == 'provide_feedback')
+    {
+      $('#id_provide_feedback').show();
+      $('#id_chat').hide();
+      $('#id_learn_more').hide();
+      $('#id_take_the_survey').hide();
+      $('#id_anonymous_feedback').hide();
+    }
+    else if(this.value == 'chat')
+    {
+      $('#id_provide_feedback').hide();
+      $('#id_chat').show();
+      $('#id_learn_more').hide();
+      $('#id_take_the_survey').hide();
+      $('#id_anonymous_feedback').hide();
+    }
+    else if(this.value == 'learn_more')
+    {
+      $('#id_learn_more').show();
+      $('#id_provide_feedback').hide();
+      $('#id_chat').hide();
+      $('#id_take_the_survey').hide();
+      $('#id_anonymous_feedback').hide();
+    }
+    else if(this.value == 'take_survey')
+    {
+      $('#id_take_the_survey').show();
+      $('#id_learn_more').hide();
+      $('#id_provide_feedback').hide();
+      $('#id_chat').hide();
+      $('#id_anonymous_feedback').hide();
+    }
+    else if(this.value == 'anonymous_feedback')
+    {
+      $('#id_anonymous_feedback').show();
+      $('#id_take_the_survey').hide();
+      $('#id_learn_more').hide();
+      $('#id_provide_feedback').hide();
+      $('#id_chat').hide();
+    }
+
+    // secondary cta
+    $('#notification_template_cta_key').on('change',function() {
+    if(this.value == 'provide_feedback')
+    {
+      $('#id_provide_feedback').show();
+      $('#id_chat').hide();
+      $('#id_learn_more').hide();
+      $('#id_take_the_survey').hide();
+      $('#id_anonymous_feedback').hide();
+    }
+    else if(this.value == 'chat')
+    {
+      $('#id_provide_feedback').hide();
+      $('#id_chat').show();
+      $('#id_learn_more').hide();
+      $('#id_take_the_survey').hide();
+      $('#id_anonymous_feedback').hide();
+    }
+    else if(this.value == 'learn_more')
+    {
+      $('#id_learn_more').show();
+      $('#id_provide_feedback').hide();
+      $('#id_chat').hide();
+      $('#id_take_the_survey').hide();
+      $('#id_anonymous_feedback').hide();
+    }
+    else if(this.value == 'take_survey')
+    {
+      $('#id_take_the_survey').show();
+      $('#id_learn_more').hide();
+      $('#id_provide_feedback').hide();
+      $('#id_chat').hide();
+      $('#id_anonymous_feedback').hide();
+    }
+    else if(this.value == 'anonymous_feedback')
+    {
+      $('#id_anonymous_feedback').show();
+      $('#id_take_the_survey').hide();
+      $('#id_learn_more').hide();
+      $('#id_provide_feedback').hide();
+      $('#id_chat').hide();
+    }
+
+  })
 
   $(function() {
   return $(document).on('change', '#notification_template_in_exclusion_segment', function(evt) {

@@ -164,8 +164,11 @@ $(function() {
     case "primary_location":
         list_type = "regions";
         break;
-     case "notes_with_topics_frequency":
+    case "notes_with_topics_frequency":
         list_type = "occurence_of_each_topic_list";
+        break;
+    case "suburb_visited":
+        list_type = "suburb_visit_recency";
         break;
     default: 
         list_type = "recency_list";
@@ -199,6 +202,7 @@ $(document).ready(function(){
           this.value == 'average_feeling_score' ||
           this.value == 'average_impact_score' ||
           this.value == 'average_well_being_score' ||
+          this.value == 'notes_with_same_weather_condition' ||
           this.value == 'well_being_score' ||
           this.value == 'expired_subscription' ||
           this.value == 'suburb_visited')

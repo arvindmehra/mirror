@@ -84,6 +84,8 @@ class UserNotification < ActiveRecord::Base
       description: self.description,
       cta: self.cta,
       cta_key: self.cta_key,
+      secondary_cta: self.cta,
+      secondary_cta_key: self.cta_key,
       category: self.category,
       display_screen: self.display_screen,
       read_status: self.read_status,
