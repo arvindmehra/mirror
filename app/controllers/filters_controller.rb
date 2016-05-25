@@ -28,6 +28,16 @@ class FiltersController < ApplicationController
     end
   end
 
+  def destroy
+    @filter = Filter.find(params[:id])
+    if @filter.destroy
+      flash[:success] = "Thrown to Trash.."
+    else
+      flash[:error] = "Error deleting Notification"
+    end
+    redirect_to filters_path
+  end
+
   def get_list
     @filter_list = Filter.drop_down_list(params[:list_type])
     respond_to do |format|

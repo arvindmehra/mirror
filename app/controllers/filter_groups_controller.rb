@@ -26,7 +26,15 @@ class FilterGroupsController < ApplicationController
   end
 
   def destroy
+    @filter_group = FilterGroup.find(params[:id])
+    if @filter_group.destroy
+      flash[:success] = "Thrown to Trash.."
+    else
+      flash[:error] = "Error deleting Notification"
+    end
+    redirect_to filter_groups_path
   end
+
 
   def edit
   end
