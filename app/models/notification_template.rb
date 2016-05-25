@@ -82,7 +82,7 @@ FUTURE_DATE_LIST = [  "",
 
   ELAPSED_TIME = [1,2,3,4,5]
 
-  DISPLAY_SCREEN = [["",""],["Option", "option"],["Suggestion","suggestion"]]
+  DISPLAY_SCREEN = [["Option", "option"],["Suggestion","suggestion"]]
 
   CTA = {
         "create_a_note"=>"Create a note",
@@ -146,7 +146,8 @@ FUTURE_DATE_LIST = [  "",
               ]
 
   KEY_OPERATORS = {
-      "already_targeted_list" => ["1_time",
+      "already_targeted_list" => ["",
+                                  "1_time",
                                   "2_times",
                                   "3_times",
                                   "4_times",

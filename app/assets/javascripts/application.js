@@ -15,4 +15,6 @@
 //= require turbolinks
 //= require twitter/bootstrap
 //= require jquery.multi-select
+//= require moment
+//= require bootstrap-datetimepicker.min
 //= require_tree .

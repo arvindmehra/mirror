@@ -25,9 +25,12 @@ class NotificationTemplatesController < ApplicationController
   end
 
   def create
-    @notification_template = NotificationTemplate.new(notification_params)
-    @notification_template.cta = NotificationTemplate::CTA[notification_params[:cta_key]]
-    @notification_template.secondary_cta = NotificationTemplate::CTA[notification_params[:secondary_cta_key]]
+    temp_params = notification_params
+    temp_params[:start_date] = Date.strptime(temp_params[:start_date], '%m/%d/%Y') if temp_params[:start_date].present?
+    temp_params[:end_date] = Date.strptime(temp_params[:end_date], '%m/%d/%Y') if temp_params[:start_date].present?
+    @notification_template = NotificationTemplate.new(temp_params)
+    @notification_template.cta = NotificationTemplate::CTA[temp_params[:cta_key]]
+    @notification_template.secondary_cta = NotificationTemplate::CTA[temp_params[:secondary_cta_key]]
     if @notification_template.save
       flash[:success] = "New Notification Created. Superb!!"
       redirect_to notification_templates_path

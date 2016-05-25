@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160524071115) do
+ActiveRecord::Schema.define(version: 20160525132155) do
 
   create_table "devices", force: true do |t|
     t.integer  "user_id"
@@ -99,11 +99,11 @@ ActiveRecord::Schema.define(version: 20160524071115) do
     t.string   "execution_type"
     t.string   "category"
     t.string   "display_screen"
-    t.datetime "start_date"
-    t.datetime "end_date"
+    t.date     "start_date"
+    t.date     "end_date"
     t.boolean  "active"
     t.boolean  "recurring"
-    t.datetime "scheduled_time"
+    t.string   "scheduled_time"
     t.string   "trigger"
     t.text     "filter_preferences"
     t.text     "cta_preferences"
