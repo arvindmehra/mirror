@@ -39,6 +39,12 @@ class NotificationTemplate < ActiveRecord::Base
     string :learn_more_url
     string :take_the_survey_url
     string :anonymous_feedback_url
+
+    string :secondary_provide_feedback_email
+    string :secondary_chat_email
+    string :secondary_learn_more_url
+    string :secondary_take_the_survey_url
+    string :secondary_anonymous_feedback_url
   end
 
   CATEGORY_LIST = ["Experiences","Actions","Emotions","Decisions","Discoveries"]
