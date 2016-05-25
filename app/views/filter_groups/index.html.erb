@@ -18,6 +18,8 @@
   <thead>
     <tr>
       <th class="header pjax  user_field belongs_to_association_type" data-href="/admin/device?sort=user" rel="tooltip" title="" data-original-title="">Name</th>
+      <th></th>
+      <th></th>
     </tr>
   </tr>
   </thead>
@@ -27,6 +29,7 @@
         <tr class="device_row">
           <td class="vendor_id_field string_type"><%= link_to group.name, filter_group_path(group) %></td>
           <td class="vendor_id_field string_type" ><%= link_to "Duplicate", duplicate_me_filter_group_path(group), method: :post, class: "btn btn-warning" %></td>
+          <td class="vendor_id_field string_type" ><%= link_to "Delete", filter_group_path(group),{method: :delete, class: "btn btn-danger"} %></td>
         </tr>
       <% end %>
     <% end %>

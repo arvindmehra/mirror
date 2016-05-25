@@ -37,6 +37,16 @@ class NotificationTemplatesController < ApplicationController
     end
   end
 
+  def destroy
+    @notification_template = NotificationTemplate.find(params[:id])
+    if @notification_template.destroy
+      flash[:success] = "Thrown to Trash.."
+    else
+      flash[:error] = "Error deleting Notification"
+    end
+    redirect_to notification_templates_path
+  end
+
   def blast_send
     notification = NotificationTemplate.find_by(id: params[:id])
     notification.fire
