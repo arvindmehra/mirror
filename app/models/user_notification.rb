@@ -81,7 +81,7 @@ class UserNotification < ActiveRecord::Base
     score_data = self.score_data.split(",") if self.score_data.present?
     categories = JSON.parse(self.autofocus_categories) if self.autofocus_categories.present?
     weather = JSON.parse(self.weather) if self.weather.present?
-    topics = self.topics.split(",") if self.topics.present?
+    topics = self.topics.split(",").collect(&:strip) if self.topics.present?
     {
       id: self.id,
       title: self.title,
