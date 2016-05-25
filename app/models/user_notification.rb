@@ -41,6 +41,11 @@ class UserNotification < ActiveRecord::Base
     string :learn_more_url
     string :take_the_survey_url
     string :anonymous_feedback_url
+    string :secondary_provide_feedback_email
+    string :secondary_chat_email
+    string :secondary_learn_more_url
+    string :secondary_take_the_survey_url
+    string :secondary_anonymous_feedback_url
   end
 
 
@@ -100,6 +105,12 @@ class UserNotification < ActiveRecord::Base
       learn_more_url: self.learn_more_url,
       take_the_survey_url: self.take_the_survey_url,
       anonymous_feedback_url: self.anonymous_feedback_url,
+      secondary_provide_feedback_email: self.provide_feedback_email,
+      secondary_chat_email: self.chat_email,
+      secondary_learn_more_url: self.learn_more_url,
+      secondary_take_the_survey_url: self.take_the_survey_url,
+      secondary_anonymous_feedback_url: self.anonymous_feedback_url,
+
       filter: {
         days_from_now: self.days_from_now,
         topics: topics,

@@ -121,13 +121,8 @@
       <%= f.select :cta_key,options_for_select(NotificationTemplate::CTA.invert.to_a), class: "form-control" %><br />
     </div>
   </div>
-  <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
-    <%= f.label :secondary_cta_key, class: "col-sm-3 control-label" %>
-    <div class="col-sm-6 controls">
-      <%= f.select :secondary_cta_key,options_for_select([["",""]]+NotificationTemplate::CTA.invert.to_a), class: "form-control" %><br />
-    </div>
-  </div>
-
+  
+<!-- primary cta key fields -->
 
   <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: none" id ="id_chat">
     <%= f.label :chat_email, class: "col-sm-3 control-label" %>
@@ -159,6 +154,52 @@
       <%= f.text_field :anonymous_feedback_url, class: "form-control"  %>
     </div>  
   </div>
+
+  <!-- end -->
+
+<!-- secondary Cta key fields -->
+
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
+    <%= f.label :secondary_cta_key, class: "col-sm-3 control-label" %>
+    <% NotificationTemplate::CTA.delete("autofocus") %>
+    <div class="col-sm-6 controls">
+      <%= f.select :secondary_cta_key,options_for_select([["",""]]+NotificationTemplate::CTA.invert.to_a), class: "form-control" %><br />
+    </div>
+  </div>
+
+   <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: none" id ="secondary_id_chat">
+      <%= f.label :secondary_chat_email, class: "col-sm-3 control-label" %>
+      <div class="col-sm-6 controls">
+        <%= f.text_field :secondary_chat_email, class: "form-control"  %>
+      </div>
+    </div>
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: none" id ="secondary_id_provide_feedback">
+      <%= f.label :secondary_provide_feedback_email, class: "col-sm-3 control-label" %>
+      <div class="col-sm-6 controls">
+        <%= f.text_field :secondary_provide_feedback_email, class: "form-control"  %>
+      </div>
+    </div>
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: none" id ="secondary_id_learn_more">
+      <%= f.label :secondary_learn_more_url, class: "col-sm-3 control-label" %>
+      <div class="col-sm-6 controls">
+        <%= f.text_field :secondary_learn_more_url, class: "form-control"  %>
+      </div>
+    </div>
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: none" id ="secondary_id_take_the_survey">
+      <%= f.label :secondary_take_the_survey_url, class: "col-sm-3 control-label" %>
+      <div class="col-sm-6 controls">
+        <%= f.text_field :secondary_take_the_survey_url, class: "form-control"  %>
+      </div>
+    </div>
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: none" id ="secondary_id_anonymous_feedback">
+      <%= f.label :secondary_anonymous_feedback_url, class: "col-sm-3 control-label" %>
+      <div class="col-sm-6 controls">
+        <%= f.text_field :secondary_anonymous_feedback_url, class: "form-control"  %>
+      </div>
+    </div>
+
+  <!-- end  -->
+
 
 <!-- ############################################       Autofocus Segment ############################ -->
 
@@ -401,30 +442,71 @@
       $('#id_provide_feedback').hide();
       $('#id_chat').hide();
     }
+  })
 
-
+  $('#notification_template_secondary_cta_key').on('change',function() {
+    if(this.value == 'provide_feedback')
+    {
+      $('#secondary_id_provide_feedback').show();
+      $('#secondary_id_chat').hide();
+      $('#secondary_id_learn_more').hide();
+      $('#secondary_id_take_the_survey').hide();
+      $('#secondary_id_anonymous_feedback').hide();
+    }
+    else if(this.value == 'chat')
+    {
+      $('#secondary_id_provide_feedback').hide();
+      $('#secondary_id_chat').show();
+      $('#secondary_id_learn_more').hide();
+      $('#secondary_id_take_the_survey').hide();
+      $('#secondary_id_anonymous_feedback').hide();
+    }
+    else if(this.value == 'learn_more')
+    {
+      $('#secondary_id_learn_more').show();
+      $('#secondary_id_provide_feedback').hide();
+      $('#secondary_id_chat').hide();
+      $('#secondary_id_take_the_survey').hide();
+      $('#secondary_id_anonymous_feedback').hide();
+    }
+    else if(this.value == 'take_survey')
+    {
+      $('#secondary_id_take_the_survey').show();
+      $('#secondary_id_learn_more').hide();
+      $('#secondary_id_provide_feedback').hide();
+      $('#secondary_id_chat').hide();
+      $('#secondary_id_anonymous_feedback').hide();
+    }
+    else if(this.value == 'anonymous_feedback')
+    {
+      $('#secondary_id_anonymous_feedback').show();
+      $('#secondary_id_take_the_survey').hide();
+      $('#secondary_id_learn_more').hide();
+      $('#secondary_id_provide_feedback').hide();
+      $('#secondary_id_chat').hide();
+    }
   })
 
   $(function() {
   return $(document).on('change', '#notification_template_in_exclusion_segment', function(evt) {
     var list_val = $("#notification_template_in_exclusion_segment option:selected").val()
     switch (list_val) {
-    case "include_already_targeted":
-        list_type = "already_targeted_list";
-        break;
-    case "exclude_already_targeted":
-        list_type = "already_targeted_list";
-        break;
-    case"include_found_useful":
-        list_type = "useful_list";
-        break;
-    case"exclude_found_useful":
-        list_type = "useful_list";
-        break;
-    default:
-        list_type = "recency_list";
-        break;
-}
+      case "include_already_targeted":
+          list_type = "already_targeted_list";
+          break;
+      case "exclude_already_targeted":
+          list_type = "already_targeted_list";
+          break;
+      case"include_found_useful":
+          list_type = "useful_list";
+          break;
+      case"exclude_found_useful":
+          list_type = "useful_list";
+          break;
+      default:
+          list_type = "recency_list";
+          break;
+    }
     console.log(list_val)
     return $.ajax({
       url: '/notification_templates/get_list',
