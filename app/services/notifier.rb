@@ -3,7 +3,8 @@ class Notifier
   def self.trigger_for_batch(notification_template)
     Rails.logger.info  "Batch Notification Triggered"
     if notification_template.present?
-      text = notification_template.title << " " << notification_template.description
+      text = notification_template.title
+      text += " " + notification_template.description
       scope_users = notification_template.get_scope_users
       scope_users = scope_users.is_a?(Hash) ? scope_users[:user_ids] : scope_users
       users = User.where(id: scope_users).includes(:devices)
@@ -50,7 +51,8 @@ class Notifier
 
   def self.trigger_for_realtime(notification_template,user)
     Rails.logger.info  "RealTime Notification Triggered"
-    text = notification_template.title << " " << notification_template.description
+    text = notification_template.title
+    text += " " + notification_template.description
     construct_user_notifications(notification_template,user)
     badge = (notification_template.display_screen == "suggestion") ? user.unread_suggestion_notifications.count : user.unread_option_notifications.count
     devices = user.devices.where.not("notification_token"=>nil)

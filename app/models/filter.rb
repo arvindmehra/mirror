@@ -109,11 +109,11 @@ class Filter < ActiveRecord::Base
     else
       id = 3
     end
-    s = TempUserNote.joins("INNER JOIN transactions ON transactions.user_id = temp_user_notes.user_id")
+    s = TempUserNote.joins("LEFT JOIN transactions ON transactions.user_id = temp_user_notes.user_id")
     s = s.where(transactions: {product_id: id})
     s = s.pluck(:user_id).uniq
-    as = TempUserNote.joins("INNER JOIN transactions ON transactions.user_id = temp_user_notes.user_id")
-    as = as.where.not(transactions: {user_id: s})
+    as = TempUserNote.joins("LEFT JOIN transactions ON transactions.user_id = temp_user_notes.user_id")
+    as = as.where.not(user_id: s)
     as
   end
 
@@ -179,9 +179,9 @@ class Filter < ActiveRecord::Base
 
   def process_last_connection
     if @condition == "today"
-      s = TempUserNote.where("Date(last_activity) #{@operator}  CURDATE()")
+      s = TempUserNote.where("last_activity #{@operator}  CURDATE()")
     else
-      s = TempUserNote.where("Date(last_activity) #{@operator} DATE_SUB(now(), INTERVAL #{@digit} #{@hour_day_week})")
+      s = TempUserNote.where("last_activity #{@operator} DATE_SUB(now(), INTERVAL #{@digit} #{@hour_day_week})")
     end
 
     s
@@ -283,8 +283,8 @@ class Filter < ActiveRecord::Base
 
   def process_notes_with_topics
     @free_text = @free_text.strip.gsub(" ","").split(",")
-    clauses = (["(tags.name like ?)"] * @free_text.size).join(" or ")
-    args = @free_text.map{|x| ["%#{x}%"]}
+    clauses = (["(lower(tags.name) = ?)"] * @free_text.size).join(" or ")
+    args = @free_text.map{|x| ["#{x}".downcase]}
     sql_clause =  [clauses,*args.flatten]
     s = TempUserNote.joins("INNER JOIN tags").where(sql_clause).where("tags.note_id = temp_user_notes.notes_id")
     s

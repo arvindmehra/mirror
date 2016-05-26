@@ -22,7 +22,10 @@ class FiltersController < ApplicationController
   end
 
   def create
-    @filter = Filter.new(filter_params)
+    temp_params = filter_params
+    temp_params[:start_date] = Date.strptime(temp_params[:start_date], '%m/%d/%Y') if temp_params[:start_date].present?
+    temp_params[:end_date] = Date.strptime(temp_params[:end_date], '%m/%d/%Y') if temp_params[:start_date].present?
+    @filter = Filter.new(temp_params)
     if @filter.save
       redirect_to filters_path
     end
