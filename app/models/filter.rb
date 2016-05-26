@@ -437,6 +437,7 @@ class Filter < ActiveRecord::Base
   
 
   KEY_OPERATORS = {
+    "blank" => [""],
     "numeric_operator_list" => RELATION_OPERATOR,
     "text_operator_list" => ["equals_to","starts_with", "ends_with","contains"],
     "recency_list" => ["today",
@@ -604,7 +605,8 @@ class Filter < ActiveRecord::Base
       }
 
   SEGMENT_FINDER = {
-    "usage" => [
+    "blank" => [""],
+    "usage" => [  [""],
                   ["Downloaded the app", "downloaded_the_app"],
                   ["Upgraded the app","upgraded_the_app"],
                   ["Created Notes", "total_notes"],
@@ -623,11 +625,13 @@ class Filter < ActiveRecord::Base
                   ["Notes with Topics Frequency","notes_with_topics_frequency"]
                 ],
     "life_activity_in_realifex" => [
+                                    [""],
                                     ["Recorded Daily Activity", "recorded_daily_activity"],
                                     ["Recorded an average daily Activity (mins)","recorded_avg_daily_activity"]
                                    ],
 
-    "time" => [
+    "time" => [ 
+                [""],
                 ["Created Notes during Time period (date)","created_notes_during_time_period_date"],
                 ["Recorded Daily Activity during Time period (date)","recorded_daily_activity_during_time_period_date"],
                 ["Created Notes during Time period (period)","created_notes_during_time_period"],
@@ -635,11 +639,13 @@ class Filter < ActiveRecord::Base
 
               ],
      "places" => [
+                  [""],
                   ["Notes with Suburb visit recency","suburb_visited"],
                   ["Notes with Suburb visit frequency","suburb_visited_frequency"],
                   ["As Primary Location","primary_location"]
                 ],
       "category_topic_score" => [
+                                  [""],
                                   ["Notes with Categories","categories"],
                                   ["Notes with Feeling score","feeling_score"],
                                   ["Notes with Impact score","impact_score"],
@@ -652,10 +658,12 @@ class Filter < ActiveRecord::Base
                                   ["Notes with topics","notes_with_topics"],
                                 ],
       "weather" => [
+                      [""],
                       ["Notes with Weather condition", "weather_condition"],
                       ["Notes with same weather condition","notes_with_same_weather_condition"]
                     ],
       "steps" => [
+                    [""],
                     ["Notes with Steps", "steps"],
                     ["Notes with Steps standard deviation (Max-Min)", "notes_with_steps_standard_deviation"]
                   ]                                    
