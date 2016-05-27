@@ -76,6 +76,22 @@ FUTURE_DATE_LIST = [  "",
                       "Last 12 Months"
                     ]
 
+RECURRENCE_TIME_PERIOD_LIST = [
+                                "",
+                                "Every Day",
+                                "Every second day",
+                                "Every third day",
+                                "Every fourth day",
+                                "Every fifth day",
+                                "Every sixth day",
+                                "Every week",
+                                "Every 2 weeks",
+                                "Every 3 weeks",
+                                "Every month",
+                                "Every 2 months",
+                                "Every 3 months"
+                            ]
+
   DASHBOARD = [["",""],["Life Path","life_path"],["Life Map","life_map"],["Life Focus","life_focus"],["Life Summary","life_summary"],["Life Activity","life_activity"]]
 
   TRIGGERS = [["",""],["When notes is created","note_created"],["When activity is recorded","activity_recorded"]]

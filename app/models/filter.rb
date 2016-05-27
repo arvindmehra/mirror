@@ -1,5 +1,7 @@
 class Filter < ActiveRecord::Base
 
+  validate :check_for_average_validator
+
   def get_scope_users(group=nil,truncate_table=true)
     prepare_temp_user_note_table if truncate_table
     @filter = self
@@ -10,7 +12,7 @@ class Filter < ActiveRecord::Base
     @start_date = @filter.start_date.strftime("%Y-%m-%d") if !@filter.start_date.nil?
     @end_date = @filter.end_date.strftime("%Y-%m-%d") if !@filter.end_date.nil?
     @free_text = @filter.free_text
-    if @list_type == "recency_list" || @list_type == "pre_defined_time_period"
+    if @list_type == "recency_list" || @list_type == "pre_defined_time_period" || "record_activity_list"
       @digit, @hour_day_week = @condition.split("_")
     elsif @list_type == "future_date_list"
       @in, @digit, @hour_day_week = @condition.split("_")
@@ -29,6 +31,22 @@ class Filter < ActiveRecord::Base
     #   message = "Filter not Aplicable"
     # end
 
+  end
+
+  def check_for_average_validator
+    if free_text.present?
+      if segment == "average_impact_score"
+        (free_text.to_i >= 0 && free_text.to_i <= 6) ? true : self.errors.add(:free_text, "value not in range")
+      elsif segment == "average_feeling_score"
+        (free_text.to_i >= 0 && free_text.to_i <= 6) ? true : self.errors.add(:free_text, "value not in range")
+      elsif segment == "average_well_being_score"
+        (free_text.to_i >= -24 && free_text.to_i <= 24) ? true : self.errors.add(:free_text, "value not in range")
+      else
+        true
+      end
+    else
+      true
+    end
   end
 
   def process_weather_condition
@@ -135,21 +153,21 @@ class Filter < ActiveRecord::Base
   def process_average_impact_score
     s = TempUserNote.find_by_sql("SELECT user_avg_table.* FROM
           (SELECT temp_user_notes.*, avg(impact_score) as avg FROM temp_user_notes group by user_id)
-          as user_avg_table where avg #{@operator} #{@condition}")
+          as user_avg_table WHERE avg #{@operator} #{@condition}")
     s
   end
 
   def process_average_feeling_score
     s = TempUserNote.find_by_sql("SELECT user_avg_table.* FROM
           (SELECT temp_user_notes.*, avg(feeling_score) as avg FROM temp_user_notes group by user_id)
-          as user_avg_table where avg #{@operator} #{@condition}")
+          as user_avg_table WHERE avg #{@operator} #{@condition}")
     s
   end
 
   def process_average_well_being_score
     s = TempUserNote.find_by_sql("SELECT user_avg_table.* FROM
           (SELECT temp_user_notes.*, avg(perception_score) as avg FROM temp_user_notes group by user_id)
-          as user_avg_table where avg #{@operator} #{@condition}")
+          as user_avg_table WHERE avg #{@operator} #{@condition}")
     s
   end
 
@@ -173,7 +191,7 @@ class Filter < ActiveRecord::Base
   def process_total_notes
     s = TempUserNote.find_by_sql("SELECT unotes.*, user_notes FROM
         (SELECT temp_user_notes.* , count(notes_id) as user_notes FROM temp_user_notes group by user_id)
-        as unotes where user_notes #{@operator} #{@free_text}")
+        as unotes WHERE user_notes #{@operator} #{@free_text}")
     s
   end
 
@@ -257,21 +275,69 @@ class Filter < ActiveRecord::Base
 
   # users for same date record will not be fetched as datediff will be zero so start date end date need to have 1 day diff
 
+  # def process_recorded_avg_daily_activity
+  #   s = TempUserNote.find_by_sql("SELECT t3.user_id, t3.goal, t3.avg_time_spent FROM
+  #       (SELECT t2.user_id,(t2.ts / t2.total_days) as avg_time_spent, t2.ts, t2.total_days, t2.goal FROM
+  #       (SELECT t1.user_id, datediff(t1.max_activity_date, t1.min_activity_date) as total_days,
+  #       t1.total_time_spent as ts, t1.goal as goal  FROM
+  #        (SELECT
+  #           temp_user_notes.user_id as user_id, temp_user_notes.activity_goal as goal,
+  #           MIN(date(activity_date)) AS min_activity_date,
+  #           MAX(date(activity_date)) AS max_activity_date,
+  #           sum(time_spent) as total_time_spent
+  #       FROM temp_user_notes
+  #       INNER JOIN user_activities
+  #       ON temp_user_notes.user_id = user_activities.user_id
+  #       GROUP BY user_id, goal) as t1) as t2) as t3
+  #       WHERE t3.goal #{@operator} t3.avg_time_spent")
+  #   s
+  # end
+
   def process_recorded_avg_daily_activity
-    s = TempUserNote.find_by_sql("SELECT t3.user_id, t3.goal, t3.avg_time_spent FROM
+    if @condition == "today"
+      s = TempUserNote.find_by_sql("(SELECT t1.user_id, t1.total_time_spent , t1.goal,t1.activity_date FROM
+                        (SELECT temp_user_notes.user_id as user_id, temp_user_notes.activity_goal as goal, user_activities.activity_date as dates,   date(now()) as activity_date, sum(user_activities.time_spent) as total_time_spent
+                        FROM temp_user_notes
+                        INNER JOIN user_activities
+                        ON temp_user_notes.user_id = user_activities.user_id
+                        WHERE activity_date =   date(now())
+                        group by user_id , goal, dates,activity_date) as t1
+                        WHERE total_time_spent > goal)")
+
+    elsif @condition == "yesterday"
+      s = TempUserNote.find_by_sql("SELECT t3.user_id, t3.goal, t3.avg_time_spent FROM
+          (SELECT t2.user_id,(t2.ts / t2.total_days) as avg_time_spent, t2.ts, t2.total_days, t2.goal FROM
+          (SELECT t1.user_id, datediff(t1.max_activity_date, t1.min_activity_date) as total_days,
+          t1.total_time_spent as ts, t1.goal as goal FROM
+          (SELECT temp_user_notes.user_id as user_id, temp_user_notes.activity_goal as goal,
+          user_activities.activity_date as dates, DATE_SUB(now(), INTERVAL 3 day) as min_activity_date,   
+          date(now()) as max_activity_date, sum(user_activities.time_spent) as total_time_spent
+          FROM temp_user_notes
+            INNER JOIN user_activities
+            ON temp_user_notes.user_id = user_activities.user_id
+            WHERE activity_date between
+            DATE_SUB(now(), INTERVAL 1 day) and Date(now())
+            group by user_id , goal, dates, max_activity_date, min_activity_date) as t1) as t2) as t3
+            WHERE 
+            t3.goal < t3.avg_time_spent")
+    else
+      s = TempUserNote.find_by_sql("SELECT t3.user_id, t3.goal, t3.avg_time_spent FROM
         (SELECT t2.user_id,(t2.ts / t2.total_days) as avg_time_spent, t2.ts, t2.total_days, t2.goal FROM
         (SELECT t1.user_id, datediff(t1.max_activity_date, t1.min_activity_date) as total_days,
-        t1.total_time_spent as ts, t1.goal as goal  FROM
-         (SELECT
-            temp_user_notes.user_id as user_id, temp_user_notes.activity_goal as goal,
-            MIN(date(activity_date)) AS min_activity_date,
-            MAX(date(activity_date)) AS max_activity_date,
-            sum(time_spent) as total_time_spent
-        FROM temp_user_notes
-        INNER JOIN user_activities
-        ON temp_user_notes.user_id = user_activities.user_id
-        GROUP BY user_id, goal) as t1) as t2) as t3
-        where t3.goal #{@operator} t3.avg_time_spent")
+        t1.total_time_spent as ts,t1.goal as goal
+        FROM
+          (SELECT temp_user_notes.user_id as user_id, temp_user_notes.activity_goal as goal, user_activities.activity_date as dates,
+          DATE_SUB(now(), INTERVAL #{@digit} #{@hour_day_week}) as min_activity_date, CURDATE() as max_activity_date,
+          sum(user_activities.time_spent) as total_time_spent
+          FROM temp_user_notes
+            INNER JOIN user_activities
+            ON temp_user_notes.user_id = user_activities.user_id
+            WHERE activity_date between
+            DATE_SUB(now(), INTERVAL #{@digit} #{@hour_day_week}) AND CURDATE()
+            group by user_id , goal, dates, max_activity_date, min_activity_date) as t1) as t2) as t3
+            WHERE 
+            t3.goal < t3.avg_time_spent")
+    end
     s
   end
 
@@ -306,9 +372,9 @@ class Filter < ActiveRecord::Base
     s = TempUserNote.find_by_sql("SELECT roman.user_id distance_from_last_suburb_visited
                               (SELECT user_id, COUNT(*) AS visit_count 
                               FROM temp_user_notes
-                              where suburb is not null and suburb != ' '
+                              WHERE suburb is not null and suburb != ' '
                               GROUP BY user_id) as roman
-                              where visit_count #{@operator} #{@free_text}")
+                              WHERE visit_count #{@operator} #{@free_text}")
     s
   end
 
@@ -316,7 +382,7 @@ class Filter < ActiveRecord::Base
     s = TempUserNote.find_by_sql("SELECT t2.user_id, t2.std_deviation FROM
             (SELECT t1.user_id, (t1.max - t1.min) as std_deviation FROM
             (SELECT user_id,  max(perception_score) as max, min(perception_score) as min FROM temp_user_notes group by user_id) as t1) as t2
-            where t2.std_deviation #{@operator} #{free_text}")
+            WHERE t2.std_deviation #{@operator} #{free_text}")
     s
   end
 
@@ -324,7 +390,7 @@ class Filter < ActiveRecord::Base
     s = TempUserNote.find_by_sql("SELECT t2.user_id, t2.std_deviation FROM
             (SELECT t1.user_id, (t1.max - t1.min) as std_deviation FROM
             (SELECT user_id,  max(steps_walked) as max, min(steps_walked) as min FROM temp_user_notes group by user_id) as t1) as t2
-            where t2.std_deviation #{@operator} #{free_text}")
+            WHERE t2.std_deviation #{@operator} #{free_text}")
     s
   end
 
@@ -339,38 +405,38 @@ class Filter < ActiveRecord::Base
 
   def process_notes_with_topics_frequency
     ActiveRecord::Base.connection.execute("delete tmp from temp_user_notes tmp left join tags t on tmp.notes_id=t.note_id 
-                    where t.name not in ('#{@free_text}') or t.name is null")
+                    WHERE t.name not in ('#{@free_text}') or t.name is null")
     s = TempUserNote.find_by_sql("select user_id from 
                     (select user_id, count(*) as total from temp_user_notes
                     group by user_id) as t1
-                    where t1.total > #{@condition}")
+                    WHERE t1.total > #{@condition}")
     s
   end
 
   def process_notes_with_same_weather_condition
     if @condition == "today"
       user_ids = TempUserNote.find_by_sql("select user_id from temp_user_notes
-            where whether_type in ('Overcast','Fog','Cloudy','Clear','Wind','Rain','Thunderstorm','Snow') and Date(notes_recorded_at) #{@operator} DATE(NOW())
+            WHERE whether_type in ('Overcast','Fog','Cloudy','Clear','Wind','Rain','Thunderstorm','Snow') and Date(notes_recorded_at) #{@operator} DATE(NOW())
             group by user_id
             having   count(distinct whether_type) = 8")
     elsif @condition == "yesterday"
       user_ids = TempUserNote.find_by_sql("select user_id from temp_user_notes
-            where whether_type in ('Overcast','Fog','Cloudy','Clear','Wind','Rain','Thunderstorm','Snow') and Date(notes_recorded_at) #{@operator} DATE_SUB(CURDATE(), INTERVAL 1 day)
+            WHERE whether_type in ('Overcast','Fog','Cloudy','Clear','Wind','Rain','Thunderstorm','Snow') and Date(notes_recorded_at) #{@operator} DATE_SUB(CURDATE(), INTERVAL 1 day)
             group by user_id
             having   count(distinct whether_type) = 8")
     elsif @hour_day_week == "hour"
       user_ids = TempUserNote.find_by_sql("select user_id from temp_user_notes
-            where whether_type in ('Overcast','Fog','Cloudy','Clear','Wind','Rain','Thunderstorm','Snow') and Date(notes_recorded_at) #{@operator} DATE_SUB(NOW(), INTERVAL #{@digit} #{@hour_day_week})
+            WHERE whether_type in ('Overcast','Fog','Cloudy','Clear','Wind','Rain','Thunderstorm','Snow') and Date(notes_recorded_at) #{@operator} DATE_SUB(NOW(), INTERVAL #{@digit} #{@hour_day_week})
             group by user_id
-            having   count(distinct whether_type) = 8")
+            having count(distinct whether_type) = 8")
     else
       user_ids = TempUserNote.find_by_sql("select user_id from temp_user_notes
-            where whether_type in ('Overcast','Fog','Cloudy','Clear','Wind','Rain','Thunderstorm','Snow') and Date(notes_recorded_at) #{@operator} DATE_SUB(CURDATE(), INTERVAL #{@digit} #{@hour_day_week})
+            WHERE whether_type in ('Overcast','Fog','Cloudy','Clear','Wind','Rain','Thunderstorm','Snow') and Date(notes_recorded_at) #{@operator} DATE_SUB(CURDATE(), INTERVAL #{@digit} #{@hour_day_week})
             group by user_id
             having   count(distinct whether_type) = 8")
       user_ids = user_ids.map{|x| x.user_id}.uniq
       ActiveRecord::Base.connection.execute("delete from temp_user_notes
-                    where user_id in ('#{user_ids.join}')")
+                    WHERE user_id in ('#{user_ids.join}')")
       s = TempUserNote.all
       s
     end
@@ -440,7 +506,7 @@ class Filter < ActiveRecord::Base
     "blank" => [""],
     "numeric_operator_list" => RELATION_OPERATOR,
     "text_operator_list" => ["equals_to","starts_with", "ends_with","contains"],
-    "recency_list" => ["today",
+    "recency_list" => [   "today",
                           "1_hour_ago",
                           "2_hour_ago",
                           "3_hour_ago",
@@ -462,6 +528,26 @@ class Filter < ActiveRecord::Base
                           "3_week_ago",
                           "4_week_ago"
                         ],
+    "record_activity_list" => [
+                                "today",
+                                "yesterday",
+                                "1_day_ago",
+                                "2_day_ago",
+                                "3_day_ago",
+                                "4_day_ago",
+                                "5_day_ago",
+                                "6_day_ago",
+                                "7_day_ago",
+                                "8_day_ago",
+                                "9_day_ago",
+                                "10_day_ago",
+                                "11_day_ago",
+                                "12_day_ago",
+                                "13_day_ago",
+                                "2_week_ago",
+                                "3_week_ago",
+                                "4_week_ago"
+                              ],
     "merge_fields_list" => ["weather_condition",
                             "weather_temperature",
                             "distance_from_last_suburb_visited",
@@ -501,33 +587,7 @@ class Filter < ActiveRecord::Base
     "impact_score_list" => [1,2,3,4,5,6],
     "well_being_score_list" => [-24, -23, -22, -21, -20, -19, -18, -17, -16, -15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0,
                                  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
-    "occurence_of_each_topic_list" => [ 1,
-                                        2,
-                                        3,
-                                        4,
-                                        5,
-                                        6,
-                                        7,
-                                        8,
-                                        9,
-                                        10,
-                                        11,
-                                        12,
-                                        13,
-                                        14,
-                                        15,
-                                        16,
-                                        17,
-                                        18,
-                                        19,
-                                        20,
-                                        25,
-                                        30,
-                                        35,
-                                        50,
-                                        75,
-                                        100
-                                      ],
+    "occurence_of_each_topic_list" => [ 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,25,30,35,50,75,100 ],
 
     "weather_condition_list" => ["clear",
                                   "overcast",
@@ -582,31 +642,32 @@ class Filter < ActiveRecord::Base
                               "12_month_ago"
                             ],
                             
-        "suburb_visit_recency" => [
-                                    "never",
-                                    "today",
-                                    "1_day_ago",
-                                    "2_day_ago",
-                                    "3_day_ago",
-                                    "4_day_ago",
-                                    "5_day_ago",
-                                    "6_day_ago",
-                                    "7_day_ago",
-                                    "8_day_ago",
-                                    "9_day_ago",
-                                    "10_day_ago",
-                                    "11_day_ago",
-                                    "12_day_ago",
-                                    "13_day_ago",
-                                    "2_week_ago",
-                                    "3_week_ago",
-                                    "4_week_ago"
-                                  ]
+    "suburb_visit_recency" => [
+                                "never",
+                                "today",
+                                "1_day_ago",
+                                "2_day_ago",
+                                "3_day_ago",
+                                "4_day_ago",
+                                "5_day_ago",
+                                "6_day_ago",
+                                "7_day_ago",
+                                "8_day_ago",
+                                "9_day_ago",
+                                "10_day_ago",
+                                "11_day_ago",
+                                "12_day_ago",
+                                "13_day_ago",
+                                "2_week_ago",
+                                "3_week_ago",
+                                "4_week_ago"
+                              ]
       }
 
   SEGMENT_FINDER = {
     "blank" => [""],
-    "usage" => [  [""],
+    "usage" => [  
+                  [""],
                   ["Downloaded the app", "downloaded_the_app"],
                   ["Upgraded the app","upgraded_the_app"],
                   ["Created Notes", "total_notes"],
@@ -621,15 +682,13 @@ class Filter < ActiveRecord::Base
                   ["Their current subscription expired","expired_subscription"],
                   ["Users with account","users_with_account"],
                   ["Users w/o account","users_without_account"],
-                  ["With User ID", "specific_users"],
-                  ["Notes with Topics Frequency","notes_with_topics_frequency"]
+                  ["With User ID", "specific_users"]
                 ],
     "life_activity_in_realifex" => [
-                                    [""],
-                                    ["Recorded Daily Activity", "recorded_daily_activity"],
-                                    ["Recorded an average daily Activity (mins)","recorded_avg_daily_activity"]
+                                      [""],
+                                      ["Recorded Daily Activity", "recorded_daily_activity"],
+                                      ["Recorded an average daily Activity (mins) greater than current goal set","recorded_avg_daily_activity"]
                                    ],
-
     "time" => [ 
                 [""],
                 ["Created Notes during Time period (date)","created_notes_during_time_period_date"],
@@ -639,10 +698,10 @@ class Filter < ActiveRecord::Base
 
               ],
      "places" => [
-                  [""],
-                  ["Notes with Suburb visit recency","suburb_visited"],
-                  ["Notes with Suburb visit frequency","suburb_visited_frequency"],
-                  ["As Primary Location","primary_location"]
+                    [""],
+                    ["Notes with Suburb visit recency","suburb_visited"],
+                    ["Notes with Suburb visit frequency","suburb_visited_frequency"],
+                    ["As Primary Location","primary_location"]
                 ],
       "category_topic_score" => [
                                   [""],
@@ -654,8 +713,8 @@ class Filter < ActiveRecord::Base
                                   ["Well-being score from their notes","well_being_score"],
                                   ["Well-being score standard deviation (Max-Min)","wbs_standard_deviation"],
                                   ["Average Well-being score  from their notes","average_well_being_score"],
-                                  
                                   ["Notes with topics","notes_with_topics"],
+                                  ["Notes with Topics Frequency","notes_with_topics_frequency"]
                                 ],
       "weather" => [
                       [""],
@@ -666,7 +725,7 @@ class Filter < ActiveRecord::Base
                     [""],
                     ["Notes with Steps", "steps"],
                     ["Notes with Steps standard deviation (Max-Min)", "notes_with_steps_standard_deviation"]
-                  ]                                    
+                  ]
 
 }
 

@@ -163,7 +163,7 @@ $(function() {
         list_type = "recorded_activity";
         break;
     case "recorded_avg_daily_activity":
-        list_type = "recorded_activity";
+        list_type = "record_activity_list";
         break;
     case "used_app_version":
         list_type = "version_list";
@@ -183,7 +183,7 @@ $(function() {
     default: 
         list_type = "recency_list";
         break;
-}
+  }
     console.log(list_val)
     return $.ajax({
       url: '/filters/get_collective_list',
@@ -203,112 +203,112 @@ $(function() {
 });
 
 $(document).ready(function(){
-    $('#filter_segment').on('change', function() {
-      if ( this.value == 'downloaded_the_app' ||
-          this.value == 'upgraded_the_app' ||
-          this.value == 'last_note_created' ||
-          this.value == 'feeling_score' ||
-          this.value == 'impact_score' ||
-          this.value == 'average_feeling_score' ||
-          this.value == 'average_impact_score' ||
-          this.value == 'average_well_being_score' ||
-          this.value == 'notes_with_same_weather_condition' ||
-          this.value == 'well_being_score' ||
-          this.value == 'expired_subscription' ||
-          this.value == 'suburb_visited')
-        {
-          $("#free_text_field").hide();
-          $("#filter_list_type_id").show();
-          $("#filter_condition_id").show();
-          $("#filter_operator_id").show();
-          $("#start_date_field").hide();
-          $("#end_date_field").hide();
-        }
-      else if (this.value == 'subscribed_alteast_once' ||
-              this.value == 'active_subscription' ||
-              this.value == 'havent_subscribed')
-        {
-          $("#free_text_field").hide();
-          $("#filter_list_type_id").show();
-          $("#filter_condition_id").show();
-          $("#filter_operator_id").hide();
-          $("#start_date_field").hide();
-          $("#end_date_field").hide();
-        }
-      else if (this.value == 'total_notes' || this.value == 'steps' || this.value == 'suburb_visited_frequency' ||
-          this.value == 'process_wbs_standard_deviation')
-        {
-          $("#free_text_field").show();
-          $("#filter_list_type_id").hide();
-          $("#filter_condition_id").hide();
-          $("#start_date_field").hide();
-          $("#end_date_field").hide();
-        }
-      else if (this.value == 'weather_condition' || this.value == 'categories' ||
-          this.value == 'about_to_expire' || this.value == "used_app_version" || this.value == "primary_location")
+  $('#filter_segment').on('change', function() {
+    if (this.value == 'downloaded_the_app' ||
+        this.value == 'upgraded_the_app' ||
+        this.value == 'last_note_created' ||
+        this.value == 'feeling_score' ||
+        this.value == 'impact_score' ||
+        this.value == 'notes_with_same_weather_condition' ||
+        this.value == 'well_being_score' ||
+        this.value == 'expired_subscription' ||
+        this.value == 'suburb_visited')
       {
         $("#free_text_field").hide();
-        $("#filter_operator_id").hide();
         $("#filter_list_type_id").show();
         $("#filter_condition_id").show();
+        $("#filter_operator_id").show();
         $("#start_date_field").hide();
         $("#end_date_field").hide();
       }
+    else if (this.value == 'subscribed_alteast_once' ||
+            this.value == 'active_subscription' ||
+            this.value == 'havent_subscribed')
+      {
+        $("#free_text_field").hide();
+        $("#filter_list_type_id").show();
+        $("#filter_condition_id").show();
+        $("#filter_operator_id").hide();
+        $("#start_date_field").hide();
+        $("#end_date_field").hide();
+      }
+    else if (this.value == 'total_notes' || this.value == 'steps' || this.value == 'suburb_visited_frequency' ||
+        this.value == 'process_wbs_standard_deviation')
+      {
+        $("#free_text_field").show();
+        $("#filter_list_type_id").hide();
+        $("#filter_condition_id").hide();
+        $("#start_date_field").hide();
+        $("#end_date_field").hide();
+      }
+    else if (this.value == 'weather_condition' || this.value == 'categories' ||
+        this.value == 'about_to_expire' || this.value == "used_app_version" || this.value == "primary_location")
+    {
+      $("#free_text_field").hide();
+      $("#filter_operator_id").hide();
+      $("#filter_list_type_id").show();
+      $("#filter_condition_id").show();
+      $("#start_date_field").hide();
+      $("#end_date_field").hide();
+    }
 
-      else if (this.value == 'users_with_account' || this.value == 'users_without_account')
-        {
-          $("#free_text_field").hide();
-          $("#filter_list_type_id").hide();
-          $("#filter_condition_id").hide();
-          $("#filter_operator_id").hide();
-          $("#start_date_field").hide();
-          $("#end_date_field").hide();
-        }
-      else if (this.value == 'notes_with_topics' || this.value == 'specific_users')
+    else if (this.value == 'users_with_account' || this.value == 'users_without_account')
       {
-        $("#free_text_field").show();
+        $("#free_text_field").hide();
         $("#filter_list_type_id").hide();
         $("#filter_condition_id").hide();
         $("#filter_operator_id").hide();
         $("#start_date_field").hide();
         $("#end_date_field").hide();
       }
-      else if (this.value == 'created_notes_during_time_period_date' || this.value == 'recorded_daily_activity_during_time_period_date')
-      {
-        $("#start_date_field").show();
-        $("#end_date_field").show();
-        $("#filter_list_type_id").hide();
-        $("#filter_condition_id").hide();
-        $("#filter_operator_id").hide();
-      }
-     else if (this.value == 'created_notes_during_time_period' || this.value == 'recorded_daily_activity_during_time_period')
-      {
-        $("#free_text_field").hide();
-        $("#filter_list_type_id").show();
-        $("#filter_condition_id").show();
-        $("#filter_operator_id").hide();
-        $("#start_date_field").hide();
-        $("#end_date_field").hide();
-      }
-      else if (this.value == 'recorded_daily_activity' || this.value == 'recorded_avg_daily_activity')
-      {
-        $("#free_text_field").hide();
-        $("#filter_list_type_id").show();
-        $("#filter_condition_id").show();
-        $("#filter_operator_id").show();
-        $("#start_date_field").hide();
-        $("#end_date_field").hide();
-      }
-       else if (this.value == 'notes_with_topics_frequency')
-      {
-        $("#free_text_field").show();
-        $("#filter_list_type_id").show();
-        $("#filter_condition_id").show();
-        $("#filter_operator_id").show();
-        $("#start_date_field").hide();
-        $("#end_date_field").hide();
-      }
-    });
+    else if (this.value == 'notes_with_topics' || this.value == 'specific_users' ||
+        this.value == 'average_feeling_score' ||
+        this.value == 'average_impact_score' ||
+        this.value == 'average_well_being_score')
+    {
+      $("#free_text_field").show();
+      $("#filter_list_type_id").hide();
+      $("#filter_condition_id").hide();
+      $("#filter_operator_id").hide();
+      $("#start_date_field").hide();
+      $("#end_date_field").hide();
+    }
+    else if (this.value == 'created_notes_during_time_period_date' || this.value == 'recorded_daily_activity_during_time_period_date')
+    {
+      $("#start_date_field").show();
+      $("#end_date_field").show();
+      $("#filter_list_type_id").hide();
+      $("#filter_condition_id").hide();
+      $("#filter_operator_id").hide();
+    }
+   else if (this.value == 'created_notes_during_time_period' || this.value == 'recorded_daily_activity_during_time_period')
+    {
+      $("#free_text_field").hide();
+      $("#filter_list_type_id").show();
+      $("#filter_condition_id").show();
+      $("#filter_operator_id").hide();
+      $("#start_date_field").hide();
+      $("#end_date_field").hide();
+    }
+    else if (this.value == 'recorded_daily_activity' || this.value == 'recorded_avg_daily_activity')
+    {
+      $("#free_text_field").hide();
+      $("#filter_list_type_id").show();
+      $("#filter_condition_id").show();
+      $("#filter_operator_id").show();
+      $("#start_date_field").hide();
+      $("#end_date_field").hide();
+    }
+     else if (this.value == 'notes_with_topics_frequency')
+    {
+      $("#free_text_field").show();
+      $("#filter_list_type_id").show();
+      $("#filter_condition_id").show();
+      $("#filter_operator_id").show();
+      $("#start_date_field").hide();
+      $("#end_date_field").hide();
+    }
+  });
 
     $(function () {
       $('#start_datetime').datetimepicker({

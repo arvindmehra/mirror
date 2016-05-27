@@ -71,7 +71,7 @@
     <%= f.select :display_screen,options_for_select(NotificationTemplate::DISPLAY_SCREEN), class: "form-control" %><br />
     </div>
   </div>
-  <%= f.hidden_field :active, value: true %>
+  <%= f.hidden_field :active, value: false %>
   <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
     <%= f.label :execution_type, class: "col-sm-3 control-label" %>
     <div class="col-sm-6 controls">
@@ -111,6 +111,12 @@
             <span class="glyphicon glyphicon-time"></span>
           </span>
         </div>
+      </div>
+    </div>
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
+      <%= f.label :recurring_every, class: "col-sm-3 control-label" %>
+      <div class="col-sm-6 controls">
+        <%= f.select :recurring_every,options_for_select(NotificationTemplate::RECURRENCE_TIME_PERIOD_LIST), class: "form-control" %><br />
       </div>
     </div>
   </div>
