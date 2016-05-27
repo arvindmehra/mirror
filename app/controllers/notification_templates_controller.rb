@@ -98,7 +98,7 @@ private
                   :well_being, :topics, [:weather=> []], :calories_min, :calories_medium, :calories_max,:list_type,
                   :in_exclusion_operator,:in_exclusion_segment,:in_exclusion_condition,:in_exclusion_notification_id,
                   :recurring,:scheduled_time,:secondary_cta_key,:secondary_provide_feedback_email, :secondary_chat_email,
-                  :secondary_learn_more_url,:secondary_take_the_survey_url,:secondary_anonymous_feedback_url)
+                  :secondary_learn_more_url,:secondary_take_the_survey_url,:secondary_anonymous_feedback_url,:recurring_every)
   end
 
 end

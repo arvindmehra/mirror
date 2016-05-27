@@ -28,6 +28,9 @@ class FiltersController < ApplicationController
     @filter = Filter.new(temp_params)
     if @filter.save
       redirect_to filters_path
+    else
+      flash[:warning] = @filter.errors.messages[:free_text].join
+      render :new
     end
   end
 
