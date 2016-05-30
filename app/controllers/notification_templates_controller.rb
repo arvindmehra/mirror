@@ -26,6 +26,7 @@ class NotificationTemplatesController < ApplicationController
 
   def create
     temp_params = notification_params
+    temp_params["score_data"] = temp_params["score_data"].strip.gsub(" ","") if temp_params["score_data"].present?
     temp_params[:start_date] = Date.strptime(temp_params[:start_date], '%m/%d/%Y') if temp_params[:start_date].present?
     temp_params[:end_date] = Date.strptime(temp_params[:end_date], '%m/%d/%Y') if temp_params[:start_date].present?
     @notification_template = NotificationTemplate.new(temp_params)
