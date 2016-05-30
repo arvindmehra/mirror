@@ -51,8 +51,8 @@ class UserNotification < ActiveRecord::Base
 
   def self.notification_response(current_user,landmark=nil)
     response_hash  = {}
-    response_hash[:option_notifications] = option_notifications(current_user)
-    response_hash[:suggestion_notifications] = self.suggestion_notifications_hash(current_user,landmark)
+    response_hash[:option_notifications] = option_notifications_hash(current_user)
+    response_hash[:suggestion_notifications] = suggestion_notifications_hash(current_user,landmark)
     response_hash
   end
 
@@ -77,6 +77,12 @@ class UserNotification < ActiveRecord::Base
     end
   end
 
+  def self.option_notifications_hash(current_user)
+    option_notifications(current_user).map do |notification|
+      notification.data_hash
+    end
+  end
+
   def data_hash
     score_data = self.score_data.split(",") if self.score_data.present?
     categories = JSON.parse(self.autofocus_categories) if self.autofocus_categories.present?
@@ -89,8 +95,8 @@ class UserNotification < ActiveRecord::Base
       description: self.description,
       cta: self.cta,
       cta_key: self.cta_key,
-      secondary_cta: self.cta,
-      secondary_cta_key: self.cta_key,
+      secondary_cta: self.secondary_cta,
+      secondary_cta_key: self.secondary_cta_key,
       category: self.category,
       display_screen: self.display_screen,
       read_status: self.read_status,
@@ -105,11 +111,11 @@ class UserNotification < ActiveRecord::Base
       learn_more_url: self.learn_more_url,
       take_the_survey_url: self.take_the_survey_url,
       anonymous_feedback_url: self.anonymous_feedback_url,
-      secondary_provide_feedback_email: self.provide_feedback_email,
-      secondary_chat_email: self.chat_email,
-      secondary_learn_more_url: self.learn_more_url,
-      secondary_take_the_survey_url: self.take_the_survey_url,
-      secondary_anonymous_feedback_url: self.anonymous_feedback_url,
+      secondary_provide_feedback_email: self.secondary_provide_feedback_email,
+      secondary_chat_email: self.secondary_chat_email,
+      secondary_learn_more_url: self.secondary_learn_more_url,
+      secondary_take_the_survey_url: self.secondary_take_the_survey_url,
+      secondary_anonymous_feedback_url: self.secondary_anonymous_feedback_url,
 
       filter: {
         days_from_now: self.days_from_now,
