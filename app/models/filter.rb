@@ -36,11 +36,11 @@ class Filter < ActiveRecord::Base
   def check_for_average_validator
     if free_text.present?
       if segment == "average_impact_score"
-        (free_text.to_i >= 0 && free_text.to_i <= 6) ? true : self.errors.add(:free_text, "value not in range")
+        (free_text.to_i >= 0 && free_text.to_i <= 6) ? true : self.errors.add(:free_text, "value not in range should be >= 0 and <= 6")
       elsif segment == "average_feeling_score"
-        (free_text.to_i >= 0 && free_text.to_i <= 6) ? true : self.errors.add(:free_text, "value not in range")
+        (free_text.to_i >= 0 && free_text.to_i <= 8) ? true : self.errors.add(:free_text, "value not in range should be >= 0 and <= 8")
       elsif segment == "average_well_being_score"
-        (free_text.to_i >= -24 && free_text.to_i <= 24) ? true : self.errors.add(:free_text, "value not in range")
+        (free_text.to_i >= -24 && free_text.to_i <= 24) ? true : self.errors.add(:free_text, "value not in range should be >= -24 and <= 24")
       else
         true
       end
@@ -343,7 +343,7 @@ class Filter < ActiveRecord::Base
   def recorded_activity_for_yesterday_sql(operator)
     sql = "SELECT t3.user_id, t3.goal, t3.avg_time_spent FROM
             (SELECT t2.user_id,(t2.ts / t2.total_days) as avg_time_spent, t2.ts, t2.total_days, t2.goal FROM
-              (SELECT t1.user_id, datediff(t1.max_activity_date, t1.min_activity_date) as total_days,
+              (SELECT t1.user_id, (datediff(t1.max_activity_date, t1.min_activity_date) + 1) as total_days,
               t1.total_time_spent as ts, t1.goal as goal FROM
               (SELECT temp_user_notes.user_id as user_id, temp_user_notes.activity_goal as goal,
               user_activities.activity_date as dates, DATE_SUB(now(), INTERVAL 1 day) as min_activity_date,   
@@ -361,7 +361,7 @@ class Filter < ActiveRecord::Base
   def recorded_activity_for_recency_sql(operator)
     sql = "SELECT t3.user_id, t3.goal, t3.avg_time_spent FROM
             (SELECT t2.user_id,(t2.ts / t2.total_days) as avg_time_spent, t2.ts, t2.total_days, t2.goal FROM
-              (SELECT t1.user_id, datediff(t1.max_activity_date, t1.min_activity_date) as total_days,
+              (SELECT t1.user_id, (datediff(t1.max_activity_date, t1.min_activity_date) + 1) as total_days,
               t1.total_time_spent as ts,t1.goal as goal
               FROM
                 (SELECT temp_user_notes.user_id as user_id, temp_user_notes.activity_goal as goal, user_activities.activity_date as dates,
@@ -380,7 +380,7 @@ class Filter < ActiveRecord::Base
   def recorded_activity_for_recency_sql_date(operator)
     sql = "SELECT t3.user_id, t3.goal, t3.avg_time_spent FROM
           (SELECT t2.user_id,(t2.ts / t2.total_days) as avg_time_spent, t2.ts, t2.total_days, t2.goal FROM
-          (SELECT t1.user_id, datediff(t1.max_activity_date, t1.min_activity_date) as total_days,
+          (SELECT t1.user_id, (datediff(t1.max_activity_date, t1.min_activity_date) + 1) as total_days,
           t1.total_time_spent as ts,t1.goal as goal
           FROM
             (SELECT temp_user_notes.user_id as user_id, temp_user_notes.activity_goal as goal, user_activities.activity_date        as dates,

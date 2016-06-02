@@ -49,6 +49,9 @@
              <ul class="nav nav-pills nav-stacked">
               <li class= "<%= params["controller"]=="notification_templates" ? "active" : ""%>"><a href="/notification_templates">Admin Notification</a></li>
             </ul>
+             <ul class="nav nav-pills nav-stacked">
+              <li class= "<%= (params["controller"]=="notification_templates" &&  params["actions"]=="merge_fields_keys") ? "active" : ""%>"><a href="/notification_templates/merge_fields_keys">Description Keys</a></li>
+            </ul>
           </div>
         </div>
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
