@@ -48,7 +48,8 @@ RailsAdmin.config do |config|
   'Filters' => "/filters",
   "Groups" => "/filter_groups",
   "Rules" => "/rule_engines",
-  "Admin Notifications" => "/notification_templates"
+  "Admin Notifications" => "/notification_templates",
+  "Description Keys" => "/notification_templates/merge_fields_key"
 }
 
 end

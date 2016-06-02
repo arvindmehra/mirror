@@ -86,12 +86,15 @@ class NotificationTemplatesController < ApplicationController
     end
   end
 
+  def merge_fields_keys
+  end
+
 private
     
   def notification_params
     params.require(:notification_template).permit(:title, :subtitle, :description,
                   :cta,:useful, :rule_engine_id,:execution_type, :start_date, :end_date, :active,
-                  :category, :cta_key, :display_screen,:trigger,:time_elapse,:filter_preferences,
+                  :category, :cta_key, :display_screen,:trigger,:time_elapse,:filter_preferences,:merge_field,
                   :elapse_time, :weather, :dashboard, :days_from_now, :topic, :score_data, :heart_rate_min,
                   :heart_rate_medium, :heart_rate_max, :steps_walked_min, :steps_walked_medium, :steps_walked_max,
                   :sleep_time_min, :sleep_time_medium, :sleep_time_max, :temperature_min, :temperature_medium, :temperature_max,

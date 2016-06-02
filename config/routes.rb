@@ -59,6 +59,7 @@ Rails.application.routes.draw do
       patch :deactivate
       patch :activate
       get :get_list
+      get :merge_fields_keys
     end
     member do 
       post :duplicate_me
