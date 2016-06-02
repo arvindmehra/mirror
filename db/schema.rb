@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160527073331) do
+ActiveRecord::Schema.define(version: 20160602123902) do
 
   create_table "devices", force: true do |t|
     t.integer  "user_id"
@@ -81,6 +81,7 @@ ActiveRecord::Schema.define(version: 20160527073331) do
     t.float    "steps_walked",        limit: 24
     t.float    "calories_burnt",      limit: 24
     t.integer  "perception_score"
+    t.string   "note_coordinate"
   end
 
   add_index "notes", ["user_id"], name: "index_notes_on_user_id", using: :btree
