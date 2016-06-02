@@ -170,7 +170,9 @@ class V1::NotesController < V1::BaseController
   def note_params
     # VIKASH Commenting this
     # params.require(:note).permit(:body, :category, :impact, :feeling, :impact_score, :feeling_score, :latitude, :longitude, :city, :suburb, :country, :address, :recorded_at)
-    params.permit(:body, :category, :impact, :feeling, :impact_score, :feeling_score, :latitude, :longitude, :city, :suburb, :country, :address, :recorded_at, :heart_rate, :sleep_time, :temperature, :whether_type, :steps_walked, :calories_burnt)
+    params.permit(:body, :category, :impact, :feeling, :impact_score, :feeling_score, :latitude, :longitude, :city, :suburb, :country,
+                  :address, :recorded_at, :heart_rate, :sleep_time, :temperature, :whether_type, :steps_walked, :calories_burnt,
+                  :note_coordinate)
   end
 
 end
