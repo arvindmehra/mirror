@@ -19,8 +19,11 @@ class NotificationTemplatesController < ApplicationController
   end
 
   def update
+    temp_params = notification_params
     @notification_template = NotificationTemplate.find_by(id: params[:id])
-    @notification_template.update(notification_params)
+    temp_params[:start_date] = Date.strptime(temp_params[:start_date], '%m/%d/%Y') if temp_params[:start_date].present?
+    temp_params[:end_date] = Date.strptime(temp_params[:end_date], '%m/%d/%Y') if temp_params[:start_date].present?
+    @notification_template.update(temp_params)
     redirect_to notification_templates_path
   end
 
@@ -97,9 +100,10 @@ private
                   :category, :cta_key, :display_screen,:trigger,:time_elapse,:filter_preferences,:merge_field,
                   :elapse_time, :weather, :dashboard, :days_from_now, :topic, :score_data, :heart_rate_min,
                   :heart_rate_medium, :heart_rate_max, :steps_walked_min, :steps_walked_medium, :steps_walked_max,
-                  :sleep_time_min, :sleep_time_medium, :sleep_time_max, :temperature_min, :temperature_medium, :temperature_max,
-                  :chat_email, :provide_feedback_email, :learn_more_url, :take_the_survey_url, :anonymous_feedback_url,[:autofocus_categories => []],
-                  :well_being, :topics, [:weather=> []], :calories_min, :calories_medium, :calories_max,:list_type,
+                  :sleep_time_min, :sleep_time_medium, :sleep_time_max, :temperature_min, :temperature_medium,
+                  :chat_email, :provide_feedback_email, :learn_more_url, :take_the_survey_url, :anonymous_feedback_url,
+                  [:autofocus_categories => []],:show_useful, :temperature_max,:well_being,
+                  :topics, [:weather=> []], :calories_min, :calories_medium, :calories_max,:list_type,
                   :in_exclusion_operator,:in_exclusion_segment,:in_exclusion_condition,:in_exclusion_notification_id,
                   :recurring,:scheduled_time,:secondary_cta_key,:secondary_provide_feedback_email, :secondary_chat_email,
                   :secondary_learn_more_url,:secondary_take_the_survey_url,:secondary_anonymous_feedback_url,:recurring_every)

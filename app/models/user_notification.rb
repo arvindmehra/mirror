@@ -84,69 +84,70 @@ class UserNotification < ActiveRecord::Base
   end
 
   def data_hash
-    score_data = self.score_data.split(",") if self.score_data.present?
-    categories = JSON.parse(self.autofocus_categories) if self.autofocus_categories.present?
-    weather = JSON.parse(self.weather) if self.weather.present?
-    topics = self.topics.split(",").collect(&:strip) if self.topics.present?
+    score_data = score_data.split(",") if score_data.present?
+    categories = JSON.parse(autofocus_categories) if autofocus_categories.present?
+    weather = JSON.parse(weather) if weather.present?
+    topics = topics.split(",").collect(&:strip) if topics.present?
     {
-      id: self.id,
-      title: self.title,
-      subtitle: self.subtitle,
-      description: self.description,
-      cta: self.cta,
-      cta_key: self.cta_key,
-      secondary_cta: self.secondary_cta,
-      secondary_cta_key: self.secondary_cta_key,
-      category: self.category,
-      display_screen: self.display_screen,
-      read_status: self.read_status,
-      useful: self.useful,
-      mark_deleted: self.mark_deleted,
-      sent_at: self.sent_at,
-      created_at: self.created_at,
-      dashboard_screen: self.dashboard,
-      wbs: self.well_being,
-      provide_feedback_email: self.provide_feedback_email,
-      chat_email: self.chat_email,
-      learn_more_url: self.learn_more_url,
-      take_the_survey_url: self.take_the_survey_url,
-      anonymous_feedback_url: self.anonymous_feedback_url,
-      secondary_provide_feedback_email: self.secondary_provide_feedback_email,
-      secondary_chat_email: self.secondary_chat_email,
-      secondary_learn_more_url: self.secondary_learn_more_url,
-      secondary_take_the_survey_url: self.secondary_take_the_survey_url,
-      secondary_anonymous_feedback_url: self.secondary_anonymous_feedback_url,
+      id: id,
+      title: title,
+      subtitle: subtitle,
+      description: description,
+      cta: cta,
+      cta_key: cta_key,
+      secondary_cta: secondary_cta,
+      secondary_cta_key: secondary_cta_key,
+      category: category,
+      display_screen: display_screen,
+      read_status: read_status,
+      show_useful: show_useful,
+      useful: useful,
+      mark_deleted: mark_deleted,
+      sent_at: sent_at,
+      created_at: created_at,
+      dashboard_screen: dashboard,
+      wbs: well_being,
+      provide_feedback_email: provide_feedback_email,
+      chat_email: chat_email,
+      learn_more_url: learn_more_url,
+      take_the_survey_url: take_the_survey_url,
+      anonymous_feedback_url: anonymous_feedback_url,
+      secondary_provide_feedback_email: secondary_provide_feedback_email,
+      secondary_chat_email: secondary_chat_email,
+      secondary_learn_more_url: secondary_learn_more_url,
+      secondary_take_the_survey_url: secondary_take_the_survey_url,
+      secondary_anonymous_feedback_url: secondary_anonymous_feedback_url,
 
       filter: {
-        days_from_now: self.days_from_now,
+        days_from_now: days_from_now,
         topics: topics,
         score_data: score_data,
         categories: categories,
         weather: weather,
         steps_walked: {
-                      min: self.steps_walked_min,
-                      medium: self.steps_walked_medium,
-                      max: self.steps_walked_max,
+                      min: steps_walked_min,
+                      medium: steps_walked_medium,
+                      max: steps_walked_max,
                     },
         heart_rate: {
-                    min: self.heart_rate_min,
-                    medium: self.heart_rate_medium,
-                    max: self.heart_rate_max,
+                    min: heart_rate_min,
+                    medium: heart_rate_medium,
+                    max: heart_rate_max,
                   },
         temperature: {
-                  min: self.temperature_min,
-                  medium: self.temperature_medium,
-                  max: self.temperature_max,
+                  min: temperature_min,
+                  medium: temperature_medium,
+                  max: temperature_max,
                 },
         calories: {
-                  min: self.calories_min,
-                  medium: self.calories_medium,
-                  max: self.calories_max,
+                  min: calories_min,
+                  medium: calories_medium,
+                  max: calories_max,
                 },
         sleep_time: {
-                  min: self.sleep_time_min,
-                  medium: self.sleep_time_medium,
-                  max: self.sleep_time_max,
+                  min: sleep_time_min,
+                  medium: sleep_time_medium,
+                  max: sleep_time_max,
                 }
           }
     }
