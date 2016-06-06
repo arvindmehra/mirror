@@ -2,6 +2,7 @@ class RuleEngine < ActiveRecord::Base
   attr_accessor :filter_one
   has_many :notification_templates
   validates :expression, :presence => true
+  include ModelHelper
 
   def get_scope_users
     prepare_temp_user_note_table

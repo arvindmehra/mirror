@@ -20,6 +20,25 @@ class FilterGroupsController < ApplicationController
     @filter_group = FilterGroup.find_by(id: params[:id])
   end
 
+  def edit
+    @filter_group = FilterGroup.find_by(id: params[:id])
+  end
+
+  def update
+    @filter_group = FilterGroup.find_by(id: params[:id])
+    filter_parameters = filter_group_params
+    if filter_parameters.present? || !filter_parameters.nil?
+      expression = filter_parameters["filter_series"]
+      debugger
+      @filter_group.expression = expression.join.strip.gsub(" "," OR ") if expression.present?
+      @filter_group.save if @filter_group.expression.present?
+       flash[:success] = "Updated!!"
+      redirect_to filter_groups_path
+    else
+      redirect_to filter_groups_path
+    end
+  end
+
   def new
     @filter_group = FilterGroup.new
     @filters_list = Filter.all
@@ -33,13 +52,6 @@ class FilterGroupsController < ApplicationController
       flash[:error] = "Error deleting Notification"
     end
     redirect_to filter_groups_path
-  end
-
-
-  def edit
-  end
-
-  def update
   end
 
   def duplicate_me

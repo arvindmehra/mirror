@@ -1,3 +1,5 @@
+<% @ids = @rule.expression_ids %>
+
 <h1>Make a New Rule</h1>
 <%= form_for @rule do |f| %>
   <div class="form-group control-group belongs_to_association_type user_field col-sm-10">
@@ -6,24 +8,38 @@
       <%= f.text_field :name, class: "form-control",required: true  %>
     </div>  
   </div>
-
   <div class="form-group control-group belongs_to_association_type user_field col-sm-8">
-    <div id="filter_1">
-      <%= f.label "Select", class: "col-sm-2 control-label" %>
-      <div class="col-sm-8 controls">
-        <%= f.select :expression ,options_for_select([Filter.all.map{|x| ["Filter " + x.name,"Filter_" + x.id.to_s+" "]} + FilterGroup.all.map{|x| ["Group " + x.name,"Group_" + x.id.to_s+" "]}].pop),{},{multiple: true} %><br />
-      </div>  
-    </div>
+    <input name="rule_engine[expression][]" type="hidden" value="" />
+    <select id='pre-selected-options' multiple='multiple' name="rule_engine[expression][]">
+      <optgroup label='Filters'>
+        <% Filter.all.each do |f| %>
+          <% if @ids.present? && @ids[:filter].include?(f.id) %>
+            <option value="<%= "Filter_" + f.id.to_s+" " %>"  selected><%= f.name %></option>
+          <% else %>
+           <option value="<%= "Filter_" + f.id.to_s+" " %>"><%= f.name %></option>
+          <% end %> 
+        <% end %>
+      </optgroup>
+      <optgroup label='Groups'>
+        <% FilterGroup.all.each do |g| %>
+          <% if @ids.present? && @ids[:group].include?(g.id) %>
+            <option value="<%= "Group_" + g.id.to_s+" " %>" selected><%= g.name %></option>
+          <% else %>
+           <option value="<%= "Group_" + g.id.to_s+" " %>"><%= g.name %></option>
+          <% end %> 
+        <% end %>
+      </optgroup>
+    </select> 
   </div>
 
   <div class="form-group control-group belongs_to_association_type user_field col-sm-8">
     <div class="col-sm-2"></div> 
     <div class="col-sm-8"><%= f.submit class: "btn btn-primary" %></div>
   </div>
+
 <% end %>
-
-
 
 <script type="text/javascript">
   $('#filter_1').multiSelect({ keepOrder: true });
+  $('#pre-selected-options').multiSelect({ keepOrder: true });
 </script>

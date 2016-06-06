@@ -3,7 +3,7 @@ class NotificationTemplatesController < ApplicationController
   layout 'cms_layout'
 
   def index
-    @notifications = NotificationTemplate.all
+    @notifications = NotificationTemplate.all.includes(:rule_engine)
   end
 
   def show

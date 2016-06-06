@@ -1,5 +1,6 @@
 class FilterGroup < ActiveRecord::Base
 
+  include ModelHelper
   attr_accessor :filter_series
   
   def get_scope_users(rule=nil,truncate_table=true)
