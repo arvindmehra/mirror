@@ -153,21 +153,21 @@ class Filter < ActiveRecord::Base
   def process_average_impact_score
     s = TempUserNote.find_by_sql("SELECT user_avg_table.* FROM
           (SELECT temp_user_notes.*, avg(impact_score) as avg FROM temp_user_notes group by user_id)
-          as user_avg_table WHERE avg #{@operator} #{@condition}")
+          as user_avg_table WHERE avg #{@operator} #{@free_text}")
     s
   end
 
   def process_average_feeling_score
     s = TempUserNote.find_by_sql("SELECT user_avg_table.* FROM
           (SELECT temp_user_notes.*, avg(feeling_score) as avg FROM temp_user_notes group by user_id)
-          as user_avg_table WHERE avg #{@operator} #{@condition}")
+          as user_avg_table WHERE avg #{@operator} #{@free_text}")
     s
   end
 
   def process_average_well_being_score
     s = TempUserNote.find_by_sql("SELECT user_avg_table.* FROM
           (SELECT temp_user_notes.*, avg(perception_score) as avg FROM temp_user_notes group by user_id)
-          as user_avg_table WHERE avg #{@operator} #{@condition}")
+          as user_avg_table WHERE avg #{@operator} #{@free_text}")
     s
   end
 

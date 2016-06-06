@@ -28,6 +28,7 @@ class RuleEnginesController < ApplicationController
     if rule_parameters.present? || !rule_parameters.nil?
       rules = rule_parameters["expression"]
       @rule.expression = rules.join.strip.gsub(" "," AND ") if rules.present?
+      @rule.name = rule_parameters[:name]
       @rule.save if @rule.expression.present?
       flash[:success] = "New Rule Created. Bravo!!"
       redirect_to rule_engines_path
