@@ -27,15 +27,15 @@
   </div>
   
   <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
-    <%= f.label :useful, class: "col-sm-3 control-label" %>
+    <%= f.label :show_useful, class: "col-sm-3 control-label" %>
     <div class="col-sm-6 controls">
-      <%= f.select :useful,options_for_select([["YES",1],["NO",0]]), class: "form-control" %>
+      <%= f.select :show_useful,options_for_select({"YES" => true,"NO"=> false},@notification_template.useful), class: "form-control" %>
     </div>  
   </div>
   <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
     <%= f.label "Rule", class: "col-sm-3 control-label" %>
     <div class="col-sm-6 controls">
-    <%= f.select :rule_engine_id,options_for_select(RuleEngine.all.map{|x| [x.name, x.id]}), class: "form-control" %><br />
+    <%= f.select :rule_engine_id,options_for_select(RuleEngine.all.map{|x| [x.name, x.id]},@notification_template.rule_engine_id), class: "form-control" %><br />
     </div>  
   </div>
   <div class="form-group control-group belongs_to_association_type user_field col-sm-12" id="inex_segment">
@@ -68,29 +68,24 @@
   <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
     <%= f.label "Display Screen", class: "col-sm-3 control-label" %>
     <div class="col-sm-6 controls">
-    <%= f.select :display_screen,options_for_select(NotificationTemplate::DISPLAY_SCREEN), class: "form-control" %><br />
+    <%= f.select :display_screen,options_for_select(NotificationTemplate::DISPLAY_SCREEN,@notification_template.display_screen), class: "form-control" %><br />
     </div>
   </div>
   <%= f.hidden_field :active, value: false %>
   <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
     <%= f.label :execution_type, class: "col-sm-3 control-label" %>
     <div class="col-sm-6 controls">
-      <%= f.select :execution_type,options_for_select([["Batch","batch"],["Realtime","realtime"]]), class: "form-control" %><br />
+      <%= f.select :execution_type,options_for_select([["Batch","batch"],["Realtime","realtime"]],@notification_template.execution_type), class: "form-control" %><br />
     </div>  
   </div>
-  <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
-    <%= f.label :merge_field, class: "col-sm-3 control-label" %>
-    <div class="col-sm-6 controls">
-      <%= f.select :merge_field,options_for_select(NotificationTemplate::MERGE_FIELDS), class: "form-control" %><br />
-    </div>
-  </div>
 
-  <div id="date_group">
+  <div id="date_group" style="display: <%= @notification_template.execution_type == "batch" ? 'block' : 'none' %>">
     <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
       <%= f.label :start_date, class: "col-sm-3 control-label" %>
         <div class="col-sm-6 controls">
           <div class='input-group date' >
-          <%= f.text_field :start_date, class: "form-control",id: 'start_datetime'  %>
+          <% start_date =  @notification_template.start_date.present? ? @notification_template.start_date.strftime("%m/%d/%Y") : nil %>
+          <%= f.text_field :start_date, value: start_date, class: "form-control",id: 'start_datetime'  %>
           <span class="input-group-addon">
             <span class="glyphicon glyphicon-calendar"></span>
           </span>
@@ -101,7 +96,8 @@
       <%= f.label :end_date, class: "col-sm-3 control-label" %>
       <div class="col-sm-6 controls">
         <div class='input-group date' >
-          <%= f.text_field :end_date, class: "form-control",id: 'end_datetime'  %>
+        <% end_date =  @notification_template.end_date.present? ? @notification_template.end_date.strftime("%m/%d/%Y") : nil %>
+          <%= f.text_field :end_date, value: end_date, class: "form-control",id: 'end_datetime'  %>
           <span class="input-group-addon">
             <span class="glyphicon glyphicon-calendar"></span>
           </span>
@@ -137,56 +133,64 @@
     </div>
 </div>
 
-  <div id="real_time_group" style="display: none">
+  <div id="real_time_group" style="display: <%= @notification_template.execution_type == "realtime" ? 'block' : 'none' %>">
     <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
       <%= f.label "triggers", class: "col-sm-3 control-label" %>
       <div class="col-sm-6 controls">
-        <%= f.select :trigger,options_for_select(NotificationTemplate::TRIGGERS), class: "form-control" %><br />
+        <%= f.select :trigger,options_for_select(NotificationTemplate::TRIGGERS,@notification_template.trigger), class: "form-control" %><br />
       </div>  
     </div>
     <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
       <%= f.label :elapse_time, class: "col-sm-3 control-label" %>
       <div class="col-sm-6 controls">
-        <%= f.select :elapse_time,options_for_select(NotificationTemplate::ELAPSE_TIME), class: "form-control" %>
+        <%= f.select :elapse_time,options_for_select(NotificationTemplate::ELAPSE_TIME,@notification_template.elapse_time), class: "form-control" %>
       </div>  
     </div>
   </div>
 
 
   <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
+    <%= f.label :merge_field, class: "col-sm-3 control-label" %>
+    <div class="col-sm-6 controls">
+      <%= f.select :merge_field,options_for_select(NotificationTemplate::MERGE_FIELDS,@notification_template.merge_field), class: "form-control" %><br />
+    </div>
+  </div>
+
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
     <%= f.label :cta_key, class: "col-sm-3 control-label" %>
     <div class="col-sm-6 controls">
-      <%= f.select :cta_key,options_for_select(NotificationTemplate::CTA.invert.to_a), class: "form-control" %><br />
+      <%= f.select :cta_key,options_for_select(NotificationTemplate::CTA.invert.to_a,@notification_template.cta_key), class: "form-control" %><br />
     </div>
   </div>
   
 <!-- primary cta key fields -->
-
-  <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: none" id ="id_chat">
+  
+  
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: <%= @notification_template.chat_email.present? ? "block" : "none" %>" id ="id_chat">
     <%= f.label :chat_email, class: "col-sm-3 control-label" %>
     <div class="col-sm-6 controls">
       <%= f.text_field :chat_email, class: "form-control"  %>
-    </div>  
+    </div>
   </div>
-  <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: none" id ="id_provide_feedback">
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: <%= @notification_template.provide_feedback_email.present? ? 'block' : 'none' %>;" id ="id_provide_feedback">
     <%= f.label :provide_feedback_email, class: "col-sm-3 control-label" %>
     <div class="col-sm-6 controls">
       <%= f.text_field :provide_feedback_email, class: "form-control"  %>
     </div>  
   </div>
-  <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: none" id ="id_learn_more">
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: <%= @notification_template.learn_more_url.present? ? "block" : "none"; %>" id ="id_learn_more">
     <%= f.label :learn_more_url, class: "col-sm-3 control-label" %>
     <div class="col-sm-6 controls">
       <%= f.text_field :learn_more_url, class: "form-control"  %>
     </div>  
   </div>
-  <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: none" id ="id_take_the_survey">
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: <%= @notification_template.take_the_survey_url.present? ? "block" : "none"; %>" id ="id_take_the_survey">
     <%= f.label :take_the_survey_url, class: "col-sm-3 control-label" %>
     <div class="col-sm-6 controls">
       <%= f.text_field :take_the_survey_url, class: "form-control"  %>
     </div>  
   </div>
-  <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: none" id ="id_anonymous_feedback">
+  <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: <%= @notification_template.anonymous_feedback_url.present? ? "block" : "none"; %>" id ="id_anonymous_feedback">
     <%= f.label :anonymous_feedback_url, class: "col-sm-3 control-label" %>
     <div class="col-sm-6 controls">
       <%= f.text_field :anonymous_feedback_url, class: "form-control"  %>
@@ -200,35 +204,35 @@
   <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
     <%= f.label :secondary_cta_key, class: "col-sm-3 control-label" %>
     <div class="col-sm-6 controls">
-      <%= f.select :secondary_cta_key,options_for_select([["",""]]+NotificationTemplate::CTA.reject{|k| k == "autofocus"}.invert.to_a), class: "form-control" %><br />
+      <%= f.select :secondary_cta_key,options_for_select([["",""]]+NotificationTemplate::CTA.reject{|k| k == "autofocus"}.invert.to_a,@notification_template.secondary_cta_key), class: "form-control" %><br />
     </div>
   </div>
 
-   <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: none" id ="secondary_id_chat">
+   <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: <%= @notification_template.secondary_chat_email.present? ? "block" : "none"; %>" id ="secondary_id_chat">
       <%= f.label :secondary_chat_email, class: "col-sm-3 control-label" %>
       <div class="col-sm-6 controls">
         <%= f.text_field :secondary_chat_email, class: "form-control"  %>
       </div>
     </div>
-    <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: none" id ="secondary_id_provide_feedback">
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: <%= @notification_template.secondary_provide_feedback_email.present? ? "block" : "none"; %>" id ="secondary_id_provide_feedback">
       <%= f.label :secondary_provide_feedback_email, class: "col-sm-3 control-label" %>
       <div class="col-sm-6 controls">
         <%= f.text_field :secondary_provide_feedback_email, class: "form-control"  %>
       </div>
     </div>
-    <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: none" id ="secondary_id_learn_more">
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: <%= @notification_template.secondary_learn_more_url.present? ? "block" : "none"; %>" id ="secondary_id_learn_more">
       <%= f.label :secondary_learn_more_url, class: "col-sm-3 control-label" %>
       <div class="col-sm-6 controls">
         <%= f.text_field :secondary_learn_more_url, class: "form-control"  %>
       </div>
     </div>
-    <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: none" id ="secondary_id_take_the_survey">
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: <%= @notification_template.secondary_take_the_survey_url.present? ? "block" : "none"; %>" id ="secondary_id_take_the_survey">
       <%= f.label :secondary_take_the_survey_url, class: "col-sm-3 control-label" %>
       <div class="col-sm-6 controls">
         <%= f.text_field :secondary_take_the_survey_url, class: "form-control"  %>
       </div>
     </div>
-    <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: none" id ="secondary_id_anonymous_feedback">
+    <div class="form-group control-group belongs_to_association_type user_field col-sm-12" style="display: <%= @notification_template.secondary_anonymous_feedback_url.present? ? "block" : "none"; %>" id ="secondary_id_anonymous_feedback">
       <%= f.label :secondary_anonymous_feedback_url, class: "col-sm-3 control-label" %>
       <div class="col-sm-6 controls">
         <%= f.text_field :secondary_anonymous_feedback_url, class: "form-control"  %>
@@ -240,11 +244,11 @@
 
 <!-- ############################################       Autofocus Segment ############################ -->
 
-  <div id=autofocus style="display: none">
+  <div id=autofocus style="display: <%= @notification_template.cta_key == 'autofocus' ? 'block' : 'none' %>">
     <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
       <%= f.label "Autofocus Dashboard", class: "col-sm-3 control-label" %>
       <div class="col-sm-6 controls">
-         <%= f.select :dashboard,options_for_select(NotificationTemplate::DASHBOARD), class: "form-control" %>
+         <%= f.select :dashboard,options_for_select(NotificationTemplate::DASHBOARD,@notification_template.dashboard), class: "form-control" %>
       </div>
     </div>
     <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
@@ -256,13 +260,14 @@
     <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
       <%= f.label "Autofocus TimePeriod", class: "col-sm-3 control-label" %>
       <div class="col-sm-6 controls">
-        <%= f.select :days_from_now,options_for_select(NotificationTemplate::FUTURE_DATE_LIST), class: "form-control" %>
+        <%= f.select :days_from_now,options_for_select(NotificationTemplate::FUTURE_DATE_LIST,@notification_template.days_from_now), class: "form-control" %>
       </div>
     </div>
     <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
       <%= f.label "Autofocus Categories", class: "col-sm-3 control-label" %>
       <div class="col-sm-4 controls">
-        <%= f.select :autofocus_categories,options_for_select(NotificationTemplate::CATEGORY_LIST),{}, {multiple: true, class: "form-control"} %>
+        <% category_type = @notification_template.autofocus_categories.present? ? JSON.parse(@notification_template.autofocus_categories) : nil %>
+        <%= f.select :autofocus_categories,options_for_select(NotificationTemplate::CATEGORY_LIST,category_type),{}, {multiple: true, class: "form-control"} %>
       </div>
     </div>
     <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
@@ -280,7 +285,8 @@
     <div class="form-group control-group belongs_to_association_type user_field col-sm-12">
       <%= f.label "Autofocus Weather", class: "col-sm-3 control-label" %>
       <div class="col-sm-6 controls">
-        <%= f.select :weather,options_for_select(NotificationTemplate::WEATHER_LIST),{}, {multiple: true, class: "form-control"} %>
+        <% weather_type = @notification_template.weather.present? ? JSON.parse(@notification_template.weather) : nil %>
+        <%= f.select :weather,options_for_select(NotificationTemplate::WEATHER_LIST,weather_type),{}, {multiple: true, class: "form-control"} %>
       </div>  
     </div>
     <div class="form-group control-group belongs_to_association_type user_field col-sm-12">

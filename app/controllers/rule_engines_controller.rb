@@ -23,8 +23,13 @@ class RuleEnginesController < ApplicationController
   end
 
   def update
+    rule_parameters = rule_params
     @rule = RuleEngine.find_by(id: params[:id])
-    if @rule.update(rule_params)
+    if rule_parameters.present? || !rule_parameters.nil?
+      rules = rule_parameters["expression"]
+      @rule.expression = rules.join.strip.gsub(" "," AND ") if rules.present?
+      @rule.save if @rule.expression.present?
+      flash[:success] = "New Rule Created. Bravo!!"
       redirect_to rule_engines_path
     else
       redirect_to rule_engines_path

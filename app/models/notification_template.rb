@@ -47,19 +47,11 @@ class NotificationTemplate < ActiveRecord::Base
     string :secondary_anonymous_feedback_url
   end
 
-  MERGE_FIELDS = [  "",
-                    "notes",
-                    "regional_date",
-                    "suburb",
-                    "category",
-                    "temperature",
-                    "steps",
-                    "sleep",
-                    "feeling",
-                    "impact",
-                    "wbs",
-                    "weather",
-                    "goal"
+  MERGE_FIELDS = [  ["",""],
+                    ["Notes","notes"],
+                    ["Average","average"],
+                    ["Latest Note","latest_note"],
+                    ["Topics","topics"]
                   ]
 
   CATEGORY_LIST = ["Experiences","Actions","Emotions","Decisions","Discoveries"]

@@ -68,7 +68,7 @@ class FiltersController < ApplicationController
   private
 
   def filter_params
-    params.require(:filter).permit(:name, :family, :filter_type, :segment, :operator, :condition,:list_type, :free_text, :start_date, :end_date)
+    params.require(:filter).permit(:id,  :name, :family, :filter_type, :segment, :operator, :condition,:list_type, :free_text, :start_date, :end_date)
   end
 
 end
