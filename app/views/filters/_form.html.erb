@@ -261,10 +261,7 @@ $(document).ready(function(){
         $("#start_date_field").hide();
         $("#end_date_field").hide();
       }
-    else if (this.value == 'notes_with_topics' || this.value == 'specific_users' ||
-        this.value == 'average_feeling_score' ||
-        this.value == 'average_impact_score' ||
-        this.value == 'average_well_being_score')
+    else if (this.value == 'notes_with_topics' || this.value == 'specific_users')
     {
       $("#free_text_field").show();
       $("#filter_list_type_id").hide();
@@ -273,6 +270,18 @@ $(document).ready(function(){
       $("#start_date_field").hide();
       $("#end_date_field").hide();
     }
+    else if (
+        this.value == 'average_feeling_score' ||
+        this.value == 'average_impact_score' ||
+        this.value == 'average_well_being_score')
+      {
+        $("#free_text_field").show();
+        $("#filter_list_type_id").hide();
+        $("#filter_condition_id").hide();
+        $("#filter_operator_id").show();
+        $("#start_date_field").hide();
+        $("#end_date_field").hide();
+      }
     else if (this.value == 'created_notes_during_time_period_date' || this.value == 'recorded_daily_activity_during_time_period_date' || this.value == 'recorded_avg_activity_greater_date' 
       || this.value == 'recorded_avg_activity_lesser_date' || this.value == 'recorded_avg_activity_equal_date')
     {
