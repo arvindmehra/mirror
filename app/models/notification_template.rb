@@ -51,7 +51,8 @@ class NotificationTemplate < ActiveRecord::Base
                     ["Notes","notes"],
                     ["Average","average"],
                     ["Latest Note","latest_note"],
-                    ["Topics","topics"]
+                    ["Topics","topics"],
+                    ["Most Used","most_used"]
                   ]
 
   CATEGORY_LIST = ["Experiences","Actions","Emotions","Decisions","Discoveries"]

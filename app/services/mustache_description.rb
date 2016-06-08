@@ -14,7 +14,10 @@ class MustacheDescription
                                             sleep_time_latest_note: user_record.sleep_time,
                                             feeling_score_latest_note: user_record.feeling_score,impact_score_latest_note: user_record.impact_score})
     elsif merge_field == "topics"
-      Mustache.render(template.description,{topics_latest_note: user_record.topics}) 
+      Mustache.render(template.description,{topics_latest_note: user_record.topics})
+    elsif merge_field == "most_used"
+      Mustache.render(template.description,{most_used_category: user_record.category, most_used_suburb: user_record.suburb,
+                                            most_used_date: user_record.notes_recorded_at,most_used_weather: user_record.whether_type})
     elsif merge_field == "goal"
       Mustache.render(template.description,{goal_latest_note: user_record.activity_goal})
     end

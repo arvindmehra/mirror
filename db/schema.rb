@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160606064447) do
+ActiveRecord::Schema.define(version: 20160607190506) do
 
   create_table "devices", force: true do |t|
     t.integer  "user_id"
@@ -214,6 +214,13 @@ ActiveRecord::Schema.define(version: 20160606064447) do
     t.string   "time_zone"
   end
 
+  create_table "temp_user_records", force: true do |t|
+    t.integer "user_id"
+    t.integer "goal"
+    t.float   "time_spent",    limit: 24
+    t.date    "activity_date"
+  end
+
   create_table "transactions", force: true do |t|
     t.integer  "user_id"
     t.datetime "orig_purchase_time"
@@ -231,7 +238,7 @@ ActiveRecord::Schema.define(version: 20160606064447) do
 
   create_table "user_activities", force: true do |t|
     t.integer  "user_id"
-    t.string   "activity_date"
+    t.date     "activity_date"
     t.integer  "time_spent"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -260,6 +267,13 @@ ActiveRecord::Schema.define(version: 20160606064447) do
     t.datetime "sent_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "user_records", force: true do |t|
+    t.integer "user_id"
+    t.integer "goal"
+    t.float   "time_spent",    limit: 24
+    t.date    "activity_date"
   end
 
   create_table "users", force: true do |t|
