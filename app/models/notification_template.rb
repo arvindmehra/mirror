@@ -47,6 +47,8 @@ class NotificationTemplate < ActiveRecord::Base
     string :secondary_anonymous_feedback_url
   end
 
+  PRODUCT = [["RealifeChange","realifechange"]]
+
   MERGE_FIELDS = [  ["",""],
                     ["Notes","notes"],
                     ["Average","average"],
