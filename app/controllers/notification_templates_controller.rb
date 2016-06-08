@@ -102,7 +102,7 @@ private
                   :heart_rate_medium, :heart_rate_max, :steps_walked_min, :steps_walked_medium, :steps_walked_max,
                   :sleep_time_min, :sleep_time_medium, :sleep_time_max, :temperature_min, :temperature_medium,
                   :chat_email, :provide_feedback_email, :learn_more_url, :take_the_survey_url, :anonymous_feedback_url,
-                  [:autofocus_categories => []],:show_useful, :temperature_max,:well_being,
+                  [:autofocus_categories => []],:show_useful, :temperature_max,:well_being,:product,
                   :topics, [:weather=> []], :calories_min, :calories_medium, :calories_max,:list_type,
                   :in_exclusion_operator,:in_exclusion_segment,:in_exclusion_condition,:in_exclusion_notification_id,
                   :recurring,:scheduled_time,:secondary_cta_key,:secondary_provide_feedback_email, :secondary_chat_email,

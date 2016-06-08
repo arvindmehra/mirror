@@ -22,7 +22,7 @@ class Filter < ActiveRecord::Base
       if users.is_a?(Hash)
         users
       elsif group.present? && !users.is_a?(Array)
-        logger.debug  "plucking user_ids FROM temp_user_notes"
+        logger.debug  "PLUCKING user_ids FROM temp_user_notes"
         users.pluck(:user_id).uniq
       else
         users.map{|x| x.user_id}.uniq
@@ -341,7 +341,11 @@ class Filter < ActiveRecord::Base
                 WHERE activity_date = date(now())
                 group by user_id, goal, dates,activity_date) as t1
                 WHERE total_time_spent #{operator} goal)"
-    User.populate_user_records(sql)
+    begin
+       User.populate_user_records(sql)
+     rescue Exception => e
+      Rails.logger.info  "#{e}"
+     end
     sql
   end
 
@@ -361,7 +365,11 @@ class Filter < ActiveRecord::Base
                 group by user_id, goal, dates, max_activity_date, min_activity_date) as t1) as t2) as t3
                 WHERE
                 t3.avg_time_spent #{operator} t3.goal"
-    User.populate_user_records(sql)
+    begin
+       User.populate_user_records(sql)
+     rescue Exception => e
+      Rails.logger.info  "#{e}"
+     end
     sql
   end
 
@@ -382,7 +390,11 @@ class Filter < ActiveRecord::Base
                   group by user_id, goal, dates, max_activity_date, min_activity_date) as t1) as t2) as t3
                   WHERE
                   t3.avg_time_spent #{operator} t3.goal"
-    User.populate_user_records(sql)
+    begin
+       User.populate_user_records(sql)
+     rescue Exception => e
+      Rails.logger.info  "#{e}"
+     end
     sql
   end
 
@@ -403,7 +415,11 @@ class Filter < ActiveRecord::Base
               group by user_id, goal, dates, max_activity_date, min_activity_date) as t1) as t2) as t3
               WHERE
               t3.avg_time_spent #{operator} t3.goal"
-    User.populate_user_records(sql)
+    begin
+       User.populate_user_records(sql)
+     rescue Exception => e
+      Rails.logger.info  "#{e}"
+     end
     sql
   end
 
