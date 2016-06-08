@@ -23,6 +23,8 @@ class NotificationTemplatesController < ApplicationController
     @notification_template = NotificationTemplate.find_by(id: params[:id])
     temp_params[:start_date] = Date.strptime(temp_params[:start_date], '%m/%d/%Y') if temp_params[:start_date].present?
     temp_params[:end_date] = Date.strptime(temp_params[:end_date], '%m/%d/%Y') if temp_params[:start_date].present?
+    @notification_template.cta = NotificationTemplate::CTA[temp_params[:cta_key]]
+    @notification_template.secondary_cta = NotificationTemplate::CTA[temp_params[:secondary_cta_key]]
     @notification_template.update(temp_params)
     redirect_to notification_templates_path
   end
