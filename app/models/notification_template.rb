@@ -118,7 +118,8 @@ RECURRENCE_TIME_PERIOD_LIST = [
         "autofocus"=> "AutoFocus",
         "learn_more"=> "Learn More",
         "take_survey"=> "Take the survey",
-        "anonymous_feedback" => "Anonymous Feedback"
+        "anonymous_feedback" => "Anonymous Feedback",
+        "create_account" => "Create Account"
       }
 
   CATEGORY = [["Activity","activity"],
@@ -216,7 +217,11 @@ RECURRENCE_TIME_PERIOD_LIST = [
       }
 
   def get_scope_users
-    users_fulfilling_filters = rule_engine.get_scope_users
+    begin
+      users_fulfilling_filters = rule_engine.get_scope_users
+    rescue Exception => e
+      Rails.logger.info "[ERROR] in loading users #{e} Possibly no rule found"
+    end
     if in_exclusion_segment.present?
       users_fulfilling_filters = check_inclusion_exclusion_list_for(users_fulfilling_filters)
     end
@@ -246,7 +251,8 @@ RECURRENCE_TIME_PERIOD_LIST = [
       @condition = in_exclusion_condition
     end
     @operator = in_exclusion_operator
-    @notification_template = NotificationTemplate.find_by(id: in_exclusion_notification_id)
+    nt_id = in_exclusion_notification_id == 0 ? self.id : in_exclusion_notification_id
+    @notification_template = NotificationTemplate.find_by(id: nt_id)
     send("process_#{in_exclusion_segment}",users_fulfilling_filters)
   end
 

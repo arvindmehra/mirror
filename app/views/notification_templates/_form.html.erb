@@ -41,7 +41,7 @@
   <div class="form-group control-group belongs_to_association_type user_field col-sm-12" id="inex_segment">
     <%= f.label "Include Or Exclude", class: "col-sm-3 control-label" %>
     <div class="col-sm-6 controls">
-    <%= f.select :in_exclusion_segment,options_for_select([""]+NotificationTemplate::IN_EX_LIST),class: "form-control" %><br />
+    <%= f.select :in_exclusion_segment,options_for_select([""]+NotificationTemplate::IN_EX_LIST,@notification_template.in_exclusion_segment),class: "form-control" %><br />
     </div>  
   </div>
 
@@ -49,19 +49,19 @@
     <div class="form-group control-group belongs_to_association_type user_field col-sm-12" id="inex_operator" style="display:none">
       <%= f.label "InEx Operator", class: "col-sm-3 control-label" %>
       <div class="col-sm-6 controls">
-        <%= f.select :in_exclusion_operator,options_for_select(Filter::RELATION_OPERATOR),class: "form-control" %><br />
+        <%= f.select :in_exclusion_operator,options_for_select(Filter::RELATION_OPERATOR,@notification_template.in_exclusion_operator),class: "form-control" %><br />
       </div>
     </div>
     <div class="form-group control-group belongs_to_association_type user_field col-sm-12" id="inex_condition" style="display:none">
       <%= f.label "InEx Condition", class: "col-sm-3 control-label" %>
       <div class="col-sm-6 controls">
-        <%= f.select :in_exclusion_condition,options_for_select(NotificationTemplate::KEY_OPERATORS["already_targeted_list"]),class: "form-control" %><br />
+        <%= f.select :in_exclusion_condition,options_for_select(NotificationTemplate::KEY_OPERATORS["already_targeted_list"],@notification_template.in_exclusion_condition),class: "form-control" %><br />
       </div>
     </div>
     <div class="form-group control-group belongs_to_association_type user_field col-sm-12" id="inex_exclusion_notification_id"  style="display:none">
       <%= f.label "Notifications", class: "col-sm-3 control-label" %>
       <div class="col-sm-6 controls">
-        <%= f.select :in_exclusion_notification_id,options_for_select([["",""]]+NotificationTemplate.all.map{|x| [x.title,x.id]}),class: "form-control" %><br />
+        <%= f.select :in_exclusion_notification_id,options_for_select([["",""]]+[["Self",0]]+NotificationTemplate.all.map{|x| [x.title,x.id]},@notification_template.in_exclusion_notification_id),class: "form-control" %><br />
       </div>
     </div>
   </div>
@@ -397,7 +397,7 @@
      {
         $("#inex_operator").hide();
         $("#inex_condition").show();
-        $("#inex_exclusion_notification_id").hide()
+        $("#inex_exclusion_notification_id").show()
     }
     else if (this.value == "include_targeted_by_another_notification" ||
             this.value == "exclude_targeted_by_another_notification")

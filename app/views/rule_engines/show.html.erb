@@ -4,5 +4,5 @@
 <% if users.is_a?(Hash) %>
     <h3>Total_users : <%= users[:user_ids].flatten.size %></h3>
   <% else %>
-    <h3>Total_users :  <%= users.count%></h3>
+    <h3>Total_users :  <%= users.try(:count)%></h3>
   <% end %>
