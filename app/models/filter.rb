@@ -105,7 +105,7 @@ class Filter < ActiveRecord::Base
       id = 3
     end
     s = TempUserNote.joins("INNER JOIN transactions ON transactions.user_id = temp_user_notes.user_id INNER JOIN subscriptions ON subscriptions.user_id = temp_user_notes.user_id")
-    s = s.where(transactions: {product_id: id}).where("DATE(subscriptions.end_date) >= CURDATE()")
+    s = s.where(transactions: {product_id: id}).where("subscriptions.end_date >= now()")
     s
   end
 
@@ -295,14 +295,17 @@ class Filter < ActiveRecord::Base
 
   def process_recorded_avg_activity_greater_date
     s = TempUserNote.find_by_sql(recorded_activity_for_recency_sql_date('>'))
+    s
   end
 
   def process_recorded_avg_activity_lesser_date
     s = TempUserNote.find_by_sql(recorded_activity_for_recency_sql_date('<'))
+    s
   end
 
   def process_recorded_avg_activity_equal_date
     s = TempUserNote.find_by_sql(recorded_activity_for_recency_sql_date('='))
+    s
   end
 
   def process_recorded_avg_activity_greater_period
@@ -329,7 +332,7 @@ class Filter < ActiveRecord::Base
   end
 
   def recorded_activity_for_today_sql(operator)
-    sql = "(SELECT t1.user_id, t1.total_time_spent , t1.goal,t1.activity_date FROM
+    sql = "(SELECT t1.user_id, t1.total_time_spent, t1.goal,t1.dates FROM
                 (SELECT temp_user_notes.user_id as user_id, temp_user_notes.activity_goal as goal, user_activities.activity_date as dates,
                 date(now()) as activity_date, sum(user_activities.time_spent) as total_time_spent
                 FROM temp_user_notes
@@ -338,13 +341,15 @@ class Filter < ActiveRecord::Base
                 WHERE activity_date = date(now())
                 group by user_id, goal, dates,activity_date) as t1
                 WHERE total_time_spent #{operator} goal)"
+    User.populate_user_records(sql)
+    sql
   end
 
   def recorded_activity_for_yesterday_sql(operator)
-    sql = "SELECT t3.user_id, t3.goal, t3.avg_time_spent FROM
-            (SELECT t2.user_id,(t2.ts / t2.total_days) as avg_time_spent, t2.ts, t2.total_days, t2.goal FROM
+    sql = "SELECT t3.user_id, t3.goal, t3.avg_time_spent,t3.dates FROM
+            (SELECT t2.user_id,(t2.ts / t2.total_days) as avg_time_spent, t2.ts, t2.total_days, t2.goal,t2.dates FROM
               (SELECT t1.user_id, (datediff(t1.max_activity_date, t1.min_activity_date) + 1) as total_days,
-              t1.total_time_spent as ts, t1.goal as goal FROM
+              t1.total_time_spent as ts, t1.goal as goal,t1.dates FROM
               (SELECT temp_user_notes.user_id as user_id, temp_user_notes.activity_goal as goal,
               user_activities.activity_date as dates, DATE_SUB(now(), INTERVAL 1 day) as min_activity_date,   
               date(now()) as max_activity_date, sum(user_activities.time_spent) as total_time_spent
@@ -356,13 +361,15 @@ class Filter < ActiveRecord::Base
                 group by user_id, goal, dates, max_activity_date, min_activity_date) as t1) as t2) as t3
                 WHERE
                 t3.avg_time_spent #{operator} t3.goal"
+    User.populate_user_records(sql)
+    sql
   end
 
   def recorded_activity_for_recency_sql(operator)
-    sql = "SELECT t3.user_id, t3.goal, t3.avg_time_spent FROM
-            (SELECT t2.user_id,(t2.ts / t2.total_days) as avg_time_spent, t2.ts, t2.total_days, t2.goal FROM
+    sql = "SELECT t3.user_id, t3.goal, t3.avg_time_spent,t3.dates FROM
+            (SELECT t2.user_id,(t2.ts / t2.total_days) as avg_time_spent, t2.ts, t2.total_days, t2.goal,t2.dates FROM
               (SELECT t1.user_id, (datediff(t1.max_activity_date, t1.min_activity_date) + 1) as total_days,
-              t1.total_time_spent as ts,t1.goal as goal
+              t1.total_time_spent as ts,t1.goal as goal,t1.dates
               FROM
                 (SELECT temp_user_notes.user_id as user_id, temp_user_notes.activity_goal as goal, user_activities.activity_date as dates,
                 DATE_SUB(now(), INTERVAL #{@digit} #{@hour_day_week}) as min_activity_date, CURDATE() as max_activity_date,
@@ -375,15 +382,17 @@ class Filter < ActiveRecord::Base
                   group by user_id, goal, dates, max_activity_date, min_activity_date) as t1) as t2) as t3
                   WHERE
                   t3.avg_time_spent #{operator} t3.goal"
+    User.populate_user_records(sql)
+    sql
   end
 
   def recorded_activity_for_recency_sql_date(operator)
-    sql = "SELECT t3.user_id, t3.goal, t3.avg_time_spent FROM
-          (SELECT t2.user_id,(t2.ts / t2.total_days) as avg_time_spent, t2.ts, t2.total_days, t2.goal FROM
+    sql = "SELECT t3.user_id, t3.goal, t3.avg_time_spent,t3.dates FROM
+          (SELECT t2.user_id,(t2.ts / t2.total_days) as avg_time_spent, t2.ts, t2.total_days, t2.goal,t2.dates FROM
           (SELECT t1.user_id, (datediff(t1.max_activity_date, t1.min_activity_date) + 1) as total_days,
-          t1.total_time_spent as ts,t1.goal as goal
+          t1.total_time_spent as ts,t1.goal as goal,t1.dates
           FROM
-            (SELECT temp_user_notes.user_id as user_id, temp_user_notes.activity_goal as goal, user_activities.activity_date        as dates,
+            (SELECT temp_user_notes.user_id as user_id, temp_user_notes.activity_goal as goal, user_activities.activity_date as dates,
              '#{@start_date}' as min_activity_date, '#{@end_date}' as max_activity_date,
             sum(user_activities.time_spent) as total_time_spent
             FROM temp_user_notes
@@ -394,6 +403,8 @@ class Filter < ActiveRecord::Base
               group by user_id, goal, dates, max_activity_date, min_activity_date) as t1) as t2) as t3
               WHERE
               t3.avg_time_spent #{operator} t3.goal"
+    User.populate_user_records(sql)
+    sql
   end
 
   def process_specific_users

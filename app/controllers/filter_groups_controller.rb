@@ -29,7 +29,6 @@ class FilterGroupsController < ApplicationController
     filter_parameters = filter_group_params
     if filter_parameters.present? || !filter_parameters.nil?
       expression = filter_parameters["filter_series"]
-      debugger
       @filter_group.expression = expression.join.strip.gsub(" "," OR ") if expression.present?
       @filter_group.save if @filter_group.expression.present?
        flash[:success] = "Updated!!"

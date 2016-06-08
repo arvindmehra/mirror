@@ -12,6 +12,7 @@ class User < ActiveRecord::Base
   has_many :user_notifications
 
   after_create :create_trial_subscription
+  before_create :set_activity_goal
 
   def create_trial_subscription
     self.subscriptions.create(start_date: Time.now, end_date: 10.days.from_now)
@@ -92,6 +93,18 @@ class User < ActiveRecord::Base
   def is_in_filter_scope?(notification_template)
     filter_scoped_users = notification_template.get_scope_users
     filter_scoped_users.include?(self.id)
+  end
+
+  def set_activity_goal
+    self.activity_goal = 3
+  end
+
+  def self.populate_user_records(records)
+    ActiveRecord::Base.connection.execute("TRUNCATE temp_user_records")
+    ActiveRecord::Base.connection.execute(
+                          "INSERT INTO temp_user_records
+                          (user_id,goal,time_spent,activity_date)
+                          #{records}")
   end
 
   def self.populate_temp_user_notes
